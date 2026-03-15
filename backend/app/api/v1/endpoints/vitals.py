@@ -1,0 +1,57 @@
+from fastapi import APIRouter, HTTPException, Depends
+from app.models.schema import ClinicalFeatureVector, WellnessAssessmentOutput
+from app.brain.risk_engine import risk_engine
+from app.services.db_service import db_service
+from typing import List, Dict, Any
+import asyncio
+
+router = APIRouter()
+
+@router.get("/history", response_model=List[Dict[str, Any]])
+async def get_history(patient_id: str = "patient_001"):
+    """
+    Retrieves history for the current patient.
+    """
+    try:
+        history = await db_service.get_patient_history(patient_id)
+        return history
+    except Exception as e:
+        print(f"Error fetching history: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching clinical history")
+
+@router.post("/ingest", response_model=WellnessAssessmentOutput)
+async def ingest_vitals(feature_vector: ClinicalFeatureVector):
+    """
+    RECEIVES vitals from Patient PWA for Wellness Tracking.
+    STORES raw data in Firestore.
+    ACTIVATES Wellness Analytics Engine.
+    RETURNS assessment (Neural Vector + Suggestion).
+    """
+    try:
+        # 1. Store Raw Vitals
+        patient_id = "patient_001" 
+        
+        vitals_data = feature_vector.current_vitals.copy()
+        vitals_data['meta_age'] = feature_vector.age
+        vitals_data['meta_bmi'] = feature_vector.bmi
+        
+        await db_service.add_vital_reading(patient_id, vitals_data)
+
+        # 2. Wellness Analysis (The "Brain")
+        assessment = risk_engine.assess_wellness_vector(feature_vector)
+        
+        # 3. Store Assessment Result (The "Memory")
+        assessment_record = assessment.model_dump()
+        assessment_record['patient_id'] = patient_id
+        
+        await db_service.save_assessment(assessment_record)
+
+        # 4. Observation Logging
+        if assessment.significant_deviation_detected:
+            print(f"!!! SIGNIFICANT WELLNESS DEVIATION for Patient {patient_id} !!!")
+
+        return assessment
+
+    except Exception as e:
+        print(f"Error processing vitals: {e}")
+        raise HTTPException(status_code=500, detail="Internal Brain Error during processing")
