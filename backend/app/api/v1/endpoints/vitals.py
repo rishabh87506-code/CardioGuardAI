@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from app.models.schema import ClinicalFeatureVector, WellnessAssessmentOutput
-from app.brain.risk_engine import risk_engine
+from app.brain.agents import cardio_brain
 from app.services.db_service import db_service
+from app.services.whatsapp_service import whatsapp_service
 from typing import List, Dict, Any
 import asyncio
 
@@ -37,8 +38,8 @@ async def ingest_vitals(feature_vector: ClinicalFeatureVector):
         
         await db_service.add_vital_reading(patient_id, vitals_data)
 
-        # 2. Wellness Analysis (The "Brain")
-        assessment = risk_engine.assess_wellness_vector(feature_vector)
+        # 2. Wellness Analysis (The "Brain") - Multi-agent Orchestration
+        assessment = cardio_brain.process_vitals_loop(feature_vector)
         
         # 3. Store Assessment Result (The "Memory")
         assessment_record = assessment.model_dump()
@@ -46,9 +47,25 @@ async def ingest_vitals(feature_vector: ClinicalFeatureVector):
         
         await db_service.save_assessment(assessment_record)
 
-        # 4. Observation Logging
+        # 4. Hrdai-Pro Live Broadcasts (WhatsApp/Emergency Integration)
+        user_name = feature_vector.history_flags.get("user_display_name", "Arjun Sharma")
+        
         if assessment.significant_deviation_detected:
-            print(f"!!! SIGNIFICANT WELLNESS DEVIATION for Patient {patient_id} !!!")
+            # 🚨 Trigger Emergency Response BROADCAST
+            asyncio.create_task(whatsapp_service.trigger_emergency_alert(
+                user_name=user_name,
+                vitals=vitals_data,
+                deviation_score=assessment.neural_assessment_vector
+            ))
+            print(f"🚨 Hridai: EMERGENCY Broadcast sent for {user_name}!")
+        else:
+            # 📡 Regular Wellness Update Broadcast
+            asyncio.create_task(whatsapp_service.send_broadcast(
+                user_name=user_name,
+                wellness_index=assessment.neural_assessment_vector,
+                location=feature_vector.history_flags.get("location", "New Delhi")
+            ))
+            print(f"📡 Hridai: Wellness Broadcast sent for {user_name}.")
 
         return assessment
 

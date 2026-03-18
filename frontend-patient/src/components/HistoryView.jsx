@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { Clock, TrendingUp, AlertCircle, Loader2, Calendar, Activity, Gauge } from 'lucide-react';
 
-const HISTORY_URL = "http://localhost:8000/api/v1/vitals/history";
+const HISTORY_ENDPOINT = "/metrics/history?type=vital_pulse&limit=20";
 
 export default function HistoryView() {
     const [history, setHistory] = useState([]);
@@ -11,8 +11,16 @@ export default function HistoryView() {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await axios.get(HISTORY_URL);
-                setHistory(response.data);
+                const response = await api.get(HISTORY_ENDPOINT);
+                // Map Gateway metrics response to the UI format
+                const mappedHistory = response.data.history.map(item => ({
+                  hr: item.value,
+                  sbp: item.metadata.sbp || 120,
+                  dbp: item.metadata.dbp || 80,
+                  timestamp: item.measurement_timestamp,
+                  bmi: item.metadata.bmi || 24.0
+                }));
+                setHistory(mappedHistory);
             } catch (err) {
                 console.error("Error fetching history:", err);
             } finally {
@@ -21,6 +29,7 @@ export default function HistoryView() {
         };
         fetchHistory();
     }, []);
+
 
     if (loading) {
         return (

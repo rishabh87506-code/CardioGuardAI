@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { Activity, ArrowRight, Loader2, User, Ruler, HeartPulse, Gauge, Zap } from 'lucide-react';
 import clsx from 'clsx';
 
-const API_URL = "http://localhost:8000/api/v1/vitals/ingest";
+const API_ENDPOINT = "/brain/vitals/ingest";
+
 
 export default function VitalsForm({ onComplete, isLowEnd }) {
     const [loading, setLoading] = useState(false);
@@ -35,14 +36,25 @@ export default function VitalsForm({ onComplete, isLowEnd }) {
         };
 
         try {
-            const response = await axios.post(API_URL, payload);
+            const response = await api.post(API_ENDPOINT, payload);
             onComplete(response.data);
+            
+            // Also store metric locally in the Gateway DB for history
+            await api.post('/metrics/ingest', {
+              metric_type: 'vital_pulse',
+              value: payload.current_vitals.hr,
+              source: 'patient_input',
+              quality_score: 1.0,
+              metadata: { sbp: payload.current_vitals.sbp, dbp: payload.current_vitals.dbp }
+            });
+
         } catch (err) {
-            alert("Neural Link Interrupted: " + err.message);
+            alert("Neural Link Interrupted: " + (err.response?.data?.message || err.message));
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;

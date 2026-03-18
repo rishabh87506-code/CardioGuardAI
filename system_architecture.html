@@ -1,0 +1,2533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioGuardAI — System Architecture</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080b14;
+            --bg2: #0c1020;
+            --bg3: #111828;
+            --border: rgba(99, 179, 255, 0.1);
+            --border2: rgba(99, 179, 255, 0.06);
+            --red: #ff3d6e;
+            --red2: rgba(255, 61, 110, 0.12);
+            --teal: #00e5c8;
+            --teal2: rgba(0, 229, 200, 0.1);
+            --gold: #ffb830;
+            --gold2: rgba(255, 184, 48, 0.1);
+            --blue: #4db8ff;
+            --blue2: rgba(77, 184, 255, 0.1);
+            --violet: #b87cff;
+            --violet2: rgba(184, 124, 255, 0.1);
+            --green: #39e87a;
+            --green2: rgba(57, 232, 122, 0.1);
+            --text: #c8d8f0;
+            --dim: #5a7090;
+            --white: #e8f2ff;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ── TAB NAV ── */
+        .tabs {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: rgba(8, 11, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            gap: 0;
+        }
+
+        .tab-brand {
+            font-family: 'Fraunces', serif;
+            font-weight: 900;
+            font-size: 1rem;
+            color: var(--white);
+            margin-right: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-brand-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 10px var(--red);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.4
+            }
+        }
+
+        .tab {
+            padding: 18px 24px;
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: var(--dim);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab.active {
+            color: var(--white);
+            border-bottom-color: var(--teal);
+        }
+
+        /* ── SECTION PANELS ── */
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        /* ════════════════════════════════════════
+   PART 1 — APP SKELETON
+════════════════════════════════════════ */
+        .skeleton-wrap {
+            padding: 48px 40px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            min-height: calc(100vh - 57px);
+        }
+
+        /* Screen list */
+        .screen-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .screen-group-label {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            padding: 16px 0 6px 12px;
+        }
+
+        .screen-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+
+        .screen-item:hover {
+            background: var(--bg3);
+        }
+
+        .screen-item.active {
+            background: var(--teal2);
+            border-color: rgba(0, 229, 200, 0.2);
+            color: var(--teal);
+        }
+
+        .screen-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .screen-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .screen-tag {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--bg3);
+            color: var(--dim);
+        }
+
+        /* Phone mockup */
+        .phone-area {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .phone-frame {
+            flex-shrink: 0;
+            width: 280px;
+        }
+
+        .phone-shell {
+            width: 280px;
+            background: var(--bg2);
+            border: 2px solid rgba(99, 179, 255, 0.2);
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(99, 179, 255, 0.05),
+                0 40px 80px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .phone-notch {
+            height: 28px;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-notch-pill {
+            width: 80px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .phone-screen {
+            background: var(--bg);
+            min-height: 520px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-home-bar {
+            height: 24px;
+            background: var(--bg2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-home-pill {
+            width: 60px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        /* Screen contents */
+        .screen-content {
+            display: none;
+        }
+
+        .screen-content.active {
+            display: block;
+            animation: fadeSlide 0.3s ease;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Shared screen UI atoms */
+        .s-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            color: var(--dim);
+        }
+
+        .s-title {
+            padding: 4px 14px 10px;
+            font-family: 'Fraunces', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.2;
+        }
+
+        .s-subtitle {
+            padding: 0 14px 14px;
+            font-size: 0.7rem;
+            color: var(--dim);
+        }
+
+        .s-card {
+            margin: 0 12px 8px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .s-card-label {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 4px;
+        }
+
+        .s-card-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .s-card-unit {
+            font-size: 0.65rem;
+            color: var(--dim);
+        }
+
+        .s-card-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .s-card-mini {
+            flex: 1;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .s-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        .s-pill-green {
+            background: var(--green2);
+            color: var(--green);
+            border: 1px solid rgba(57, 232, 122, 0.2);
+        }
+
+        .s-pill-red {
+            background: var(--red2);
+            color: var(--red);
+            border: 1px solid rgba(255, 61, 110, 0.2);
+        }
+
+        .s-pill-gold {
+            background: var(--gold2);
+            color: var(--gold);
+            border: 1px solid rgba(255, 184, 48, 0.2);
+        }
+
+        .s-ecg {
+            margin: 0 12px 8px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+
+        .s-chat-bubble {
+            margin: 4px 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            line-height: 1.4;
+        }
+
+        .s-chat-ai {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-bottom-left-radius: 3px;
+            margin-right: 32px;
+        }
+
+        .s-chat-user {
+            background: var(--teal2);
+            border: 1px solid rgba(0, 229, 200, 0.15);
+            color: var(--teal);
+            border-bottom-right-radius: 3px;
+            margin-left: 32px;
+            text-align: right;
+        }
+
+        .s-btn {
+            margin: 8px 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .s-btn-primary {
+            background: var(--teal);
+            color: var(--bg);
+        }
+
+        .s-btn-outline {
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: transparent;
+        }
+
+        .s-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 52px;
+            background: var(--bg2);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .s-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 0.5rem;
+            color: var(--dim);
+            cursor: pointer;
+        }
+
+        .s-nav-item.act {
+            color: var(--teal);
+        }
+
+        .s-nav-icon {
+            font-size: 1rem;
+        }
+
+        /* Spec panel */
+        .spec-panel {
+            flex: 1;
+        }
+
+        .spec-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+
+        .spec-subtitle {
+            font-size: 0.8rem;
+            color: var(--dim);
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        .spec-section {
+            margin-bottom: 20px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .spec-section-header {
+            padding: 12px 16px;
+            background: var(--bg3);
+            border-bottom: 1px solid var(--border2);
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .spec-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 12px;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border2);
+            font-size: 0.78rem;
+        }
+
+        .spec-row:last-child {
+            border-bottom: none;
+        }
+
+        .spec-key {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--dim);
+        }
+
+        .spec-val {
+            color: var(--text);
+        }
+
+        .spec-val code {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            background: var(--bg3);
+            padding: 1px 5px;
+            border-radius: 4px;
+            color: var(--gold);
+        }
+
+        /* ════════════════════════════════════════
+   PART 2 — NEURAL SCHEMA
+════════════════════════════════════════ */
+        .neural-wrap {
+            padding: 48px 40px;
+            min-height: calc(100vh - 57px);
+        }
+
+        .neural-header {
+            margin-bottom: 40px;
+        }
+
+        .neural-canvas {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .neural-svg-wrap {
+            min-width: 1100px;
+        }
+
+        /* Node styles */
+        .nn-node {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nn-node:hover .nn-rect {
+            filter: brightness(1.3);
+        }
+
+        .nn-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            fill: var(--white);
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .nn-sublabel {
+            font-family: var(--mono);
+            font-size: 8px;
+            fill: var(--dim);
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .nn-layer-title {
+            font-family: 'Fraunces', serif;
+            font-size: 13px;
+            fill: var(--dim);
+            text-anchor: middle;
+        }
+
+        .nn-edge {
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0.35;
+        }
+
+        .nn-edge-active {
+            stroke-dasharray: 4 3;
+            animation: dash 1.5s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -28;
+            }
+        }
+
+        /* Schema detail table */
+        .schema-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .schema-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .schema-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .sc-input::before {
+            background: var(--blue);
+        }
+
+        .sc-embed::before {
+            background: var(--violet);
+        }
+
+        .sc-fusion::before {
+            background: var(--gold);
+        }
+
+        .sc-output::before {
+            background: var(--teal);
+        }
+
+        .schema-cat {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 8px;
+        }
+
+        .sc-input .schema-cat {
+            color: var(--blue);
+        }
+
+        .sc-embed .schema-cat {
+            color: var(--violet);
+        }
+
+        .sc-fusion .schema-cat {
+            color: var(--gold);
+        }
+
+        .sc-output .schema-cat {
+            color: var(--teal);
+        }
+
+        .schema-card-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .schema-spec-row {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--dim);
+            padding: 3px 0;
+            border-bottom: 1px solid var(--border2);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .schema-spec-row:last-child {
+            border-bottom: none;
+        }
+
+        .schema-spec-row span {
+            color: var(--text);
+        }
+
+        /* ════════════════════════════════════════
+   PART 3 — DATA FLOW
+════════════════════════════════════════ */
+        .flow-wrap {
+            padding: 48px 40px;
+            min-height: calc(100vh - 57px);
+        }
+
+        .flow-canvas {
+            position: relative;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 40px;
+        }
+
+        /* Flow node types */
+        .flow-node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .flow-node:hover {
+            transform: translateY(-2px);
+        }
+
+        .flow-box {
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid;
+            min-width: 120px;
+            position: relative;
+            line-height: 1.3;
+        }
+
+        .flow-box-sub {
+            font-family: var(--mono);
+            font-size: 0.55rem;
+            margin-top: 3px;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        .fn-user {
+            background: var(--red2);
+            border-color: rgba(255, 61, 110, 0.35);
+            color: var(--red);
+        }
+
+        .fn-device {
+            background: var(--gold2);
+            border-color: rgba(255, 184, 48, 0.35);
+            color: var(--gold);
+        }
+
+        .fn-edge {
+            background: var(--violet2);
+            border-color: rgba(184, 124, 255, 0.35);
+            color: var(--violet);
+        }
+
+        .fn-ai {
+            background: var(--teal2);
+            border-color: rgba(0, 229, 200, 0.35);
+            color: var(--teal);
+        }
+
+        .fn-cloud {
+            background: var(--blue2);
+            border-color: rgba(77, 184, 255, 0.35);
+            color: var(--blue);
+        }
+
+        .fn-health {
+            background: var(--green2);
+            border-color: rgba(57, 232, 122, 0.35);
+            color: var(--green);
+        }
+
+        .fn-caregiver {
+            background: rgba(255, 184, 48, 0.08);
+            border-color: rgba(255, 184, 48, 0.25);
+            color: var(--gold);
+        }
+
+        /* Legend */
+        .flow-legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding: 16px 20px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--dim);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Flow direction label */
+        .flow-dir-label {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-dir-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Shared typography */
+        .part-tag {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--teal);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .part-tag::before {
+            content: '';
+            width: 30px;
+            height: 1px;
+            background: var(--teal);
+        }
+
+        .part-title {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 900;
+            color: var(--white);
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            line-height: 1.1;
+        }
+
+        .part-title em {
+            font-style: italic;
+            color: var(--teal);
+        }
+
+        .part-desc {
+            font-size: 0.85rem;
+            color: var(--dim);
+            max-width: 700px;
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            z-index: 999;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--text);
+            max-width: 220px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            line-height: 1.6;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 179, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        /* Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.vis {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- ── TAB BAR ── -->
+    <div class="tabs">
+        <div class="tab-brand">
+            <div class="tab-brand-dot"></div>
+            CardioGuardAI
+        </div>
+        <div class="tab active" onclick="switchTab('skeleton')">App Skeleton</div>
+        <div class="tab" onclick="switchTab('neural')">Neural Schema</div>
+        <div class="tab" onclick="switchTab('flow')">Data Flow</div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════
+  PANEL 1 — APP SKELETON
+════════════════════════════════════════════════════ -->
+    <div class="panel active" id="panel-skeleton">
+        <div class="skeleton-wrap">
+
+            <!-- Screen list -->
+            <div>
+                <div class="part-tag">Application Structure</div>
+                <div
+                    style="font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:24px;line-height:1.2;">
+                    Screen <em style="font-style:italic;color:var(--teal)">Skeleton</em></div>
+
+                <div class="screen-list">
+                    <div class="screen-group-label">Onboarding</div>
+                    <div class="screen-item active" onclick="showScreen('splash')">
+                        <span class="screen-icon">❤️</span>
+                        <span class="screen-name">Splash / Onboard</span>
+                        <span class="screen-tag">PUBLIC</span>
+                    </div>
+                    <div class="screen-item" onclick="showScreen('profile')">
+                        <span class="screen-icon">👤</span>
+                        <span class="screen-name">Health Profile Setup</span>
+                        <span class="screen-tag">SETUP</span>
+                    </div>
+                    <div class="screen-item" onclick="showScreen('consent')">
+                        <span class="screen-icon">🔒</span>
+                        <span class="screen-name">Consent & Privacy</span>
+                        <span class="screen-tag">LEGAL</span>
+                    </div>
+
+                    <div class="screen-group-label">Core App</div>
+                    <div class="screen-item" onclick="showScreen('dashboard')">
+                        <span class="screen-icon">📊</span>
+                        <span class="screen-name">Main Dashboard</span>
+                        <span class="screen-tag">HOME</span>
+                    </div>
+                    <div class="screen-item" onclick="showScreen('aarogya')">
+                        <span class="screen-icon">🤝</span>
+                        <span class="screen-name">Aarogya Chat</span>
+                        <span class="screen-tag">AI</span>
+                    </div>
+                    <div class="screen-item" onclick="showScreen('ecg')">
+                        <span class="screen-icon">🫀</span>
+                        <span class="screen-name">ECG & Vitals Detail</span>
+                        <span class="screen-tag">MONITOR</span>
+                    </div>
+                    <div class="screen-item" onclick="showScreen('alert')">
+                        <span class="screen-icon">⚠️</span>
+                        <span class="screen-name">Alert / Emergency</span>
+                        <span class="screen-tag">CRITICAL</span>
+                    </div>
+                    <div class="screen-item" onclick="showScreen('timeline')">
+                        <span class="screen-icon">📅</span>
+                        <span class="screen-name">Longitudinal Timeline</span>
+                        <span class="screen-tag">HISTORY</span>
+                    </div>
+
+                    <div class="screen-group-label">Network</div>
+                    <div class="screen-item" onclick="showScreen('caregiver')">
+                        <span class="screen-icon">👨‍👩‍👧</span>
+                        <span class="screen-name">Caregiver Network</span>
+                        <span class="screen-tag">SOCIAL</span>
+                    </div>
+                    <div class="screen-item" onclick="showScreen('asha')">
+                        <span class="screen-icon">🏥</span>
+                        <span class="screen-name">ASHA Connect</span>
+                        <span class="screen-tag">GOVT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone + Spec -->
+            <div class="phone-area">
+                <!-- Phone -->
+                <div class="phone-frame">
+                    <div class="phone-shell">
+                        <div class="phone-notch">
+                            <div class="phone-notch-pill"></div>
+                        </div>
+                        <div class="phone-screen" id="phone-screen">
+
+                            <!-- SPLASH -->
+                            <div class="screen-content active" id="sc-splash">
+                                <div
+                                    style="background:linear-gradient(160deg,var(--bg) 0%,#0d1525 100%);min-height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;position:relative;">
+                                    <div
+                                        style="width:64px;height:64px;background:var(--red2);border:2px solid rgba(255,61,110,0.3);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2rem;">
+                                        ❤️</div>
+                                    <div
+                                        style="font-family:'Fraunces',serif;font-size:1.4rem;font-weight:900;color:var(--white);text-align:center;line-height:1.1;">
+                                        CardioGuard<span style="color:var(--red)">AI</span></div>
+                                    <div
+                                        style="font-size:0.65rem;color:var(--dim);text-align:center;max-width:180px;line-height:1.5;">
+                                        Your empathetic cardiac wellness companion</div>
+                                    <div
+                                        style="margin-top:20px;width:100%;background:var(--teal);border-radius:10px;padding:10px;text-align:center;font-size:0.75rem;font-weight:700;color:var(--bg);">
+                                        Get Started</div>
+                                    <div
+                                        style="width:100%;background:transparent;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;font-size:0.75rem;color:var(--dim);">
+                                        I already have an account</div>
+                                    <div
+                                        style="position:absolute;bottom:10px;font-family:var(--mono);font-size:0.5rem;color:var(--dim);text-align:center;">
+                                        Non-diagnostic wellness tool · v1.0</div>
+                                </div>
+                            </div>
+
+                            <!-- PROFILE -->
+                            <div class="screen-content" id="sc-profile">
+                                <div class="s-bar"><span>Step 1 of 3</span><span style="color:var(--teal)">●●○</span>
+                                </div>
+                                <div class="s-title">Tell us about<br>yourself</div>
+                                <div class="s-subtitle">This helps personalise your risk model</div>
+                                <div style="margin:0 12px 8px;display:flex;flex-direction:column;gap:8px;">
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:0.72rem;color:var(--dim);">
+                                        Name: Priya Kapoor</div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:0.72rem;color:var(--dim);">
+                                        Age: 47 · Gender: Female</div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:0.72rem;color:var(--dim);">
+                                        City: Jaipur, Rajasthan</div>
+                                    <div
+                                        style="background:var(--red2);border:1px solid rgba(255,61,110,0.2);border-radius:8px;padding:10px 12px;font-size:0.7rem;color:var(--red);">
+                                        ⚠ Conditions: Hypertension</div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:0.72rem;color:var(--dim);">
+                                        Wearable: Noise ColorFit Pro</div>
+                                </div>
+                                <div class="s-btn s-btn-primary" style="margin-top:10px;">Continue →</div>
+                            </div>
+
+                            <!-- CONSENT -->
+                            <div class="screen-content" id="sc-consent">
+                                <div class="s-bar"><span>Step 3 of 3</span><span style="color:var(--teal)">●●●</span>
+                                </div>
+                                <div class="s-title">Your data,<br>your control</div>
+                                <div style="margin:0 12px;display:flex;flex-direction:column;gap:6px;">
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:0.65rem;color:var(--text);line-height:1.5;">
+                                        <div
+                                            style="color:var(--teal);font-family:var(--mono);font-size:0.55rem;margin-bottom:4px;">
+                                            ENCRYPTED STORAGE</div>
+                                        All vitals stored locally with Fernet encryption. Never sold to third parties.
+                                    </div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:0.65rem;color:var(--dim);line-height:1.5;">
+                                        <div
+                                            style="color:var(--gold);font-family:var(--mono);font-size:0.55rem;margin-bottom:4px;">
+                                            NON-DIAGNOSTIC DISCLAIMER</div>
+                                        This app does not diagnose. Always consult a doctor for medical decisions.
+                                    </div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:0.65rem;color:var(--dim);line-height:1.5;">
+                                        <div
+                                            style="color:var(--violet);font-family:var(--mono);font-size:0.55rem;margin-bottom:4px;">
+                                            CAREGIVER ACCESS</div>
+                                        Choose who receives emergency alerts from your guardian network.
+                                    </div>
+                                </div>
+                                <div class="s-btn s-btn-primary" style="margin-top:10px;">I Agree & Continue</div>
+                            </div>
+
+                            <!-- DASHBOARD -->
+                            <div class="screen-content" id="sc-dashboard">
+                                <div class="s-bar"><span>CARDIOGUARDAI</span><span style="color:var(--green)">●
+                                        LIVE</span></div>
+                                <div style="padding:6px 14px 2px;font-size:0.7rem;color:var(--dim);">Good morning, Priya
+                                    🙏</div>
+                                <div class="s-card-row" style="margin:0 12px 6px;gap:6px;">
+                                    <div class="s-card-mini">
+                                        <div class="s-card-label">Heart Rate</div>
+                                        <div style="font-size:1.3rem;font-weight:700;color:var(--white);">72 <span
+                                                style="font-size:0.55rem;color:var(--dim)">bpm</span></div>
+                                        <div class="s-pill s-pill-green" style="margin-top:4px;">↔ Normal</div>
+                                    </div>
+                                    <div class="s-card-mini">
+                                        <div class="s-card-label">Blood Pressure</div>
+                                        <div style="font-size:1.1rem;font-weight:700;color:var(--white);">128/82</div>
+                                        <div class="s-pill s-pill-gold" style="margin-top:4px;">↑ Watch</div>
+                                    </div>
+                                </div>
+                                <div class="s-card-row" style="margin:0 12px 6px;gap:6px;">
+                                    <div class="s-card-mini">
+                                        <div class="s-card-label">SpO₂</div>
+                                        <div style="font-size:1.3rem;font-weight:700;color:var(--white);">97<span
+                                                style="font-size:0.55rem;color:var(--dim)">%</span></div>
+                                    </div>
+                                    <div class="s-card-mini">
+                                        <div class="s-card-label">Risk Score</div>
+                                        <div style="font-size:1.3rem;font-weight:700;color:var(--gold);">38%</div>
+                                        <div class="s-pill s-pill-gold" style="margin-top:4px;">Low-Mod</div>
+                                    </div>
+                                </div>
+                                <div class="s-ecg">
+                                    <div class="s-card-label">ECG Rhythm · Normal Sinus</div>
+                                    <svg width="100%" height="32" viewBox="0 0 240 32">
+                                        <path
+                                            d="M0,16 L30,16 L35,4 L40,28 L45,4 L50,28 L55,16 L80,16 L85,10 L90,22 L95,16 L130,16 L135,4 L140,28 L145,4 L150,28 L155,16 L180,16 L185,10 L190,22 L195,16 L240,16"
+                                            stroke="var(--red)" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <div class="s-nav">
+                                    <div class="s-nav-item act">
+                                        <div class="s-nav-icon">🏠</div>Home
+                                    </div>
+                                    <div class="s-nav-item">
+                                        <div class="s-nav-icon">🤝</div>Aarogya
+                                    </div>
+                                    <div class="s-nav-item">
+                                        <div class="s-nav-icon">📅</div>Timeline
+                                    </div>
+                                    <div class="s-nav-item">
+                                        <div class="s-nav-icon">👤</div>Profile
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AAROGYA -->
+                            <div class="screen-content" id="sc-aarogya">
+                                <div class="s-bar"><span>🤝 AAROGYA</span><span style="color:var(--green)">●
+                                        Online</span></div>
+                                <div
+                                    style="padding:4px 14px 10px;font-size:0.62rem;color:var(--dim);font-style:italic;">
+                                    Constitutional AI · Non-diagnostic</div>
+                                <div class="s-chat-bubble s-chat-ai">Namaste Priya 🙏 I notice your BP is slightly
+                                    elevated. How are you feeling right now?</div>
+                                <div class="s-chat-bubble s-chat-user">Stressed with work. Mild headache.</div>
+                                <div class="s-chat-bubble s-chat-ai">I understand 💙 Work stress can raise BP. Let me
+                                    guide you through a 4-7-8 breathing cycle. <em>This is wellness guidance, not
+                                        diagnosis.</em></div>
+                                <div
+                                    style="margin:6px 12px;background:var(--teal2);border:1px solid rgba(0,229,200,0.2);border-radius:10px;padding:10px;text-align:center;">
+                                    <div style="font-size:0.7rem;color:var(--teal);font-weight:600;margin-bottom:4px;">
+                                        Start Guided Breathing</div>
+                                    <div style="font-family:var(--mono);font-size:0.55rem;color:var(--dim);">4 · 7 · 8 ·
+                                        Technique</div>
+                                </div>
+                                <div style="margin:4px 12px;display:flex;gap:6px;">
+                                    <div
+                                        style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;font-size:0.62rem;color:var(--dim);">
+                                        📞 Call Doctor</div>
+                                    <div
+                                        style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center;font-size:0.62rem;color:var(--dim);">
+                                        🚨 Alert Family</div>
+                                </div>
+                                <div
+                                    style="position:absolute;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:8px;align-items:center;">
+                                    <div
+                                        style="flex:1;background:var(--bg3);border-radius:20px;padding:7px 12px;font-size:0.65rem;color:var(--dim);">
+                                        Type or hold mic to speak...</div>
+                                    <div
+                                        style="width:28px;height:28px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;">
+                                        🎤</div>
+                                </div>
+                            </div>
+
+                            <!-- ECG -->
+                            <div class="screen-content" id="sc-ecg">
+                                <div class="s-bar"><span>ECG DETAIL</span><span>Lead I</span></div>
+                                <div
+                                    style="margin:0 12px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;">
+                                    <div class="s-card-label">Live ECG Waveform</div>
+                                    <svg width="100%" height="60" viewBox="0 0 240 60">
+                                        <rect width="240" height="60" fill="rgba(0,0,0,0.2)" rx="6" />
+                                        <line x1="0" y1="30" x2="240" y2="30" stroke="rgba(99,179,255,0.1)"
+                                            stroke-width="1" />
+                                        <path
+                                            d="M0,30 L20,30 L25,8 L30,52 L35,8 L40,52 L45,30 L70,30 L75,18 L80,42 L85,30 L120,30 L125,8 L130,52 L135,8 L140,52 L145,30 L170,30 L175,18 L180,42 L185,30 L240,30"
+                                            stroke="var(--red)" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                                    </svg>
+                                    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                                        <div class="s-pill s-pill-green">Sinus Rhythm</div>
+                                        <div style="font-family:var(--mono);font-size:0.55rem;color:var(--dim);">72 bpm
+                                            · QRS 80ms</div>
+                                    </div>
+                                </div>
+                                <div class="s-card-row" style="margin:0 12px 8px;gap:6px;">
+                                    <div class="s-card-mini">
+                                        <div class="s-card-label">PR Interval</div>
+                                        <div style="font-size:1rem;font-weight:700;color:var(--white);">160<span
+                                                style="font-size:0.55rem;color:var(--dim)">ms</span></div>
+                                    </div>
+                                    <div class="s-card-mini">
+                                        <div class="s-card-label">QT Interval</div>
+                                        <div style="font-size:1rem;font-weight:700;color:var(--white);">380<span
+                                                style="font-size:0.55rem;color:var(--dim)">ms</span></div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="margin:0 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;">
+                                    <div class="s-card-label">SHAP Top Features</div>
+                                    <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px;">
+                                        <div style="display:flex;align-items:center;gap:6px;font-size:0.6rem;">
+                                            <div style="width:60%;height:4px;background:var(--red);border-radius:2px;">
+                                            </div><span style="color:var(--dim)">BP +0.24</span>
+                                        </div>
+                                        <div style="display:flex;align-items:center;gap:6px;font-size:0.6rem;">
+                                            <div style="width:40%;height:4px;background:var(--gold);border-radius:2px;">
+                                            </div><span style="color:var(--dim)">Stress +0.16</span>
+                                        </div>
+                                        <div style="display:flex;align-items:center;gap:6px;font-size:0.6rem;">
+                                            <div style="width:25%;height:4px;background:var(--teal);border-radius:2px;">
+                                            </div><span style="color:var(--dim)">Sleep -0.09</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ALERT -->
+                            <div class="screen-content" id="sc-alert">
+                                <div
+                                    style="background:rgba(255,61,110,0.08);border-bottom:1px solid rgba(255,61,110,0.2);padding:10px 14px;display:flex;align-items:center;gap:8px;">
+                                    <div
+                                        style="width:8px;height:8px;border-radius:50%;background:var(--red);animation:blink 1s infinite;">
+                                    </div>
+                                    <div
+                                        style="font-family:var(--mono);font-size:0.6rem;color:var(--red);text-transform:uppercase;letter-spacing:0.1em;">
+                                        Priority Alert</div>
+                                </div>
+                                <div style="padding:14px;">
+                                    <div
+                                        style="font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:6px;">
+                                        Elevated BP Pattern<br>Detected</div>
+                                    <div style="font-size:0.68rem;color:var(--dim);line-height:1.5;margin-bottom:12px;">
+                                        3 consecutive readings above 130/85 over 4 hours. Aarogya recommends rest and
+                                        monitoring. <strong>This is not a diagnosis.</strong></div>
+                                    <div style="display:flex;flex-direction:column;gap:6px;">
+                                        <div
+                                            style="background:var(--red);border-radius:10px;padding:10px;text-align:center;font-size:0.75rem;font-weight:700;color:white;">
+                                            🚨 Call Emergency Services</div>
+                                        <div
+                                            style="background:var(--gold2);border:1px solid rgba(255,184,48,0.3);border-radius:10px;padding:10px;text-align:center;font-size:0.75rem;color:var(--gold);">
+                                            📲 Alert My Caregiver</div>
+                                        <div
+                                            style="background:var(--teal2);border:1px solid rgba(0,229,200,0.2);border-radius:10px;padding:10px;text-align:center;font-size:0.75rem;color:var(--teal);">
+                                            🤝 Talk to Aarogya</div>
+                                        <div
+                                            style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;font-size:0.72rem;color:var(--dim);">
+                                            I'm feeling fine — dismiss</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TIMELINE -->
+                            <div class="screen-content" id="sc-timeline">
+                                <div class="s-bar"><span>TIMELINE</span><span>Last 30d</span></div>
+                                <div class="s-title" style="font-size:1rem;">Longitudinal<br>Health Pattern</div>
+                                <div
+                                    style="margin:0 12px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;">
+                                    <svg width="100%" height="50" viewBox="0 0 240 50">
+                                        <polyline points="0,35 30,32 60,38 90,25 120,28 150,20 180,24 210,18 240,22"
+                                            fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="0,30 30,28 60,32 90,22 120,25 150,18 180,20 210,16 240,18"
+                                            fill="none" stroke="var(--blue)" stroke-width="1" stroke-dasharray="3 2"
+                                            stroke-linecap="round" opacity="0.5" />
+                                    </svg>
+                                    <div
+                                        style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.5rem;color:var(--dim);margin-top:4px;">
+                                        <span>Aug 1</span><span>Aug 15</span><span>Aug 30</span></div>
+                                </div>
+                                <div style="margin:0 12px;display:flex;flex-direction:column;gap:4px;">
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;">
+                                        <div style="font-size:0.65rem;color:var(--text);">Aug 28 · BP Elevated Alert
+                                        </div>
+                                        <div class="s-pill s-pill-gold" style="font-size:0.5rem;">Flagged</div>
+                                    </div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;">
+                                        <div style="font-size:0.65rem;color:var(--text);">Aug 20 · Good sleep pattern
+                                        </div>
+                                        <div class="s-pill s-pill-green" style="font-size:0.5rem;">Positive</div>
+                                    </div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;">
+                                        <div style="font-size:0.65rem;color:var(--text);">Aug 12 · Risk score ↓ 44%→38%
+                                        </div>
+                                        <div class="s-pill s-pill-green" style="font-size:0.5rem;">Improved</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CAREGIVER -->
+                            <div class="screen-content" id="sc-caregiver">
+                                <div class="s-bar"><span>GUARDIAN NETWORK</span></div>
+                                <div class="s-title" style="font-size:1rem;">Your Care<br>Circle</div>
+                                <div style="margin:0 12px;display:flex;flex-direction:column;gap:6px;">
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;align-items:center;gap:10px;">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:var(--gold2);border:1px solid rgba(255,184,48,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">
+                                            👨</div>
+                                        <div style="flex:1;">
+                                            <div style="font-size:0.75rem;font-weight:600;color:var(--white);">Raj
+                                                Kapoor</div>
+                                            <div style="font-size:0.6rem;color:var(--dim);">Husband · Emergency contact
+                                            </div>
+                                        </div>
+                                        <div class="s-pill s-pill-green" style="font-size:0.5rem;">Active</div>
+                                    </div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;align-items:center;gap:10px;">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:var(--blue2);border:1px solid rgba(77,184,255,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">
+                                            👨‍⚕️</div>
+                                        <div style="flex:1;">
+                                            <div style="font-size:0.75rem;font-weight:600;color:var(--white);">Dr. Mehra
+                                            </div>
+                                            <div style="font-size:0.6rem;color:var(--dim);">Cardiologist · View-only
+                                            </div>
+                                        </div>
+                                        <div class="s-pill s-pill-green" style="font-size:0.5rem;">Active</div>
+                                    </div>
+                                    <div
+                                        style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;align-items:center;gap:10px;">
+                                        <div
+                                            style="width:32px;height:32px;border-radius:50%;background:var(--green2);border:1px solid rgba(57,232,122,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">
+                                            🏥</div>
+                                        <div style="flex:1;">
+                                            <div style="font-size:0.75rem;font-weight:600;color:var(--white);">Sunita
+                                                (ASHA)</div>
+                                            <div style="font-size:0.6rem;color:var(--dim);">Community worker · Alerts
+                                            </div>
+                                        </div>
+                                        <div class="s-pill s-pill-green" style="font-size:0.5rem;">Active</div>
+                                    </div>
+                                    <div
+                                        style="background:var(--bg3);border:1px dashed var(--border);border-radius:10px;padding:10px;text-align:center;font-size:0.7rem;color:var(--dim);">
+                                        + Add caregiver</div>
+                                </div>
+                            </div>
+
+                            <!-- ASHA -->
+                            <div class="screen-content" id="sc-asha">
+                                <div class="s-bar"><span>ASHA CONNECT</span><span style="color:var(--green)">●
+                                        Linked</span></div>
+                                <div class="s-title" style="font-size:1rem;">Community<br>Care Bridge</div>
+                                <div
+                                    style="margin:0 12px 8px;background:var(--green2);border:1px solid rgba(57,232,122,0.2);border-radius:10px;padding:12px;">
+                                    <div style="font-size:0.7rem;font-weight:600;color:var(--green);margin-bottom:4px;">
+                                        Your ASHA Worker</div>
+                                    <div style="font-size:0.8rem;color:var(--white);font-weight:600;">Sunita Devi</div>
+                                    <div style="font-size:0.62rem;color:var(--dim);">Jaipur Ward 12 · Last visit: 3 days
+                                        ago</div>
+                                    <div style="display:flex;gap:6px;margin-top:8px;">
+                                        <div
+                                            style="flex:1;background:var(--green);border-radius:6px;padding:6px;text-align:center;font-size:0.62rem;color:var(--bg);font-weight:700;">
+                                            📞 Call Now</div>
+                                        <div
+                                            style="flex:1;background:transparent;border:1px solid rgba(57,232,122,0.3);border-radius:6px;padding:6px;text-align:center;font-size:0.62rem;color:var(--green);">
+                                            📋 Share Report</div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="margin:0 12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;">
+                                    <div class="s-card-label">Nearby PHC / Clinic</div>
+                                    <div style="font-size:0.72rem;color:var(--white);margin:4px 0;">Jaipur PHC Sector 7
+                                    </div>
+                                    <div style="font-size:0.6rem;color:var(--dim);">1.2 km · Open 8am–6pm · Free
+                                        consultation</div>
+                                    <div
+                                        style="margin-top:6px;font-size:0.65rem;color:var(--teal);text-decoration:underline;cursor:pointer;">
+                                        Get directions →</div>
+                                </div>
+                            </div>
+
+                        </div><!-- end phone-screen -->
+                        <div class="phone-home-bar">
+                            <div class="phone-home-pill"></div>
+                        </div>
+                    </div>
+                </div><!-- end phone-shell -->
+
+                <!-- Spec panel -->
+                <div class="spec-panel">
+                    <div class="spec-title" id="spec-title">Splash / Onboarding</div>
+                    <div class="spec-subtitle" id="spec-subtitle">Entry point — brand impression & account creation
+                    </div>
+
+                    <div class="spec-section" id="spec-body">
+                        <div class="spec-section-header">Screen Specification</div>
+                        <div class="spec-row">
+                            <div class="spec-key">Route</div>
+                            <div class="spec-val"><code>/onboard/splash</code></div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">Access</div>
+                            <div class="spec-val">Public (unauthenticated)</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">Components</div>
+                            <div class="spec-val">Logo, tagline, CTA buttons, version badge</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">Navigation</div>
+                            <div class="spec-val">→ Profile Setup, → Login</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">Offline</div>
+                            <div class="spec-val">✓ Fully offline capable</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">State</div>
+                            <div class="spec-val">None (stateless screen)</div>
+                        </div>
+                    </div>
+
+                    <div class="spec-section">
+                        <div class="spec-section-header">Technical Notes</div>
+                        <div class="spec-row">
+                            <div class="spec-key">Framework</div>
+                            <div class="spec-val">React Native 0.73</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">Animation</div>
+                            <div class="spec-val">Lottie heart pulse on load</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">A11y</div>
+                            <div class="spec-val">Hindi VoiceOver labels</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">Deep Link</div>
+                            <div class="spec-val"><code>cgai://splash</code></div>
+                        </div>
+                    </div>
+
+                    <div class="spec-section">
+                        <div class="spec-section-header">Constitutional AI Check</div>
+                        <div class="spec-row">
+                            <div class="spec-key">Disclaimer</div>
+                            <div class="spec-val">Non-diagnostic badge always visible</div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-key">Tone</div>
+                            <div class="spec-val">Warm, family-like, not clinical</div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end phone-area -->
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════
+  PANEL 2 — NEURAL SCHEMA
+════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-neural">
+        <div class="neural-wrap">
+            <div class="part-tag">Multimodal AI Architecture</div>
+            <div class="part-title">Neural <em>Schema</em></div>
+            <div class="part-desc">The CardioGuardAI multimodal neural network fuses five distinct input streams through
+                parallel encoder branches, merges them in a cross-attention fusion layer, and passes through
+                constitutional AI safety rails before producing risk scores and empathetic guidance. AUC: 0.8883.</div>
+
+            <div class="neural-canvas">
+                <div class="neural-svg-wrap">
+                    <svg id="neural-svg" width="1100" height="560" viewBox="0 0 1100 560">
+                        <defs>
+                            <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="rgba(99,179,255,0.4)" />
+                            </marker>
+                            <marker id="arr-teal" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="var(--teal)" />
+                            </marker>
+                            <marker id="arr-red" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="var(--red)" />
+                            </marker>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feMerge>
+                                    <feMergeNode in="blur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- Layer labels -->
+                        <text x="80" y="25" class="nn-layer-title" fill="rgba(99,179,255,0.4)" font-size="11"
+                            font-family="JetBrains Mono">INPUT STREAMS</text>
+                        <text x="310" y="25" class="nn-layer-title" fill="rgba(184,124,255,0.5)" font-size="11"
+                            font-family="JetBrains Mono">ENCODERS</text>
+                        <text x="530" y="25" class="nn-layer-title" fill="rgba(255,184,48,0.6)" font-size="11"
+                            font-family="JetBrains Mono">FUSION</text>
+                        <text x="720" y="25" class="nn-layer-title" fill="rgba(0,229,200,0.6)" font-size="11"
+                            font-family="JetBrains Mono">PROCESSING</text>
+                        <text x="940" y="25" class="nn-layer-title" fill="rgba(57,232,122,0.6)" font-size="11"
+                            font-family="JetBrains Mono">OUTPUT</text>
+
+                        <!-- Column dividers -->
+                        <line x1="200" y1="30" x2="200" y2="540" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+                        <line x1="430" y1="30" x2="430" y2="540" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+                        <line x1="630" y1="30" x2="630" y2="540" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+                        <line x1="840" y1="30" x2="840" y2="540" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+
+                        <!-- ── INPUT NODES ── -->
+                        <!-- Vitals -->
+                        <g class="nn-node" filter="url(#glow)"
+                            data-tip="Wearable vitals: HR, BP, SpO₂, temperature. BLE sync every 30s.">
+                            <rect class="nn-rect" x="10" y="50" width="140" height="50" rx="8"
+                                fill="rgba(77,184,255,0.1)" stroke="rgba(77,184,255,0.35)" stroke-width="1.5" />
+                            <text x="80" y="70" class="nn-label" fill="var(--blue)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">VITALS STREAM</text>
+                            <text x="80" y="84" class="nn-sublabel" fill="rgba(99,179,255,0.5)" font-size="8"
+                                font-family="JetBrains Mono" text-anchor="middle">HR · BP · SpO₂ · Temp</text>
+                        </g>
+
+                        <!-- ECG -->
+                        <g class="nn-node" filter="url(#glow)"
+                            data-tip="1-lead ECG waveform from wearable patch. Sampled at 256Hz. Preprocessed with bandpass filter.">
+                            <rect class="nn-rect" x="10" y="130" width="140" height="50" rx="8"
+                                fill="rgba(255,61,110,0.1)" stroke="rgba(255,61,110,0.35)" stroke-width="1.5" />
+                            <text x="80" y="150" class="nn-label" fill="var(--red)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">ECG WAVEFORM</text>
+                            <text x="80" y="164" class="nn-sublabel" fill="rgba(255,61,110,0.5)" font-size="8"
+                                font-family="JetBrains Mono" text-anchor="middle">1-lead · 256Hz · RAW</text>
+                        </g>
+
+                        <!-- Symptoms -->
+                        <g class="nn-node" filter="url(#glow)"
+                            data-tip="Voice-input symptoms via Hindi NLP. Structured into 40 clinical symptom vectors.">
+                            <rect class="nn-rect" x="10" y="210" width="140" height="50" rx="8"
+                                fill="rgba(184,124,255,0.1)" stroke="rgba(184,124,255,0.35)" stroke-width="1.5" />
+                            <text x="80" y="230" class="nn-label" fill="var(--violet)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">SYMPTOM NLP</text>
+                            <text x="80" y="244" class="nn-sublabel" fill="rgba(184,124,255,0.5)" font-size="8"
+                                font-family="JetBrains Mono" text-anchor="middle">Voice · Text · 40 vectors</text>
+                        </g>
+
+                        <!-- Longitudinal -->
+                        <g class="nn-node" filter="url(#glow)"
+                            data-tip="Historical vitals time-series. LSTM processes 90-day rolling window.">
+                            <rect class="nn-rect" x="10" y="290" width="140" height="50" rx="8"
+                                fill="rgba(255,184,48,0.1)" stroke="rgba(255,184,48,0.35)" stroke-width="1.5" />
+                            <text x="80" y="310" class="nn-label" fill="var(--gold)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">LONGITUDINAL</text>
+                            <text x="80" y="324" class="nn-sublabel" fill="rgba(255,184,48,0.5)" font-size="8"
+                                font-family="JetBrains Mono" text-anchor="middle">90-day history · LSTM</text>
+                        </g>
+
+                        <!-- Demographics -->
+                        <g class="nn-node" filter="url(#glow)"
+                            data-tip="User profile: age, gender, region, comorbidities, menstrual phase (women). Embedded into 32-dim vector.">
+                            <rect class="nn-rect" x="10" y="370" width="140" height="50" rx="8"
+                                fill="rgba(57,232,122,0.1)" stroke="rgba(57,232,122,0.35)" stroke-width="1.5" />
+                            <text x="80" y="390" class="nn-label" fill="var(--green)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">DEMOGRAPHICS</text>
+                            <text x="80" y="404" class="nn-sublabel" fill="rgba(57,232,122,0.5)" font-size="8"
+                                font-family="JetBrains Mono" text-anchor="middle">Age · Gender · Region</text>
+                        </g>
+
+                        <!-- ── ENCODER NODES ── -->
+                        <!-- Vitals encoder -->
+                        <g class="nn-node" data-tip="3-layer MLP. Input dim: 8. Hidden: 64. Output: 128-dim embedding.">
+                            <rect class="nn-rect" x="220" y="55" width="160" height="42" rx="8"
+                                fill="rgba(77,184,255,0.07)" stroke="rgba(77,184,255,0.25)" stroke-width="1.5" />
+                            <text x="300" y="72" class="nn-label" fill="var(--blue)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Vitals MLP Encoder</text>
+                            <text x="300" y="86" class="nn-sublabel" fill="rgba(99,179,255,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">8 → 64 → 128 · ReLU · BN</text>
+                        </g>
+
+                        <!-- ECG encoder -->
+                        <g class="nn-node"
+                            data-tip="1D CNN + Transformer. Extracts QRS morphology, RR intervals, ST segment. Output: 128-dim.">
+                            <rect class="nn-rect" x="220" y="130" width="160" height="42" rx="8"
+                                fill="rgba(255,61,110,0.07)" stroke="rgba(255,61,110,0.25)" stroke-width="1.5" />
+                            <text x="300" y="147" class="nn-label" fill="var(--red)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">ECG CNN+Transformer</text>
+                            <text x="300" y="161" class="nn-sublabel" fill="rgba(255,61,110,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">Conv1D · 8-head Attn · 128d</text>
+                        </g>
+
+                        <!-- Symptoms encoder -->
+                        <g class="nn-node"
+                            data-tip="Bio-clinical BERT fine-tuned on Hindi medical corpus. CLS token → 128-dim embedding.">
+                            <rect class="nn-rect" x="220" y="208" width="160" height="42" rx="8"
+                                fill="rgba(184,124,255,0.07)" stroke="rgba(184,124,255,0.25)" stroke-width="1.5" />
+                            <text x="300" y="225" class="nn-label" fill="var(--violet)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Clinical BERT (Hindi)</text>
+                            <text x="300" y="239" class="nn-sublabel" fill="rgba(184,124,255,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">768 → 128 · CLS token</text>
+                        </g>
+
+                        <!-- LSTM encoder -->
+                        <g class="nn-node"
+                            data-tip="Bidirectional LSTM with attention. 90-day window, 8 vitals features. Output: 128-dim context.">
+                            <rect class="nn-rect" x="220" y="286" width="160" height="42" rx="8"
+                                fill="rgba(255,184,48,0.07)" stroke="rgba(255,184,48,0.25)" stroke-width="1.5" />
+                            <text x="300" y="303" class="nn-label" fill="var(--gold)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">BiLSTM + Attention</text>
+                            <text x="300" y="317" class="nn-sublabel" fill="rgba(255,184,48,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">T=90 · hidden=256 · 128d</text>
+                        </g>
+
+                        <!-- Demo encoder -->
+                        <g class="nn-node"
+                            data-tip="Demographic embedding table. Categorical features → 32-dim, then projected to 128-dim.">
+                            <rect class="nn-rect" x="220" y="364" width="160" height="42" rx="8"
+                                fill="rgba(57,232,122,0.07)" stroke="rgba(57,232,122,0.25)" stroke-width="1.5" />
+                            <text x="300" y="381" class="nn-label" fill="var(--green)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Embedding Table</text>
+                            <text x="300" y="395" class="nn-sublabel" fill="rgba(57,232,122,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">32 → 128 · Lookup + MLP</text>
+                        </g>
+
+                        <!-- ── FUSION ── -->
+                        <g class="nn-node"
+                            data-tip="Cross-modal attention fusion. 5×128-dim embeddings concatenated → 640-dim. Multi-head cross-attention (8 heads) reduces to 256-dim unified representation.">
+                            <rect class="nn-rect" x="450" y="160" width="150" height="180" rx="12"
+                                fill="rgba(255,184,48,0.07)" stroke="rgba(255,184,48,0.4)" stroke-width="2" />
+                            <text x="525" y="225" class="nn-label" fill="var(--gold)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">CROSS-MODAL</text>
+                            <text x="525" y="240" class="nn-label" fill="var(--gold)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">ATTENTION</text>
+                            <text x="525" y="255" class="nn-label" fill="var(--gold)" font-size="10"
+                                font-family="JetBrains Mono" text-anchor="middle">FUSION</text>
+                            <text x="525" y="278" class="nn-sublabel" fill="rgba(255,184,48,0.5)" font-size="8"
+                                font-family="JetBrains Mono" text-anchor="middle">5×128 → 640</text>
+                            <text x="525" y="292" class="nn-sublabel" fill="rgba(255,184,48,0.5)" font-size="8"
+                                font-family="JetBrains Mono" text-anchor="middle">→ 256 via 8-head Attn</text>
+                            <text x="525" y="310" class="nn-sublabel" fill="rgba(255,184,48,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">LayerNorm · Dropout 0.3</text>
+                            <!-- Fusion icon dots -->
+                            <circle cx="505" cy="193" r="4" fill="rgba(77,184,255,0.5)" />
+                            <circle cx="520" cy="193" r="4" fill="rgba(255,61,110,0.5)" />
+                            <circle cx="535" cy="193" r="4" fill="rgba(184,124,255,0.5)" />
+                            <circle cx="505" cy="207" r="4" fill="rgba(255,184,48,0.5)" />
+                            <circle cx="520" cy="207" r="4" fill="rgba(57,232,122,0.5)" />
+                            <text x="525" y="178" class="nn-sublabel" fill="rgba(255,184,48,0.6)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">AUC: 0.8883</text>
+                        </g>
+
+                        <!-- ── PROCESSING ── -->
+                        <!-- Classifier -->
+                        <g class="nn-node"
+                            data-tip="Risk classification head. 256 → 128 → 64 → 1. Sigmoid output = CVD risk probability.">
+                            <rect class="nn-rect" x="650" y="100" width="155" height="44" rx="8"
+                                fill="rgba(0,229,200,0.07)" stroke="rgba(0,229,200,0.3)" stroke-width="1.5" />
+                            <text x="728" y="118" class="nn-label" fill="var(--teal)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Risk Classifier Head</text>
+                            <text x="728" y="132" class="nn-sublabel" fill="rgba(0,229,200,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">256 → 128 → 64 → 1 · Sigmoid</text>
+                        </g>
+
+                        <!-- SHAP -->
+                        <g class="nn-node"
+                            data-tip="SHAP TreeExplainer or DeepExplainer. Runs post-inference to generate per-feature attribution scores for each prediction.">
+                            <rect class="nn-rect" x="650" y="185" width="155" height="44" rx="8"
+                                fill="rgba(0,229,200,0.07)" stroke="rgba(0,229,200,0.25)" stroke-width="1.5" />
+                            <text x="728" y="203" class="nn-label" fill="var(--teal)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">SHAP Explainer</text>
+                            <text x="728" y="217" class="nn-sublabel" fill="rgba(0,229,200,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">DeepExplainer · Attribution</text>
+                        </g>
+
+                        <!-- Constitutional AI -->
+                        <g class="nn-node"
+                            data-tip="Constitutional AI safety critique. Checks every output for: non-diagnostic framing, empathetic tone, appropriate escalation, zero false certainty.">
+                            <rect class="nn-rect" x="650" y="270" width="155" height="56" rx="8"
+                                fill="rgba(255,61,110,0.07)" stroke="rgba(255,61,110,0.3)" stroke-width="1.5" />
+                            <text x="728" y="290" class="nn-label" fill="var(--red)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Constitutional AI</text>
+                            <text x="728" y="304" class="nn-label" fill="var(--red)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Safety Critique</text>
+                            <text x="728" y="318" class="nn-sublabel" fill="rgba(255,61,110,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">Self-check · Tone · Escalation</text>
+                        </g>
+
+                        <!-- Bias Audit -->
+                        <g class="nn-node"
+                            data-tip="Continuous demographic bias monitor. Checks if risk scores systematically differ across gender, age, and region subgroups.">
+                            <rect class="nn-rect" x="650" y="368" width="155" height="44" rx="8"
+                                fill="rgba(57,232,122,0.07)" stroke="rgba(57,232,122,0.25)" stroke-width="1.5" />
+                            <text x="728" y="386" class="nn-label" fill="var(--green)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Bias Audit Layer</text>
+                            <text x="728" y="400" class="nn-sublabel" fill="rgba(57,232,122,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">Demographic fairness check</text>
+                        </g>
+
+                        <!-- ── OUTPUTS ── -->
+                        <g class="nn-node"
+                            data-tip="Primary output: float 0–1 cardiac risk probability, calibrated to AUC 0.8883.">
+                            <rect class="nn-rect" x="860" y="75" width="145" height="42" rx="8"
+                                fill="rgba(57,232,122,0.08)" stroke="rgba(57,232,122,0.3)" stroke-width="1.5" />
+                            <text x="933" y="92" class="nn-label" fill="var(--green)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Risk Score (0–1)</text>
+                            <text x="933" y="106" class="nn-sublabel" fill="rgba(57,232,122,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">Calibrated · Thresholded</text>
+                        </g>
+
+                        <g class="nn-node"
+                            data-tip="SHAP feature impact report. Top-5 features with direction and magnitude. Rendered as bar chart in UI.">
+                            <rect class="nn-rect" x="860" y="155" width="145" height="42" rx="8"
+                                fill="rgba(0,229,200,0.08)" stroke="rgba(0,229,200,0.25)" stroke-width="1.5" />
+                            <text x="933" y="172" class="nn-label" fill="var(--teal)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">SHAP Report</text>
+                            <text x="933" y="186" class="nn-sublabel" fill="rgba(0,229,200,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">Top-5 feature attribution</text>
+                        </g>
+
+                        <g class="nn-node"
+                            data-tip="Empathetic wellness guidance generated by Aarogya LLM. Conditioned on risk score + SHAP + constitutional critique.">
+                            <rect class="nn-rect" x="860" y="235" width="145" height="42" rx="8"
+                                fill="rgba(184,124,255,0.08)" stroke="rgba(184,124,255,0.25)" stroke-width="1.5" />
+                            <text x="933" y="252" class="nn-label" fill="var(--violet)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Aarogya Response</text>
+                            <text x="933" y="266" class="nn-sublabel" fill="rgba(184,124,255,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">LLM · Empathetic · Safe</text>
+                        </g>
+
+                        <g class="nn-node"
+                            data-tip="Emergency escalation signal. If risk > 0.75 or constitutional critique flags danger, triggers caregiver SMS + ASHA alert.">
+                            <rect class="nn-rect" x="860" y="315" width="145" height="42" rx="8"
+                                fill="rgba(255,61,110,0.08)" stroke="rgba(255,61,110,0.3)" stroke-width="1.5" />
+                            <text x="933" y="332" class="nn-label" fill="var(--red)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Escalation Trigger</text>
+                            <text x="933" y="346" class="nn-sublabel" fill="rgba(255,61,110,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">Threshold · Alert · SMS</text>
+                        </g>
+
+                        <g class="nn-node"
+                            data-tip="Longitudinal storage. Risk score + inputs archived to TimescaleDB for LSTM retraining pipeline.">
+                            <rect class="nn-rect" x="860" y="393" width="145" height="42" rx="8"
+                                fill="rgba(255,184,48,0.08)" stroke="rgba(255,184,48,0.25)" stroke-width="1.5" />
+                            <text x="933" y="410" class="nn-label" fill="var(--gold)" font-size="9"
+                                font-family="JetBrains Mono" text-anchor="middle">Timeline Archive</text>
+                            <text x="933" y="424" class="nn-sublabel" fill="rgba(255,184,48,0.4)" font-size="7.5"
+                                font-family="JetBrains Mono" text-anchor="middle">TimescaleDB · MLOps feed</text>
+                        </g>
+
+                        <!-- ── EDGES: Inputs → Encoders ── -->
+                        <path class="nn-edge" d="M150,75 L218,76" stroke="rgba(77,184,255,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M150,155 L218,151" stroke="rgba(255,61,110,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M150,235 L218,229" stroke="rgba(184,124,255,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M150,315 L218,307" stroke="rgba(255,184,48,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M150,395 L218,385" stroke="rgba(57,232,122,0.5)"
+                            marker-end="url(#arr)" />
+
+                        <!-- ── EDGES: Encoders → Fusion ── -->
+                        <path class="nn-edge nn-edge-active" d="M380,76 Q415,76 448,200" stroke="rgba(77,184,255,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge nn-edge-active" d="M380,151 Q415,151 448,225" stroke="rgba(255,61,110,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge nn-edge-active" d="M380,229 L448,250" stroke="rgba(184,124,255,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge nn-edge-active" d="M380,307 Q415,307 448,275" stroke="rgba(255,184,48,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge nn-edge-active" d="M380,385 Q415,385 448,305" stroke="rgba(57,232,122,0.5)"
+                            marker-end="url(#arr)" />
+
+                        <!-- ── EDGES: Fusion → Processing ── -->
+                        <path class="nn-edge" d="M600,210 Q625,122 648,122" stroke="rgba(0,229,200,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M600,230 Q625,207 648,207" stroke="rgba(0,229,200,0.4)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M600,255 Q625,298 648,298" stroke="rgba(255,61,110,0.4)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M600,295 Q625,390 648,390" stroke="rgba(57,232,122,0.4)"
+                            marker-end="url(#arr)" />
+
+                        <!-- ── EDGES: Processing → Outputs ── -->
+                        <path class="nn-edge" d="M805,122 L858,96" stroke="rgba(57,232,122,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M805,207 L858,176" stroke="rgba(0,229,200,0.5)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M805,298 L858,256" stroke="rgba(184,124,255,0.4)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M805,298 L858,336" stroke="rgba(255,61,110,0.4)"
+                            marker-end="url(#arr)" />
+                        <path class="nn-edge" d="M805,390 L858,414" stroke="rgba(255,184,48,0.4)"
+                            marker-end="url(#arr)" />
+
+                        <!-- Feedback loop -->
+                        <path d="M933,435 Q933,510 80,510 Q10,510 10,450" stroke="rgba(255,184,48,0.2)"
+                            stroke-width="1.5" fill="none" stroke-dasharray="4 4" marker-end="url(#arr)" />
+                        <text x="500" y="525" fill="rgba(255,184,48,0.4)" font-size="8" font-family="JetBrains Mono"
+                            text-anchor="middle">LSTM RETRAINING FEEDBACK LOOP</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Schema cards -->
+            <div class="schema-grid reveal">
+                <div class="schema-card sc-input">
+                    <div class="schema-cat">Input Layer</div>
+                    <div class="schema-card-title">5 Multimodal Streams</div>
+                    <div class="schema-spec-row">Vitals dim <span>8 features</span></div>
+                    <div class="schema-spec-row">ECG length <span>2048 samples</span></div>
+                    <div class="schema-spec-row">Symptom tokens <span>512 max</span></div>
+                    <div class="schema-spec-row">History window <span>90 days</span></div>
+                    <div class="schema-spec-row">Demo embedding <span>32 dim</span></div>
+                </div>
+                <div class="schema-card sc-embed">
+                    <div class="schema-cat">Encoder Layer</div>
+                    <div class="schema-card-title">Parallel Branch Encoders</div>
+                    <div class="schema-spec-row">Vitals <span>MLP 3-layer</span></div>
+                    <div class="schema-spec-row">ECG <span>1D-CNN + Transformer</span></div>
+                    <div class="schema-spec-row">Symptoms <span>Clinical BERT</span></div>
+                    <div class="schema-spec-row">Temporal <span>BiLSTM + Attn</span></div>
+                    <div class="schema-spec-row">Output per encoder <span>128-dim</span></div>
+                </div>
+                <div class="schema-card sc-fusion">
+                    <div class="schema-cat">Fusion Layer</div>
+                    <div class="schema-card-title">Cross-Modal Attention</div>
+                    <div class="schema-spec-row">Input <span>5 × 128 = 640</span></div>
+                    <div class="schema-spec-row">Attention heads <span>8</span></div>
+                    <div class="schema-spec-row">Output dim <span>256</span></div>
+                    <div class="schema-spec-row">AUC achieved <span>0.8883</span></div>
+                    <div class="schema-spec-row">Regularization <span>Dropout 0.3</span></div>
+                </div>
+                <div class="schema-card sc-output">
+                    <div class="schema-cat">Output Layer</div>
+                    <div class="schema-card-title">5 Output Heads</div>
+                    <div class="schema-spec-row">Risk score <span>0.0 – 1.0</span></div>
+                    <div class="schema-spec-row">SHAP features <span>Top-5 + direction</span></div>
+                    <div class="schema-spec-row">Aarogya text <span>LLM conditioned</span></div>
+                    <div class="schema-spec-row">Escalation <span>Binary threshold</span></div>
+                    <div class="schema-spec-row">Archive <span>TimescaleDB</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════
+  PANEL 3 — DATA FLOW
+════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-flow">
+        <div class="flow-wrap">
+            <div class="part-tag">End-to-End Data Flow</div>
+            <div class="part-title">User → AI → <em>Health System</em></div>
+            <div class="part-desc">Complete bidirectional data flow from the user's body and voice, through edge
+                processing and AI inference, to caregiver network and health system — and back again as empathetic
+                guidance and alerts.</div>
+
+            <div class="flow-legend">
+                <div class="legend-item">
+                    <div class="legend-dot"
+                        style="background:rgba(255,61,110,0.5);border:1px solid rgba(255,61,110,0.5)"></div>User /
+                    Patient
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(255,184,48,0.5)"></div>Device / Wearable
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(184,124,255,0.5)"></div>Edge / On-Device AI
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(0,229,200,0.5)"></div>Cloud AI Core
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(77,184,255,0.5)"></div>Backend Services
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:rgba(57,232,122,0.5)"></div>Health System / ASHA
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot"
+                        style="background:rgba(255,184,48,0.3);border:1px dashed rgba(255,184,48,0.5)"></div>Caregiver /
+                    Family
+                </div>
+            </div>
+
+            <!-- SVG Flow Diagram -->
+            <div style="overflow-x:auto;padding-bottom:20px;">
+                <svg id="flow-svg" width="1160" height="760" viewBox="0 0 1160 760" style="min-width:1000px;">
+                    <defs>
+                        <marker id="farr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,1 L7,4 L0,7 Z" fill="rgba(99,179,255,0.5)" />
+                        </marker>
+                        <marker id="farr-teal" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,1 L7,4 L0,7 Z" fill="var(--teal)" />
+                        </marker>
+                        <marker id="farr-red" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,1 L7,4 L0,7 Z" fill="var(--red)" />
+                        </marker>
+                        <marker id="farr-green" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,1 L7,4 L0,7 Z" fill="var(--green)" />
+                        </marker>
+                        <marker id="farr-gold" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                            <path d="M0,1 L7,4 L0,7 Z" fill="var(--gold)" />
+                        </marker>
+                        <filter id="glow2">
+                            <feGaussianBlur stdDeviation="4" result="blur" />
+                            <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <!-- ─── COLUMN LABELS ─── -->
+                    <text x="80" y="22" font-family="JetBrains Mono" font-size="9" fill="rgba(255,61,110,0.6)"
+                        text-anchor="middle" letter-spacing="1">USER</text>
+                    <text x="240" y="22" font-family="JetBrains Mono" font-size="9" fill="rgba(255,184,48,0.6)"
+                        text-anchor="middle" letter-spacing="1">DEVICE</text>
+                    <text x="420" y="22" font-family="JetBrains Mono" font-size="9" fill="rgba(184,124,255,0.6)"
+                        text-anchor="middle" letter-spacing="1">EDGE AI</text>
+                    <text x="610" y="22" font-family="JetBrains Mono" font-size="9" fill="rgba(0,229,200,0.6)"
+                        text-anchor="middle" letter-spacing="1">CLOUD AI CORE</text>
+                    <text x="810" y="22" font-family="JetBrains Mono" font-size="9" fill="rgba(77,184,255,0.6)"
+                        text-anchor="middle" letter-spacing="1">SERVICES</text>
+                    <text x="1000" y="22" font-family="JetBrains Mono" font-size="9" fill="rgba(57,232,122,0.6)"
+                        text-anchor="middle" letter-spacing="1">HEALTH SYSTEM</text>
+
+                    <!-- Column swim-lane backgrounds -->
+                    <rect x="20" y="30" width="120" height="700" rx="6" fill="rgba(255,61,110,0.03)"
+                        stroke="rgba(255,61,110,0.08)" stroke-width="1" />
+                    <rect x="170" y="30" width="140" height="700" rx="6" fill="rgba(255,184,48,0.03)"
+                        stroke="rgba(255,184,48,0.08)" stroke-width="1" />
+                    <rect x="330" y="30" width="175" height="700" rx="6" fill="rgba(184,124,255,0.03)"
+                        stroke="rgba(184,124,255,0.08)" stroke-width="1" />
+                    <rect x="525" y="30" width="175" height="700" rx="6" fill="rgba(0,229,200,0.03)"
+                        stroke="rgba(0,229,200,0.08)" stroke-width="1" />
+                    <rect x="720" y="30" width="175" height="700" rx="6" fill="rgba(77,184,255,0.03)"
+                        stroke="rgba(77,184,255,0.08)" stroke-width="1" />
+                    <rect x="915" y="30" width="185" height="700" rx="6" fill="rgba(57,232,122,0.03)"
+                        stroke="rgba(57,232,122,0.08)" stroke-width="1" />
+
+                    <!-- ═══ ROW 1: Data Collection ═══ -->
+                    <text x="580" y="58" font-family="JetBrains Mono" font-size="8" fill="rgba(99,179,255,0.3)"
+                        text-anchor="middle">① DATA COLLECTION</text>
+                    <line x1="20" y1="62" x2="1100" y2="62" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+
+                    <!-- User body node -->
+                    <g filter="url(#glow2)" class="nn-node"
+                        data-tip="User's body generates continuous physiological signals via wearable and self-reported symptoms.">
+                        <rect x="28" y="70" width="104" height="54" rx="8" fill="rgba(255,61,110,0.1)"
+                            stroke="rgba(255,61,110,0.4)" stroke-width="1.5" />
+                        <text x="80" y="90" font-family="JetBrains Mono" font-size="9" fill="var(--red)"
+                            text-anchor="middle">PATIENT</text>
+                        <text x="80" y="104" font-family="JetBrains Mono" font-size="7.5" fill="rgba(255,61,110,0.5)"
+                            text-anchor="middle">Priya, 47F, Jaipur</text>
+                        <text x="80" y="116" font-family="JetBrains Mono" font-size="7.5" fill="rgba(255,61,110,0.4)"
+                            text-anchor="middle">Hypertension risk</text>
+                    </g>
+
+                    <!-- Voice input -->
+                    <g class="nn-node"
+                        data-tip="User speaks symptoms in Hindi. 'Sar mein dard hai, thoda chakkar aa raha hai' → offline STT → symptom vectors.">
+                        <rect x="28" y="138" width="104" height="40" rx="8" fill="rgba(255,61,110,0.06)"
+                            stroke="rgba(255,61,110,0.2)" stroke-width="1" />
+                        <text x="80" y="154" font-family="JetBrains Mono" font-size="8" fill="rgba(255,61,110,0.7)"
+                            text-anchor="middle">Voice Input</text>
+                        <text x="80" y="167" font-family="JetBrains Mono" font-size="7" fill="rgba(255,61,110,0.4)"
+                            text-anchor="middle">Hindi STT · Offline</text>
+                    </g>
+
+                    <!-- Wearable -->
+                    <g class="nn-node"
+                        data-tip="Noise ColorFit Pro / low-cost BLE wearable. Continuous HR, SpO₂. BP on demand. ECG patch optional.">
+                        <rect x="178" y="70" width="124" height="54" rx="8" fill="rgba(255,184,48,0.1)"
+                            stroke="rgba(255,184,48,0.4)" stroke-width="1.5" />
+                        <text x="240" y="90" font-family="JetBrains Mono" font-size="9" fill="var(--gold)"
+                            text-anchor="middle">WEARABLE</text>
+                        <text x="240" y="104" font-family="JetBrains Mono" font-size="7.5" fill="rgba(255,184,48,0.5)"
+                            text-anchor="middle">HR · SpO₂ · BP</text>
+                        <text x="240" y="116" font-family="JetBrains Mono" font-size="7.5" fill="rgba(255,184,48,0.4)"
+                            text-anchor="middle">BLE · 30s interval</text>
+                    </g>
+
+                    <!-- ECG patch -->
+                    <g class="nn-node"
+                        data-tip="Optional 1-lead ECG patch or smart fabric sensor. 256Hz sampling. Preprocessed on device.">
+                        <rect x="178" y="138" width="124" height="40" rx="8" fill="rgba(255,184,48,0.06)"
+                            stroke="rgba(255,184,48,0.2)" stroke-width="1" />
+                        <text x="240" y="154" font-family="JetBrains Mono" font-size="8" fill="rgba(255,184,48,0.7)"
+                            text-anchor="middle">ECG Patch / Fabric</text>
+                        <text x="240" y="167" font-family="JetBrains Mono" font-size="7" fill="rgba(255,184,48,0.4)"
+                            text-anchor="middle">256Hz · 1-lead · RAW</text>
+                    </g>
+
+                    <!-- Arrows: User → Device -->
+                    <path d="M132,97 L176,97" stroke="rgba(255,184,48,0.5)" stroke-width="1.5" fill="none"
+                        stroke-dasharray="3 2" marker-end="url(#farr-gold)" />
+                    <path d="M132,155 L176,155" stroke="rgba(255,61,110,0.4)" stroke-width="1.5" fill="none"
+                        stroke-dasharray="3 2" marker-end="url(#farr-red)" />
+
+                    <!-- ═══ ROW 2: Edge AI ═══ -->
+                    <text x="580" y="210" font-family="JetBrains Mono" font-size="8" fill="rgba(99,179,255,0.3)"
+                        text-anchor="middle">② EDGE / ON-DEVICE PROCESSING</text>
+                    <line x1="20" y1="214" x2="1100" y2="214" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+
+                    <!-- On-device TFLite -->
+                    <g class="nn-node"
+                        data-tip="TensorFlow Lite model runs on-device. Immediate risk screening without internet. Offline-first architecture. Caches data for sync.">
+                        <rect x="338" y="222" width="159" height="56" rx="8" fill="rgba(184,124,255,0.1)"
+                            stroke="rgba(184,124,255,0.4)" stroke-width="1.5" />
+                        <text x="418" y="242" font-family="JetBrains Mono" font-size="9" fill="var(--violet)"
+                            text-anchor="middle">TFLite On-Device</text>
+                        <text x="418" y="256" font-family="JetBrains Mono" font-size="7.5" fill="rgba(184,124,255,0.5)"
+                            text-anchor="middle">Offline inference · Lite model</text>
+                        <text x="418" y="268" font-family="JetBrains Mono" font-size="7.5" fill="rgba(184,124,255,0.4)"
+                            text-anchor="middle">Sync queue · Cache</text>
+                    </g>
+
+                    <!-- Arrows: Device → Edge -->
+                    <path d="M302,97 Q330,97 330,230 L336,250" stroke="rgba(184,124,255,0.4)" stroke-width="1.5"
+                        fill="none" marker-end="url(#farr)" />
+                    <path d="M302,155 Q330,155 330,240 L336,255" stroke="rgba(184,124,255,0.35)" stroke-width="1.5"
+                        fill="none" marker-end="url(#farr)" />
+                    <path d="M132,155 Q160,185 338,240" stroke="rgba(184,124,255,0.3)" stroke-width="1.5" fill="none"
+                        stroke-dasharray="3 2" marker-end="url(#farr)" />
+
+                    <!-- ═══ ROW 3: Cloud AI ═══ -->
+                    <text x="580" y="308" font-family="JetBrains Mono" font-size="8" fill="rgba(99,179,255,0.3)"
+                        text-anchor="middle">③ CLOUD AI INFERENCE ENGINE</text>
+                    <line x1="20" y1="312" x2="1100" y2="312" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+
+                    <!-- Multimodal model -->
+                    <g class="nn-node" filter="url(#glow2)"
+                        data-tip="Full multimodal fusion model in cloud. 5-stream encoder → cross-attention fusion → risk classifier. AUC 0.8883.">
+                        <rect x="533" y="320" width="159" height="66" rx="10" fill="rgba(0,229,200,0.09)"
+                            stroke="rgba(0,229,200,0.45)" stroke-width="2" />
+                        <text x="612" y="342" font-family="JetBrains Mono" font-size="9" fill="var(--teal)"
+                            text-anchor="middle">MULTIMODAL MODEL</text>
+                        <text x="612" y="356" font-family="JetBrains Mono" font-size="7.5" fill="rgba(0,229,200,0.5)"
+                            text-anchor="middle">5-stream Fusion · AUC 0.8883</text>
+                        <text x="612" y="370" font-family="JetBrains Mono" font-size="7.5" fill="rgba(0,229,200,0.4)"
+                            text-anchor="middle">SHAP · Constitutional AI</text>
+                        <text x="612" y="378" font-family="JetBrains Mono" font-size="7" fill="rgba(0,229,200,0.3)"
+                            text-anchor="middle">Bias Audit · Safety Critique</text>
+                    </g>
+
+                    <!-- FastAPI gateway -->
+                    <g class="nn-node"
+                        data-tip="FastAPI inference gateway. Authenticates user, decrypts payload, routes to model, returns signed response.">
+                        <rect x="728" y="322" width="159" height="56" rx="8" fill="rgba(77,184,255,0.08)"
+                            stroke="rgba(77,184,255,0.3)" stroke-width="1.5" />
+                        <text x="808" y="342" font-family="JetBrains Mono" font-size="9" fill="var(--blue)"
+                            text-anchor="middle">FastAPI Gateway</text>
+                        <text x="808" y="356" font-family="JetBrains Mono" font-size="7.5" fill="rgba(77,184,255,0.5)"
+                            text-anchor="middle">Auth · Decrypt · Route</text>
+                        <text x="808" y="370" font-family="JetBrains Mono" font-size="7.5" fill="rgba(77,184,255,0.4)"
+                            text-anchor="middle">Rate limit · Signed JWT</text>
+                    </g>
+
+                    <!-- Arrow: Edge → Cloud -->
+                    <path d="M497,250 Q510,250 533,340" stroke="rgba(0,229,200,0.5)" stroke-width="1.5" fill="none"
+                        stroke-dasharray="4 3" marker-end="url(#farr-teal)" />
+                    <!-- Arrow: Cloud model → FastAPI -->
+                    <path d="M692,353 L726,353" stroke="rgba(77,184,255,0.5)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr)" />
+
+                    <!-- ═══ ROW 4: Storage ═══ -->
+                    <text x="580" y="412" font-family="JetBrains Mono" font-size="8" fill="rgba(99,179,255,0.3)"
+                        text-anchor="middle">④ PERSISTENCE & STORAGE</text>
+                    <line x1="20" y1="416" x2="1100" y2="416" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+
+                    <!-- TimescaleDB -->
+                    <g class="nn-node"
+                        data-tip="TimescaleDB time-series store. Fernet-encrypted vitals, risk scores, alerts. Feeds LSTM retraining pipeline.">
+                        <rect x="533" y="424" width="159" height="44" rx="8" fill="rgba(0,229,200,0.06)"
+                            stroke="rgba(0,229,200,0.2)" stroke-width="1.5" />
+                        <text x="612" y="442" font-family="JetBrains Mono" font-size="8.5" fill="var(--teal)"
+                            text-anchor="middle">TimescaleDB</text>
+                        <text x="612" y="456" font-family="JetBrains Mono" font-size="7" fill="rgba(0,229,200,0.4)"
+                            text-anchor="middle">Vitals history · Risk scores · Fernet AES</text>
+                    </g>
+
+                    <!-- SQLite local -->
+                    <g class="nn-node"
+                        data-tip="On-device SQLite for offline-first storage. Syncs to cloud when connectivity resumes.">
+                        <rect x="338" y="424" width="155" height="44" rx="8" fill="rgba(184,124,255,0.06)"
+                            stroke="rgba(184,124,255,0.2)" stroke-width="1.5" />
+                        <text x="416" y="442" font-family="JetBrains Mono" font-size="8.5" fill="var(--violet)"
+                            text-anchor="middle">SQLite (Local)</text>
+                        <text x="416" y="456" font-family="JetBrains Mono" font-size="7" fill="rgba(184,124,255,0.4)"
+                            text-anchor="middle">Offline cache · Sync queue</text>
+                    </g>
+
+                    <!-- MLflow -->
+                    <g class="nn-node"
+                        data-tip="MLflow tracks model versions, experiments, and triggers retraining when drift is detected.">
+                        <rect x="728" y="424" width="159" height="44" rx="8" fill="rgba(77,184,255,0.06)"
+                            stroke="rgba(77,184,255,0.2)" stroke-width="1.5" />
+                        <text x="808" y="442" font-family="JetBrains Mono" font-size="8.5" fill="var(--blue)"
+                            text-anchor="middle">MLflow / MLOps</text>
+                        <text x="808" y="456" font-family="JetBrains Mono" font-size="7" fill="rgba(77,184,255,0.4)"
+                            text-anchor="middle">Model drift · Retrain pipeline</text>
+                    </g>
+
+                    <!-- Storage arrows -->
+                    <path d="M612,386 L612,422" stroke="rgba(0,229,200,0.4)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr-teal)" />
+                    <path d="M418,278 L418,422" stroke="rgba(184,124,255,0.4)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr)" />
+                    <path d="M808,378 L808,422" stroke="rgba(77,184,255,0.4)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr)" />
+                    <path d="M693,446 L726,446" stroke="rgba(77,184,255,0.3)" stroke-width="1" fill="none"
+                        stroke-dasharray="3 2" marker-end="url(#farr)" />
+
+                    <!-- ═══ ROW 5: Output / Escalation ═══ -->
+                    <text x="580" y="500" font-family="JetBrains Mono" font-size="8" fill="rgba(99,179,255,0.3)"
+                        text-anchor="middle">⑤ RESPONSE & ESCALATION</text>
+                    <line x1="20" y1="504" x2="1100" y2="504" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+
+                    <!-- Aarogya response -->
+                    <g class="nn-node"
+                        data-tip="Empathetic Aarogya response generated by LLM conditioned on risk score + SHAP features + constitutional AI critique. Shown in app chat.">
+                        <rect x="28" y="512" width="104" height="56" rx="8" fill="rgba(255,61,110,0.08)"
+                            stroke="rgba(255,61,110,0.3)" stroke-width="1.5" />
+                        <text x="80" y="532" font-family="JetBrains Mono" font-size="8.5" fill="var(--red)"
+                            text-anchor="middle">Aarogya Chat</text>
+                        <text x="80" y="546" font-family="JetBrains Mono" font-size="7" fill="rgba(255,61,110,0.4)"
+                            text-anchor="middle">Empathetic response</text>
+                        <text x="80" y="558" font-family="JetBrains Mono" font-size="7" fill="rgba(255,61,110,0.3)"
+                            text-anchor="middle">Hindi · Safe · Calm</text>
+                    </g>
+
+                    <!-- Dashboard update -->
+                    <g class="nn-node"
+                        data-tip="Risk score, SHAP chart, and ECG analysis pushed to user dashboard in real time.">
+                        <rect x="178" y="512" width="124" height="56" rx="8" fill="rgba(255,184,48,0.08)"
+                            stroke="rgba(255,184,48,0.3)" stroke-width="1.5" />
+                        <text x="240" y="532" font-family="JetBrains Mono" font-size="8.5" fill="var(--gold)"
+                            text-anchor="middle">Dashboard</text>
+                        <text x="240" y="546" font-family="JetBrains Mono" font-size="7" fill="rgba(255,184,48,0.4)"
+                            text-anchor="middle">Risk · SHAP · ECG</text>
+                        <text x="240" y="558" font-family="JetBrains Mono" font-size="7" fill="rgba(255,184,48,0.3)"
+                            text-anchor="middle">Realtime update</text>
+                    </g>
+
+                    <!-- Alert engine -->
+                    <g class="nn-node"
+                        data-tip="If risk > 0.75: triggers SMS to family caregiver, push notification to ASHA worker, optional 108 ambulance suggestion.">
+                        <rect x="338" y="512" width="155" height="56" rx="8" fill="rgba(184,124,255,0.08)"
+                            stroke="rgba(184,124,255,0.35)" stroke-width="1.5" />
+                        <text x="416" y="532" font-family="JetBrains Mono" font-size="8.5" fill="var(--violet)"
+                            text-anchor="middle">Alert Engine</text>
+                        <text x="416" y="546" font-family="JetBrains Mono" font-size="7" fill="rgba(184,124,255,0.4)"
+                            text-anchor="middle">Threshold trigger · SMS</text>
+                        <text x="416" y="558" font-family="JetBrains Mono" font-size="7" fill="rgba(184,124,255,0.3)"
+                            text-anchor="middle">Push · Caregiver · ASHA</text>
+                    </g>
+
+                    <!-- Kafka event bus -->
+                    <g class="nn-node"
+                        data-tip="Apache Kafka event bus. Decouples inference output from downstream consumers (caregiver alerts, ASHA dispatch, analytics).">
+                        <rect x="533" y="512" width="159" height="56" rx="8" fill="rgba(0,229,200,0.07)"
+                            stroke="rgba(0,229,200,0.3)" stroke-width="1.5" />
+                        <text x="612" y="532" font-family="JetBrains Mono" font-size="8.5" fill="var(--teal)"
+                            text-anchor="middle">Kafka Event Bus</text>
+                        <text x="612" y="546" font-family="JetBrains Mono" font-size="7" fill="rgba(0,229,200,0.4)"
+                            text-anchor="middle">alert.trigger · score.update</text>
+                        <text x="612" y="558" font-family="JetBrains Mono" font-size="7" fill="rgba(0,229,200,0.3)"
+                            text-anchor="middle">timeline.write · asha.notify</text>
+                    </g>
+
+                    <!-- ═══ ROW 6: Health System ═══ -->
+                    <text x="580" y="600" font-family="JetBrains Mono" font-size="8" fill="rgba(99,179,255,0.3)"
+                        text-anchor="middle">⑥ HEALTH SYSTEM & FEEDBACK</text>
+                    <line x1="20" y1="604" x2="1100" y2="604" stroke="rgba(99,179,255,0.06)" stroke-width="1" />
+
+                    <!-- Caregiver -->
+                    <g class="nn-node"
+                        data-tip="Family receives SMS with: risk score, recommended action, nearest PHC. Can respond with acknowledgement.">
+                        <rect x="728" y="612" width="159" height="56" rx="8" fill="rgba(255,184,48,0.08)"
+                            stroke="rgba(255,184,48,0.3)" stroke-width="1.5" />
+                        <text x="808" y="632" font-family="JetBrains Mono" font-size="8.5" fill="var(--gold)"
+                            text-anchor="middle">Family Caregiver</text>
+                        <text x="808" y="646" font-family="JetBrains Mono" font-size="7" fill="rgba(255,184,48,0.4)"
+                            text-anchor="middle">SMS · App alert · View</text>
+                        <text x="808" y="658" font-family="JetBrains Mono" font-size="7" fill="rgba(255,184,48,0.3)"
+                            text-anchor="middle">Acknowledge · Call patient</text>
+                    </g>
+
+                    <!-- ASHA Worker -->
+                    <g class="nn-node"
+                        data-tip="ASHA worker receives AI-generated patient summary + visit priority. Can update clinical notes that feed back into the model.">
+                        <rect x="922" y="612" width="172" height="56" rx="8" fill="rgba(57,232,122,0.09)"
+                            stroke="rgba(57,232,122,0.35)" stroke-width="1.5" />
+                        <text x="1008" y="632" font-family="JetBrains Mono" font-size="8.5" fill="var(--green)"
+                            text-anchor="middle">ASHA Worker</text>
+                        <text x="1008" y="646" font-family="JetBrains Mono" font-size="7" fill="rgba(57,232,122,0.4)"
+                            text-anchor="middle">AI summary · Visit priority</text>
+                        <text x="1008" y="658" font-family="JetBrains Mono" font-size="7" fill="rgba(57,232,122,0.3)"
+                            text-anchor="middle">Clinical notes → feedback</text>
+                    </g>
+
+                    <!-- PHC / Doctor -->
+                    <g class="nn-node"
+                        data-tip="Doctor receives longitudinal vitals report and SHAP explanation. Can add clinical annotations that improve the model.">
+                        <rect x="533" y="612" width="159" height="56" rx="8" fill="rgba(77,184,255,0.08)"
+                            stroke="rgba(77,184,255,0.3)" stroke-width="1.5" />
+                        <text x="612" y="632" font-family="JetBrains Mono" font-size="8.5" fill="var(--blue)"
+                            text-anchor="middle">Doctor / PHC</text>
+                        <text x="612" y="646" font-family="JetBrains Mono" font-size="7" fill="rgba(77,184,255,0.4)"
+                            text-anchor="middle">Vitals report · SHAP view</text>
+                        <text x="612" y="658" font-family="JetBrains Mono" font-size="7" fill="rgba(77,184,255,0.3)"
+                            text-anchor="middle">Annotate → model feedback</text>
+                    </g>
+
+                    <!-- ─── RESPONSE ARROWS (back to user) ─── -->
+                    <!-- FastAPI → Aarogya -->
+                    <path d="M808,322 Q808,280 500,265 Q200,250 80,510" stroke="rgba(255,61,110,0.4)" stroke-width="1.5"
+                        fill="none" stroke-dasharray="4 3" marker-end="url(#farr-red)" />
+                    <!-- FastAPI → Dashboard -->
+                    <path d="M728,345 Q600,345 500,340 Q300,330 240,510" stroke="rgba(255,184,48,0.35)"
+                        stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#farr-gold)" />
+
+                    <!-- Alert engine → Kafka -->
+                    <path d="M493,540 L531,540" stroke="rgba(0,229,200,0.4)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr-teal)" />
+
+                    <!-- Kafka → Caregiver, ASHA, Doctor -->
+                    <path d="M692,540 Q720,540 726,635" stroke="rgba(255,184,48,0.4)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr-gold)" />
+                    <path d="M692,555 Q850,560 920,640" stroke="rgba(57,232,122,0.4)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr-green)" />
+                    <path d="M612,568 L612,610" stroke="rgba(77,184,255,0.4)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr)" />
+
+                    <!-- Kafka → Alert engine -->
+                    <path d="M533,545 L493,545" stroke="rgba(184,124,255,0.35)" stroke-width="1.5" fill="none"
+                        marker-end="url(#farr)" />
+
+                    <!-- FastAPI → Alert engine -->
+                    <path d="M808,378 Q700,430 493,530" stroke="rgba(184,124,255,0.3)" stroke-width="1.5" fill="none"
+                        stroke-dasharray="3 2" marker-end="url(#farr)" />
+
+                    <!-- Feedback arrows (back into model) -->
+                    <path d="M1008,668 Q1008,720 612,720 Q420,720 418,470" stroke="rgba(57,232,122,0.2)"
+                        stroke-width="1.5" fill="none" stroke-dasharray="4 4" marker-end="url(#farr-green)" />
+                    <path d="M612,668 Q612,700 570,700 Q545,700 543,470" stroke="rgba(77,184,255,0.2)"
+                        stroke-width="1.5" fill="none" stroke-dasharray="4 4" marker-end="url(#farr)" />
+
+                    <!-- Feedback label -->
+                    <text x="700" y="730" font-family="JetBrains Mono" font-size="8" fill="rgba(57,232,122,0.3)"
+                        text-anchor="middle">CLINICAL FEEDBACK LOOP → MODEL RETRAINING</text>
+
+                    <!-- Step numbers -->
+                    <text x="580" y="48" font-family="JetBrains Mono" font-size="7.5" fill="rgba(99,179,255,0.2)"
+                        text-anchor="middle">─────────────────────────────────────────────────────────────────────────────────────────────────</text>
+                </svg>
+            </div>
+
+            <!-- Flow summary cards -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;" class="reveal">
+                <div
+                    style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid var(--red);">
+                    <div
+                        style="font-family:var(--mono);font-size:0.55rem;color:var(--red);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;">
+                        Upstream (User → System)</div>
+                    <div style="font-size:0.78rem;font-weight:600;color:var(--white);margin-bottom:6px;">Body Signals to
+                        Risk Score</div>
+                    <div style="font-family:var(--mono);font-size:0.62rem;color:var(--dim);line-height:1.7;">Wearable →
+                        BLE → Phone → TFLite edge screening → Encrypted upload → Multimodal fusion → AUC 0.8883 risk
+                        score → SHAP report</div>
+                </div>
+                <div
+                    style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid var(--teal);">
+                    <div
+                        style="font-family:var(--mono);font-size:0.55rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;">
+                        Downstream (System → User)</div>
+                    <div style="font-size:0.78rem;font-weight:600;color:var(--white);margin-bottom:6px;">Intelligence
+                        Back to Patient</div>
+                    <div style="font-family:var(--mono);font-size:0.62rem;color:var(--dim);line-height:1.7;">Risk score
+                        → Constitutional AI critique → Aarogya empathetic response → Dashboard update → Alert engine →
+                        Family SMS → ASHA dispatch</div>
+                </div>
+                <div
+                    style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid var(--green);">
+                    <div
+                        style="font-family:var(--mono);font-size:0.55rem;color:var(--green);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;">
+                        Feedback Loop</div>
+                    <div style="font-size:0.78rem;font-weight:600;color:var(--white);margin-bottom:6px;">Clinical
+                        Annotations → Retraining</div>
+                    <div style="font-family:var(--mono);font-size:0.62rem;color:var(--dim);line-height:1.7;">Doctor
+                        annotations + ASHA visit notes → TimescaleDB → MLflow drift detection → LSTM retraining pipeline
+                        → Improved AUC over time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── TAB SWITCHER ──
+        function switchTab(id) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-' + id).classList.add('active');
+            event.target.classList.add('active');
+            triggerReveal();
+        }
+
+        // ── SCREEN SWITCHER ──
+        const screenSpecs = {
+            splash: {
+                title: 'Splash / Onboarding',
+                sub: 'Entry point — brand impression & account creation',
+                rows: [
+                    ['Route', '<code>/onboard/splash</code>'],
+                    ['Access', 'Public (unauthenticated)'],
+                    ['Components', 'Logo, tagline, CTA buttons, version badge'],
+                    ['Navigation', '→ Profile Setup, → Login'],
+                    ['Offline', '✓ Fully offline capable'],
+                    ['Constitutional', 'Non-diagnostic badge always visible'],
+                ]
+            },
+            profile: {
+                title: 'Health Profile Setup',
+                sub: 'Collects demographics, conditions, wearable pairing',
+                rows: [
+                    ['Route', '<code>/onboard/profile</code>'],
+                    ['Access', 'Onboarding flow only'],
+                    ['Inputs', 'Name, age, gender, city, conditions, wearable'],
+                    ['Model Use', 'Seeds demographic embedding vector'],
+                    ['Women flag', 'Activates menstrual correlation module'],
+                    ['Offline', '✓ Offline — syncs on connect'],
+                ]
+            },
+            consent: {
+                title: 'Consent & Privacy',
+                sub: 'DPDP Act compliance, caregiver permissions, disclaimers',
+                rows: [
+                    ['Route', '<code>/onboard/consent</code>'],
+                    ['Legal', 'DPDP Act · Fernet disclosure · Non-diagnostic'],
+                    ['Consent flags', 'Caregiver access · Analytics opt-in · SMS'],
+                    ['Storage', 'Consent record stored encrypted locally'],
+                    ['Required', 'Cannot proceed without completing'],
+                    ['Regulatory', 'Non-CDSCO wellness scope declaration'],
+                ]
+            },
+            dashboard: {
+                title: 'Main Dashboard',
+                sub: 'Real-time vitals, risk score, ECG rhythm strip',
+                rows: [
+                    ['Route', '<code>/home</code>'],
+                    ['Refresh', 'Vitals: 30s · Risk score: on change'],
+                    ['Components', 'Vital cards, ECG strip, risk donut, alert bar'],
+                    ['Offline', 'Last-cached values shown with timestamp'],
+                    ['SHAP', 'Mini SHAP bar accessible via tap on risk'],
+                    ['AI Layer', 'TFLite on-device + cloud sync'],
+                ]
+            },
+            aarogya: {
+                title: 'Aarogya Chat (AI Companion)',
+                sub: 'Voice-first empathetic wellness guidance',
+                rows: [
+                    ['Route', '<code>/aarogya</code>'],
+                    ['Input', 'Text · Hindi voice (offline Whisper STT)'],
+                    ['Model', 'LLM conditioned on risk score + SHAP'],
+                    ['Safety', 'Constitutional AI self-critique on every response'],
+                    ['Actions', 'Breathing guide · Family alert · Doctor call'],
+                    ['Disclaimer', 'Non-diagnostic framing enforced always'],
+                ]
+            },
+            ecg: {
+                title: 'ECG & Vitals Detail',
+                sub: 'Full waveform view, interval analysis, SHAP breakdown',
+                rows: [
+                    ['Route', '<code>/vitals/ecg</code>'],
+                    ['ECG source', 'BLE wearable patch · Fabric sensor (future)'],
+                    ['Analysis', 'QRS · PR · QT intervals · Rhythm classification'],
+                    ['SHAP', 'Feature attribution bar chart'],
+                    ['Export', 'PDF report for doctor (Fernet signed)'],
+                    ['Offline', 'Cached waveform · No cloud needed for view'],
+                ]
+            },
+            alert: {
+                title: 'Alert / Emergency Screen',
+                sub: 'Priority UI for high-risk pattern detection',
+                rows: [
+                    ['Route', '<code>/alert/:id</code>'],
+                    ['Trigger', 'Risk > 0.75 OR constitutional AI flag'],
+                    ['Actions', 'Emergency call · Family alert · Aarogya chat'],
+                    ['Design', 'Red-dominant · Large tap targets · No distractions'],
+                    ['SMS', 'Auto-sends location + risk to caregiver'],
+                    ['Disclaimer', 'Non-diagnostic — escalates to human care'],
+                ]
+            },
+            timeline: {
+                title: 'Longitudinal Timeline',
+                sub: '30/90-day vitals and risk score history',
+                rows: [
+                    ['Route', '<code>/timeline</code>'],
+                    ['Data', 'TimescaleDB via FastAPI · 90-day default'],
+                    ['Charts', 'Line chart: BP, HR, risk score over time'],
+                    ['Events', 'Flagged alerts, positive patterns, milestones'],
+                    ['LSTM', 'Feeds BiLSTM retraining pipeline'],
+                    ['Export', 'Share with doctor as PDF'],
+                ]
+            },
+            caregiver: {
+                title: 'Caregiver Network',
+                sub: 'Guardian circle management and access control',
+                rows: [
+                    ['Route', '<code>/network/caregivers</code>'],
+                    ['Roles', 'Emergency contact · View-only · Alert-only'],
+                    ['Alerts', 'SMS + push when risk threshold crossed'],
+                    ['Privacy', 'User controls what each caregiver sees'],
+                    ['ASHA', 'ASHA worker as special caregiver role'],
+                    ['Offline', 'Alert queue cached for retry on reconnect'],
+                ]
+            },
+            asha: {
+                title: 'ASHA Connect',
+                sub: 'Community health worker integration + PHC finder',
+                rows: [
+                    ['Route', '<code>/network/asha</code>'],
+                    ['Integration', 'Linked ASHA worker by ward/pin code'],
+                    ['Alerts', 'ASHA receives AI patient summary PDF'],
+                    ['PHC finder', 'Nearest PHC/clinic with hours + distance'],
+                    ['Teleconsult', 'WebRTC video call to ASHA or doctor'],
+                    ['Data share', 'Share timeline report with one tap'],
+                ]
+            }
+        };
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.screen-content').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('sc-' + id).classList.add('active');
+
+            const spec = screenSpecs[id];
+            if (spec) {
+                document.getElementById('spec-title').textContent = spec.title;
+                document.getElementById('spec-subtitle').textContent = spec.sub;
+                const body = document.getElementById('spec-body');
+                body.innerHTML = '<div class="spec-section-header">Screen Specification</div>' +
+                    spec.rows.map(r => `<div class="spec-row"><div class="spec-key">${r[0]}</div><div class="spec-val">${r[1]}</div></div>`).join('');
+            }
+        }
+
+        // ── TOOLTIP ──
+        const tooltip = document.getElementById('tooltip');
+        document.querySelectorAll('[data-tip]').forEach(el => {
+            el.addEventListener('mouseenter', e => {
+                tooltip.textContent = el.dataset.tip;
+                tooltip.classList.add('visible');
+            });
+            el.addEventListener('mousemove', e => {
+                tooltip.style.left = (e.clientX + 12) + 'px';
+                tooltip.style.top = (e.clientY - 10) + 'px';
+            });
+            el.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('visible');
+            });
+        });
+
+        // ── REVEAL ──
+        function triggerReveal() {
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => {
+                    el.classList.add('vis');
+                });
+            }, 100);
+        }
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        triggerReveal();
+    </script>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioGuardAI — System Architecture</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        /* CSS omitted in this cat command for brevity but I will write the file using write_to_file */
+    </style>
+</head>
+
+<body>
+</body>
+
+</html>

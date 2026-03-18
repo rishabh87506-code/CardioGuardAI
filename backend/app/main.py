@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(
     title="CardioGuard AI Wellness Engine",
@@ -18,6 +19,8 @@ app.add_middleware(
 
 from app.api.v1.router import api_router
 app.include_router(api_router, prefix="/api/v1")
+
+app.mount("/portal", StaticFiles(directory="static", html=True), name="portal")
 
 @app.get("/")
 async def root():

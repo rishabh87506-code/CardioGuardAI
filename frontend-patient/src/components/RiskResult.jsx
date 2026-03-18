@@ -73,7 +73,7 @@ export default function RiskResult({ assessment, onReset, isLowEnd, lang }) {
             )}
 
             {/* AI Assistant Agent */}
-            <WellnessChatAgent lang={lang} isDeviation={isDeviation} />
+            <WellnessChatAgent lang={lang} assessment={assessment} isDeviation={isDeviation} />
 
             {/* Observation Details */}
             {assessment.significant_observations.length > 0 && (

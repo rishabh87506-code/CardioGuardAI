@@ -1,5 +1,5 @@
 import React from 'react';
-import { Hospital, MapPin, Ambulance } from 'lucide-react';
+import { Building2 as Hospital, MapPin, Ambulance } from 'lucide-react';
 import clsx from 'clsx';
 
 export default function WellnessTriagePanel({ lang, currentLevel = 'emergency' }) {
