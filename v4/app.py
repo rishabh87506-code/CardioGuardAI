@@ -129,14 +129,18 @@ def predict():
         prob = float(model.predict_proba(fa)[0][1])
         score = round(prob * 100, 2)
         
-        # Risk levels
+        # Clinical Risk Thresholding (v4.8 Production)
         level = "LOW"
-        if score >= 60: level = "HIGH"
-        elif score >= 30: level = "MODERATE"
+        asha_dispatch = False
+        if score >= 70:
+            level = "HIGH"
+            asha_dispatch = True
+        elif score >= 30:
+            level = "MODERATE"
 
         # Auto-Trigger WhatsApp Agent for High Risk
         broadcasted = False
-        if level == "HIGH" or data.get('emergency', False):
+        if asha_dispatch or data.get('emergency', False):
             broadcasted = wa_agent.broadcast(data.get('name', 'Patient'), score, level)
 
         # SHAP Explanations
