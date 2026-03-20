@@ -14,8 +14,18 @@ import numpy as np
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
+# Enable rate limiting to prevent abuse
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
+
 # In production, specify your frontend domain in ALLOWED_ORIGINS
 ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
 CORS(app, origins=ALLOWED_ORIGINS)
@@ -84,6 +94,7 @@ def health():
 
 # ── ROUTE: RISK PREDICTION ─────────────────────────────
 @app.route('/api/predict', methods=['POST'])
+@limiter.limit("10 per minute")
 def predict():
     if not model:
         return jsonify({"error": "Risk model not loaded on server."}), 503
@@ -133,6 +144,7 @@ def predict():
 
 # ── ROUTE: CLAUDE PROXY ────────────────────────────────
 @app.route('/api/chat', methods=['POST'])
+@limiter.limit("5 per minute")
 def chat():
     if not ANTHROPIC_API_KEY:
         return jsonify({"error": "Anthropic API Key not configured on proxy server."}), 503
