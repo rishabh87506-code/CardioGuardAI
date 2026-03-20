@@ -95,6 +95,12 @@ DISPLAY_NAMES = {
 }
 
 # ── ROUTE: HEALTH ──────────────────────────────────────
+# ── ROUTE: SERVE FRONTEND ──────────────────────────────
+@app.route('/')
+@app.route('/index.html')
+def serve_index():
+    return open('index.html').read()
+
 @app.route('/health', methods=['GET'])
 @app.route('/api/health', methods=['GET'])
 def health():
