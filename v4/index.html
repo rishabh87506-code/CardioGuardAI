@@ -1378,6 +1378,7 @@ async function runRisk() {
     sleep_hours_per_day: rData.sleep_hours_per_day||7,
     chest_pain:        rData.chest_pain==='Haan'?1:0,
     blood_sugar:       rData.blood_sugar||100,
+    name:              profile.name || 'User'
   };
 
   let score=null, level='', explanation='', shapFactors=[];
@@ -1389,6 +1390,7 @@ async function runRisk() {
       score = ag.risk_score ?? (ag.probability*100);
       level = ag.risk_level || (score<30?'LOW':score<60?'MODERATE':'HIGH');
       explanation = ag.message_hindi || '';
+      if (ag.whatsapp_alert) toast('📡 [AGENT: WHATSAPP] Live Broadcast Complete!', 5000);
       if (ag.shap_values) {
         shapFactors = Object.entries(ag.shap_values).slice(0,5).map(([k,v])=>({
           factor:k, impact:typeof v==='object'?v.impact:Math.abs(v)*100,

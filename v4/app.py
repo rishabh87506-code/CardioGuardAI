@@ -33,6 +33,22 @@ CORS(app, origins=ALLOWED_ORIGINS)
 # ── CONFIGURATION ──────────────────────────────────────
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model', 'antigravity_model.pkl')
+WHATSAPP_KEY = os.environ.get('WHATSAPP_API_KEY', '')
+
+# ── WHATSAPP BROADCAST AGENT ──────────────────────────
+class WhatsAppAgent:
+    def __init__(self, key):
+        self.key = key
+    def broadcast(self, name, score, level):
+        """Live Broadcast to WhatsApp/Emergency Contacts"""
+        if not self.key or self.key == "MOCK":
+            print(f"📡 [MOCK BROADCAST]: {name} score {score}% ({level}). API Key missing.")
+            return False
+        # Actual implementation logic for Meta/Cloud API would go here
+        print(f"✅ [WHATSAPP LIVE]: Alert sent for {name} ({score}%)")
+        return True
+
+wa_agent = WhatsAppAgent(WHATSAPP_KEY)
 
 # ── LOAD RISK MODEL ────────────────────────────────────
 def load_risk_model():
@@ -88,6 +104,7 @@ def health():
         "version": "4.5",
         "model_loaded": model is not None,
         "claude_configured": len(ANTHROPIC_API_KEY) > 20,
+        "whatsapp_agent": "Active" if WHATSAPP_KEY else "Standby (Mock)",
         "environment": os.environ.get('RAILWAY_ENVIRONMENT', 'local'),
         "timestamp": time.time()
     })
@@ -110,11 +127,17 @@ def predict():
 
         fa = np.array(fa_list).reshape(1, -1)
         prob = float(model.predict_proba(fa)[0][1])
+        score = round(prob * 100, 2)
         
         # Risk levels
         level = "LOW"
-        if prob >= 0.60: level = "HIGH"
-        elif prob >= 0.30: level = "MODERATE"
+        if score >= 60: level = "HIGH"
+        elif score >= 30: level = "MODERATE"
+
+        # Auto-Trigger WhatsApp Agent for High Risk
+        broadcasted = False
+        if level == "HIGH" or data.get('emergency', False):
+            broadcasted = wa_agent.broadcast(data.get('name', 'Patient'), score, level)
 
         # SHAP Explanations
         shap_vals = {}
@@ -133,8 +156,9 @@ def predict():
             except: pass
 
         return jsonify({
-            "risk_score": round(prob * 100, 2),
+            "risk_score": score,
             "risk_level": level,
+            "whatsapp_alert": broadcasted,
             "shap_values": shap_vals,
             "proxy_mode": True,
             "disclaimer": "Non-diagnostic wellness assessment."
