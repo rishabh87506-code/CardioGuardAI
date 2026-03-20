@@ -524,6 +524,7 @@ select.iinp option{background:var(--bg3)}
       <div class="hc-stat"><div class="hc-sv" id="hcHR">—</div><div class="hc-sl">HR</div></div>
       <div class="hc-stat"><div class="hc-sv" id="hcBS">—</div><div class="hc-sl">Sugar</div></div>
     </div>
+    <div id="hcQR" style="margin:12px 0;padding:8px;background:var(--bg2);border-radius:12px;border:1px solid var(--bd);display:flex;justify-content:center"></div>
     <div class="hc-foot">CardioGuardAI · Hridai Master Agent<br>CIN: U62011DL2026PTC464381<br>⚠ Wellness only — not a medical diagnosis</div>
     <button class="hc-share" onclick="shareCard()">📤 Share with Doctor</button>
   </div>
@@ -1847,6 +1848,16 @@ function saveProxy() {
   const ag=document.getElementById('agUrl').value.trim();
   if(px){PROXY_URL=px;ST.s('proxy',px);proxyEnabled=true;ST.s('pxon',true);}
   if(ag){AG_URL=ag;ST.s('ag',ag);}
+  
+  // If no proxy URL, prompt for Railway/Local
+  if(!px) {
+    const isRW = confirm('Kya aap Railway server use kar rahe hain?');
+    if(isRW) {
+      const rw = prompt('Railway URL enter karein (ex: https://cg-prod.up.railway.app):');
+      if(rw) { PROXY_URL=rw; ST.s('proxy',rw); proxyEnabled=true; ST.s('pxon',true); }
+    }
+  }
+
   closeModal('PROXMODAL'); syncKeyPrev();
   toast(proxyEnabled?'✓ Proxy enabled — key hidden!':'✓ Saved');
 }
@@ -1860,6 +1871,13 @@ function openCard() {
   document.getElementById('hcBP').textContent=v?`${v.sys}/${v.dia}`:'—/—';
   document.getElementById('hcHR').textContent=v?v.hr:'—';
   document.getElementById('hcBS').textContent=v?v.bs:'—';
+  
+  // ── GENERATE QR FOR SHARING ──
+  const shareUrl = window.location.href; // Shared URL is the app itself
+  const qrImg = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(shareUrl)}`;
+  const qrEl = document.getElementById('hcQR');
+  if(qrEl) qrEl.innerHTML = `<img src="${qrImg}" style="width:100%;height:auto;border-radius:12px;border:2px solid var(--bg3)">`;
+
   document.getElementById('HCARD').classList.add('open');
 }
 function closeCard(){document.getElementById('HCARD').classList.remove('open');}
