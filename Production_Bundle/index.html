@@ -12,10 +12,9 @@
 <title>CardioGuardAI</title>
 <style>
 /* ═══════════════════════════════════════════
-   CARDIOGUARDAI — PRODUCTION v4 (WELLNESS CATEGORY)
+   CARDIOGUARDAI — PRODUCTION v4
    Syne display · DM Sans body
    Deep space × Cardiac crimson × Bioluminescent
-   Compliance: Non-diagnostic Wellness Support
 ═══════════════════════════════════════════ */
 :root{
   --bg:    #040608;
@@ -554,7 +553,7 @@ select.iinp option{background:var(--bg3)}
       <div class="hc-stat"><div class="hc-sv" id="hcBS">—</div><div class="hc-sl">Sugar</div></div>
     </div>
     <div id="hcQR" style="margin:12px 0;padding:8px;background:var(--bg2);border-radius:12px;border:1px solid var(--bd);display:flex;justify-content:center"></div>
-    <div class="hc-foot">CardioGuardAI · Wellness OS<br>Domain: cardioguardai.in<br>⚠ Wellness only — not a medical diagnosis</div>
+    <div class="hc-foot">CardioGuardAI · Hridai Master Agent<br>CIN: U62011DL2026PTC464381<br>⚠ Wellness only — not a medical diagnosis</div>
     <button class="hc-share" onclick="shareCard()">📤 Share with Doctor</button>
   </div>
 </div>
@@ -613,11 +612,11 @@ select.iinp option{background:var(--bg3)}
   <div class="ob act" id="ob0">
     <div class="ob-brand">
       <div class="ob-wordmark">Cardio<em>GuardAI</em></div>
-      <div class="ob-sub">Advanced Wellness Analytics Platform</div>
+      <div class="ob-sub">Powered by Hridai Master Agent</div>
     </div>
     <div class="ob-card">
       <h2>Shuru Karein</h2>
-      <p>India ka pehla agentic wellness support platform. Hridai aur 11 specialist agents — sirf aapke liye.</p>
+      <p>India ka pehla agentic cardiac wellness platform. Hridai aur 11 specialist agents — sirf aapke liye.</p>
       <div class="ifield">
         <div class="ilabel">Anthropic API Key</div>
         <input class="iinp" id="apiK" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
@@ -750,13 +749,13 @@ select.iinp option{background:var(--bg3)}
           <circle class="rbg" cx="42" cy="42" r="34"/>
           <circle class="rarc" id="RARC" cx="42" cy="42" r="34" stroke="var(--teal)" stroke-dasharray="214" stroke-dashoffset="214"/>
         </svg>
-        <div class="rnum"><div class="n" id="RNUM">—</div><div class="p">WELLNESS</div></div>
+        <div class="rnum"><div class="n" id="RNUM">—</div><div class="p">RISK</div></div>
       </div>
       <div class="rinfo">
         <div class="rlv" id="RLV" style="color:var(--ink3)">NOT ASSESSED</div>
         <div class="rlb" id="RLB">Assessment nahi hua</div>
-        <div class="rht" id="RHT">Wellness tab → Screening chalaaein</div>
-        <div class="rrun-btn" onclick="goS('risk')">🧘 Run Screening</div>
+        <div class="rht" id="RHT">Risk tab → Assessment chalaaein</div>
+        <div class="rrun-btn" onclick="goS('risk')">🫀 Run Assessment</div>
       </div>
     </div>
     <div class="stk" onclick="goS('chat')">
@@ -777,7 +776,7 @@ select.iinp option{background:var(--bg3)}
   <!-- ── RISK ASSESSMENT ── -->
   <div class="scr" id="s-risk">
     <div class="rshdr">
-      <div class="rshdr-t">Vascular Wellness Screening</div>
+      <div class="rshdr-t">Cardiac Risk Assessment</div>
       <div class="rshdr-s">Hridai + Antigravity XGBoost · AUC 0.81</div>
     </div>
     <div class="rprog"><div class="rpfill" id="RPFILL" style="width:0%"></div></div>
@@ -932,7 +931,7 @@ select.iinp option{background:var(--bg3)}
   <div id="NAV">
     <button class="ni on" id="n-chat" onclick="goS('chat')"><div class="ni-ico">💬</div><div class="ni-lbl">Chat</div></button>
     <button class="ni" id="n-dash" onclick="goS('dash')"><div class="ni-ico">📊<div class="nbdg" id="nb-dash"></div></div><div class="ni-lbl">Dashboard</div></button>
-    <button class="ni" id="n-risk" onclick="goS('risk')"><div class="ni-ico">🧘</div><div class="ni-lbl">Wellness</div></button>
+    <button class="ni" id="n-risk" onclick="goS('risk')"><div class="ni-ico">🫀</div><div class="ni-lbl">Risk</div></button>
     <button class="ni" id="n-vitals" onclick="goS('vitals')"><div class="ni-ico">🩺</div><div class="ni-lbl">Vitals</div></button>
     <button class="ni" id="n-reports" onclick="goS('reports')"><div class="ni-ico">📋</div><div class="ni-lbl">Reports</div></button>
     <button class="ni" id="n-meds" onclick="goS('meds')"><div class="ni-ico">💊<div class="nbdg" id="nb-meds"></div></div><div class="ni-lbl">Meds</div></button>
@@ -971,51 +970,48 @@ let repType='lab', tourIdx=0;
 
 // ── TOUR DATA ─────────────────────────────────────────
 const TOUR = [
-  { ico:'🧘', ttl:'Aapka Wellness Guardian', body:'CardioGuardAI India ka pehla agentic wellness platform hai. Hridai aur 11 specialist agents milkar aapki sehat ki raksha karte hain — 24 ghante, 7 din.' },
-  { ico:'🧠', ttl:'Hridai — OS OS', body:'Hridai 11 specialist agents ka orchestrator hai. Wellness Monitor, Vitals Sentinel, Crisis Agent, Lifestyle Coach — sab Hridai ke command mein hain.' },
-  { ico:'📊', ttl:'Antigravity AI Analytics', body:'Hamare XGBoost engine (Precision 0.81) se aapka wellness variance score milega. 22 health factors analyze hokar ek wellness insight banata hai — research-grade analytics.' },
+  { ico:'🫀', ttl:'Aapka Cardiac Guardian', body:'CardioGuardAI India ka pehla agentic cardiac wellness platform hai. Hridai aur 11 specialist agents milkar aapki sehat ki raksha karte hain — 24 ghante, 7 din.' },
+  { ico:'🧠', ttl:'Hridai — Master Agent', body:'Hridai 11 specialist agents ka orchestrator hai. Risk Monitor, Vitals Sentinel, Emergency Agent, Lifestyle Coach — sab Hridai ke command mein hain.' },
+  { ico:'📊', ttl:'Antigravity AI Model', body:'Hamare XGBoost model (AUC 0.81) se aapka cardiac risk score milega. 22 health factors analyze hokar ek precise risk score banata hai — research-grade accuracy.' },
   { ico:'🔒', ttl:'Complete Privacy', body:'DPDP Act 2023 compliant. Proxy architecture se aapka API key kabhi bhi expose nahi hoga. Sirf aapka data, sirf aapke device pe. Na cloud, na sharing.' },
 ];
 
 // ── 11 AGENTS ─────────────────────────────────────────
 const AGENTS = [
-  { id:'risk',  n:'Wellness Insights',    ico:'📊', c:'var(--red2)', d:'Wellness deviation patterns track karta hai. Patterns badalne pe turant alert.', s:'watching', on:true },
-  { id:'vit',   n:'Habit Sentinel',       ico:'🩺', c:'var(--rose)', d:'Lagaataar 3 readings mein abnormal vitals patterns detect karne pe alert.', s:'watching', on:true },
-  { id:'med',   n:'Habit Reminder',       ico:'💊', c:'var(--gold)', d:'Daily routine waqt par follow karne ka reminder track karta hai.', s:'standby',  on:true },
-  { id:'em',    n:'Crisis Support',       ico:'🚨', c:'var(--rose)', d:'Ghabrahat ya saans ki takleef pe immediate 108 support guidance.', s:'live',     on:true },
-  { id:'rep',   n:'Report Summary',       ico:'🧪', c:'var(--blue)', d:'Personal health reports ko scan karke plain Hinglish mein summary.', s:'standby',  on:true },
-  { id:'lc',    n:'Lifestyle Coach',      ico:'🧘', c:'var(--teal)', d:'Har Somwar personalised weekly wellness plan — insights ke hisaab se.', s:'active',   on:true },
-  { id:'cb',    n:'Caregiver Bridge',     ico:'👨‍👩‍👦', c:'var(--grn)',  d:'Daily wellness summary family member ko bhejta hai.', s:'standby',  on:false },
-  { id:'mm',    n:'Memory Analytics',     ico:'🧠', c:'var(--blue)', d:'7-day pattern analysis. Wellness trends early detect karta hai.', s:'active',   on:true },
-  { id:'asha',  n:'Wellness Coordinator', ico:'🏥', c:'var(--teal)', d:'Deviation hone pe wellness support aur nearest coordinator alert.', s:'standby',  on:false },
-  { id:'appt',  n:'Specialist Link',      ico:'📅', c:'var(--gold)', d:'Variance high hone pe wellness specialist se milna suggest karta hai.', s:'standby',  on:true },
-  { id:'bias',  n:'Equity Audit',         ico:'⚖️',  c:'var(--tl2)', d:'Har analytics mein demographic bias check — fairness ensure.', s:'active',   on:true },
+  { id:'risk',  n:'Risk Monitor',         ico:'📊', c:'var(--red2)', d:'Cardiac risk score weekly track karta hai. >8% change pe turant alert.', s:'watching', on:true },
+  { id:'vit',   n:'Vitals Sentinel',      ico:'🩺', c:'var(--rose)', d:'Lagaataar 3 readings mein abnormal BP/HR detect karne pe alert.', s:'watching', on:true },
+  { id:'med',   n:'Medication Reminder',  ico:'💊', c:'var(--gold)', d:'Dawai waqt par lene ka reminder. Adherence rate track karta hai.', s:'standby',  on:true },
+  { id:'em',    n:'Emergency Escalation', ico:'🚨', c:'var(--rose)', d:'Chest pain ya breathlessness pe 108 guidance + caregiver SMS.', s:'live',     on:true },
+  { id:'rep',   n:'Report Analyser',      ico:'🧪', c:'var(--blue)', d:'Lab reports, ECG, Echo ko scan karke plain Hinglish mein explain.', s:'standby',  on:true },
+  { id:'lc',    n:'Lifestyle Coach',      ico:'🧘', c:'var(--teal)', d:'Har Somwar personalised weekly wellness plan — risk ke hisaab se.', s:'active',   on:true },
+  { id:'cb',    n:'Caregiver Bridge',     ico:'👨‍👩‍👦', c:'var(--grn)',  d:'Daily health summary family member ko bhejta hai.', s:'standby',  on:false },
+  { id:'mm',    n:'Longitudinal Memory',  ico:'🧠', c:'var(--blue)', d:'7-day pattern analysis. Subclinical changes early detect karta hai.', s:'active',   on:true },
+  { id:'asha',  n:'ASHA Dispatch',        ico:'🏥', c:'var(--teal)', d:'High-risk users ke liye nearest ASHA worker alert aur dispatch.', s:'standby',  on:false },
+  { id:'appt',  n:'Appointment Finder',   ico:'📅', c:'var(--gold)', d:'Risk >60% hone pe cardiologist appointment suggest karta hai.', s:'standby',  on:true },
+  { id:'bias',  n:'Bias Audit',           ico:'⚖️',  c:'var(--tl2)', d:'Har prediction mein demographic bias check — fairness ensure.', s:'active',   on:true },
 ];
 
 // ── QR CHIPS ──────────────────────────────────────────
 const QRS = {
-  default:   [{e:'🙏',t:'Aaj kaisa feel kar raha hoon'},{e:'❤️',t:'Wellness tips chahiye'},{e:'🩸',t:'BP patterns manage kaise karein'},{e:'🥗',t:'Healthy Indian khaana'},{e:'😴',t:'Neend ki patterns'},{e:'🧘',t:'Stress manage kaise karein'},{e:'🚨',t:'Ghabrahat mehsoos ho rahi hai'}],
-  emergency: [{e:'📞',t:'108 support guidance'},{e:'🏥',t:'Specialist support chahiye'},{e:'🧘',t:'Abhi takleef mein kya karoon'},{e:'👨‍👩‍👦',t:'Caretaker ko kaise bataaein'}],
-  lifestyle: [{e:'🥗',t:'Aaj ka healthy breakfast'},{e:'🚶',t:'Daily walk guidance'},{e:'💧',t:'Din mein kitna paani piyein'},{e:'🧘',t:'Meditation patterns'},{e:'😴',t:'Neend behtar kaise karein'}],
-  risk:      [{e:'📊',t:'Wellness Variance matlab kya hai'},{e:'⬇️',t:'Variance kaise kam karein'},{e:'👨‍⚕️',t:'Specialist se kya poochhein'},{e:'📅',t:'Checkup schedule kab karein'}],
+  default:   [{e:'🙏',t:'Aaj kaisa feel kar raha hoon'},{e:'❤️',t:'Dil ki sehat ke tips'},{e:'🩸',t:'BP high ho toh kya karein'},{e:'🥗',t:'Heart healthy Indian khaana'},{e:'😴',t:'Neend ki problem ka hal'},{e:'🧘',t:'Stress kam kaise karein'},{e:'🚨',t:'Chest mein dard hai abhi'}],
+  emergency: [{e:'📞',t:'108 pe call kaise karein'},{e:'🏥',t:'Hospital jana chahiye kya'},{e:'🧘',t:'Abhi takleef mein kya karoon'},{e:'👨‍👩‍👦',t:'Ghar wale ko kaise bataaein'}],
+  lifestyle: [{e:'🥗',t:'Aaj ka healthy breakfast'},{e:'🚶',t:'Kitni walk karni chahiye'},{e:'💧',t:'Din mein kitna paani piyein'},{e:'🧘',t:'Meditation kaise shuru karein'},{e:'😴',t:'Neend behtar kaise karein'}],
+  risk:      [{e:'📊',t:'Risk score ka matlab kya hai'},{e:'⬇️',t:'Risk score kaise kam karein'},{e:'👨‍⚕️',t:'Doctor se kya poochhein'},{e:'📅',t:'Checkup schedule kab karein'}],
 };
 
-const SYS = `Aap **Hridai** (हृदई) hain — CardioGuardAI ka **Wellness Operating System**.
-Aapka mission: User ki vascular wellness aur general wellbeing ko monitor aur improve karna.
+// ── HRIDAI SYSTEM PROMPT ──────────────────────────────
+const SYS = `You are Hridai (हृदई) — the Master Agent and intelligence core of CardioGuardAI, India's most advanced cardiac wellness platform.
 
-IMPORTANT (Compliance):
-- Hridai ek **Wellness Support Platform** hai.
-- Aap koi medical **diagnosis** nahi dete.
-- Aap **patient** word ki jagah **user** ya **member** use karenge.
-- Aap **cardiac risk** ki jagah **wellness variance** ya **health patterns** use karenge.
-- Aapka output hamesha ek medical summary ya guide hai, diagnostic report nahi.
+CardioGuardAI = platform. You = Hridai (the AI inside it). Like Google has Gemini.
+
+Company: CardioGuardAI Private Limited (CIN: U62011DL2026PTC464381)
 
 PERSONALITY:
-- Warm, caring Hinglish — like a knowledgeable health guide (chacha/mausi who is very fit)
+- Warm, caring Hinglish — like a knowledgeable family elder (chacha/mausi who is also a doctor)
 - Always "aap" (respectful). Never clinical, never robotic.
 - Celebrate health wins genuinely and enthusiastically
 - When someone is scared: comfort FIRST, facts second
-- Be specific: "20 min brisk walk" not just "activity karein"
+- Be specific: "20 min brisk walk" not just "exercise karein"
 - Build real rapport across the conversation — remember what was shared
 
 FORMAT:
@@ -1125,11 +1121,11 @@ function goOB(n) {
 
 function startApp() {
   const k = document.getElementById('apiK').value.trim();
-    const px = document.getElementById('pxK').value.trim();
-    if (!k && !px) { toast('API key ya Proxy URL daalen'); return; }
-    if (k) { KEY = k; ST.s('key', k); }
-    if (px) { PROXY_URL = px; ST.s('proxy', px); proxyEnabled = true; ST.s('pxon', true); }
-    goOB(1); initTour();
+  const px = document.getElementById('pxK').value.trim();
+  if (!k && !px) { toast('API key ya Proxy URL daalen'); return; }
+  if (k) { KEY = k; ST.s('key', k); }
+  if (px) { PROXY_URL = px; ST.s('proxy', px); proxyEnabled = true; ST.s('pxon', true); }
+  goOB(1); initTour();
 }
 
 function initTour() { tourIdx=0; renderTour(); }
@@ -1220,7 +1216,7 @@ function chatWelcome() {
   const h = new Date().getHours();
   const g = h<12 ? 'Suprabhat 🌅' : h<17 ? 'Namaskar 🙏' : 'Shubh Sandhya 🌙';
   const nm = profile.name ? `, **${profile.name}**` : '';
-  bubble(`${g}${nm}!\n\nMain **Hridai** hoon — **CardioGuardAI** ka Master Agent. Aapke liye 11 specialist agents ready hain:\n\n- 📊 **Wellness Monitor** — patterns track kar raha hai\n- 🩺 **Habit Sentinel** — vitar/pulse patterns dekh raha hai\n- 🚨 **Crisis Agent** — kisi bhi emergency support pe turant ready\n- 🧘 **Lifestyle Coach** — wellness plan bana raha hai\n\n_Aaj aap kaisa mehsoos kar rahe hain? Koi sawaal, koi takleef?_\n\n⚠ Main doctor nahi hoon — ek AI wellness companion hoon.`, 'ai');
+  bubble(`${g}${nm}!\n\nMain **Hridai** hoon — **CardioGuardAI** ka Master Agent. Aapke liye 11 specialist agents ready hain:\n\n- 📊 **Risk Monitor** — cardiac score track kar raha hai\n- 🩺 **Vitals Sentinel** — BP/HR patterns dekh raha hai\n- 🚨 **Emergency Agent** — kisi bhi emergency pe turant ready\n- 🧘 **Lifestyle Coach** — wellness plan bana raha hai\n\n_Aaj aap kaisa mehsoos kar rahe hain? Koi sawaal, koi takleef?_\n\n⚠ Main doctor nahi hoon — ek AI wellness companion hoon.`, 'ai');
 }
 
 async function sendMsg() {
@@ -1426,13 +1422,13 @@ async function runRisk() {
   // 1. Try Antigravity model first
   try {
     const ag = await callAntigravity(p);
-    if (ag && (ag.wellness_score!=null || ag.probability!=null)) {
-      score = ag.wellness_score ?? (ag.probability*100);
-      level = ag.insight_category || (score<30?'OPTIMAL':score<60?'DEVIATION':'CRITICAL');
+    if (ag && (ag.risk_score!=null || ag.probability!=null)) {
+      score = ag.risk_score ?? (ag.probability*100);
+      level = ag.risk_level || (score<30?'LOW':score<60?'MODERATE':'HIGH');
       explanation = ag.message_hindi || '';
-      if (ag.broadcast_status) toast('📡 [AGENT: WELLNESS] Live Broadcast Complete!', 5000);
-      if (ag.factor_analysis) {
-        shapFactors = Object.entries(ag.factor_analysis).slice(0,5).map(([k,v])=>({
+      if (ag.whatsapp_alert) toast('📡 [AGENT: WHATSAPP] Live Broadcast Complete!', 5000);
+      if (ag.shap_values) {
+        shapFactors = Object.entries(ag.shap_values).slice(0,5).map(([k,v])=>({
           factor:k, impact:typeof v==='object'?v.impact:Math.abs(v)*100,
           direction:typeof v==='object'?v.direction:(v>0?'increases':'decreases')
         }));
@@ -1441,19 +1437,19 @@ async function runRisk() {
   } catch(e) { console.log('Antigravity unavailable, using Claude fallback'); }
 
   // 2. Claude fallback if Antigravity not connected
-    if (score===null) {
+  if (score===null) {
     try {
       const raw = await callClaude(
-        [{role:'user',content:`Calculate wellness variance for these 22 factors: ${JSON.stringify(p)}. Return ONLY valid JSON: {"score":number_0_to_100,"level":"OPTIMAL|DEVIATION|CRITICAL","explanation_hindi":"2 sentences Hinglish","shap_factors":[{"factor":"display_name","impact":0_to_100,"direction":"increases|decreases"}]}`}],
-        'You are a wellness analytics engine. Return ONLY a valid JSON object with no other text, no markdown, no explanation.',
+        [{role:'user',content:`Calculate cardiac risk for these 22 factors: ${JSON.stringify(p)}. Return ONLY valid JSON: {"score":number_0_to_100,"level":"LOW|MODERATE|HIGH","explanation_hindi":"2 sentences Hinglish","shap_factors":[{"factor":"display_name","impact":0_to_100,"direction":"increases|decreases"}]}`}],
+        'You are a cardiac risk calculator. Return ONLY a valid JSON object with no other text, no markdown, no explanation.',
         512
       );
       const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
       score = parsed.score||35;
-      level = parsed.level||(score<30?'OPTIMAL':score<60?'DEVIATION':'CRITICAL');
+      level = parsed.level||(score<30?'LOW':score<60?'MODERATE':'HIGH');
       explanation = parsed.explanation_hindi||'';
       shapFactors = parsed.shap_factors||[];
-    } catch(e) { score=35; level='DEVIATION'; explanation='Please connect Analytics engine for accurate results.'; }
+    } catch(e) { score=35; level='MODERATE'; explanation='Please connect Antigravity model for accurate results.'; }
   }
 
   showRiskResult(score, level, explanation, shapFactors);
@@ -1479,13 +1475,13 @@ function showRiskResult(score, level, expl, shap) {
             stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"
             transform="rotate(-90 55 55)" style="transition:stroke-dashoffset 1.3s ease"/>
         </svg>
-      <div class="rres-num">
-        <div class="rres-pct" style="color:${C[level]}">${score.toFixed(1)}</div>
-        <div class="rres-lbl">% VARIANCE</div>
+        <div class="rres-num">
+          <div class="rres-pct" style="color:${C[level]}">${score.toFixed(1)}</div>
+          <div class="rres-lbl">% RISK</div>
+        </div>
       </div>
-    </div>
-    <div class="rres-lv" style="color:${C[level]}">${level} INDICATOR</div>
-    <div class="rres-msg">${expl||msgs[level]}</div>
+      <div class="rres-lv" style="color:${C[level]}">${level} RISK</div>
+      <div class="rres-msg">${expl||msgs[level]}</div>
       ${shapHtml}
       <div class="rres-actions">
         <button class="btn-pri" onclick="goS('chat');setTimeout(()=>qc('Mera risk score ${score.toFixed(1)}% aaya — ${level}. Matlab kya hai? Main kya karoon?'),400)">
@@ -1921,8 +1917,8 @@ function openCard() {
 }
 function closeCard(){document.getElementById('HCARD').classList.remove('open');}
 async function shareCard(){
-  const txt=`CardioGuardAI Wellness Summary\n\nDeviation Score: ${lastRisk?.score?.toFixed(1)||'—'}%\nBP: ${vitalsLog.at(-1)?.sys||'—'}/${vitalsLog.at(-1)?.dia||'—'} mmHg\nDate: ${new Date().toLocaleDateString('hi-IN')}\n\n⚠ Wellness assessment only — not a medical diagnosis\nCardioGuardAI · cardioguardai.in`;
-  if(navigator.share){try{await navigator.share({title:'CardioGuardAI Wellness Card',text:txt});}catch(e){}}
+  const txt=`CardioGuardAI Health Summary\n\nRisk Score: ${lastRisk?.score?.toFixed(1)||'—'}% (${lastRisk?.level||'Not Assessed'})\nBP: ${vitalsLog.at(-1)?.sys||'—'}/${vitalsLog.at(-1)?.dia||'—'} mmHg\nDate: ${new Date().toLocaleDateString('hi-IN')}\n\n⚠ Wellness assessment only — not a medical diagnosis\nCardioGuardAI · CIN U62011DL2026PTC464381`;
+  if(navigator.share){try{await navigator.share({title:'CardioGuardAI Health Card',text:txt});}catch(e){}}
   else{navigator.clipboard?.writeText(txt);toast('📋 Health card copied!');}
 }
 

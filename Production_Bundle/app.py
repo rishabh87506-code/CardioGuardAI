@@ -1,7 +1,7 @@
 """
 CardioGuard AI — Merged Production Backend (v4.5)
 ================================================
-Combines Antigravity Wellness Engine + Secure Hridai Proxy
+Combines Antigravity Risk Engine + Secure Hridai Proxy
 Designed for Railway/Cloud Run deployment.
 """
 
@@ -27,7 +27,7 @@ limiter = Limiter(
 )
 
 # In production, specify your frontend domain in ALLOWED_ORIGINS
-ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', 'https://cardioguardai.in,https://www.cardioguardai.in').split(',')
+ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
 CORS(app, origins=ALLOWED_ORIGINS)
 
 # ── CONFIGURATION ──────────────────────────────────────
@@ -110,17 +110,17 @@ def health():
         "version": "4.5",
         "model_loaded": model is not None,
         "claude_configured": len(ANTHROPIC_API_KEY) > 20,
-        "whatsapp_agent": "Active" if WHATSAPP_KEY else "Standby (BETA)",
+        "whatsapp_agent": "Active" if WHATSAPP_KEY else "Standby (Mock)",
         "environment": os.environ.get('RAILWAY_ENVIRONMENT', 'local'),
         "timestamp": time.time()
     })
 
-# ── ROUTE: WELLNESS ANALYSIS ──────────────────────────
+# ── ROUTE: RISK PREDICTION ─────────────────────────────
 @app.route('/api/predict', methods=['POST'])
 @limiter.limit("10 per minute")
 def predict():
     if not model:
-        return jsonify({"error": "Wellness analytics engine not active."}), 503
+        return jsonify({"error": "Risk model not loaded on server."}), 503
     
     try:
         data = request.get_json(force=True)
@@ -135,19 +135,19 @@ def predict():
         prob = float(model.predict_proba(fa)[0][1])
         score = round(prob * 100, 2)
         
-        # Wellness Pattern Thresholding (v4.8 Wellness Compliance)
-        level = "OPTIMAL"
+        # Clinical Risk Thresholding (v4.8 Production)
+        level = "LOW"
         asha_dispatch = False
         if score >= 70:
-            level = "CRITICAL DEVIATION"
+            level = "HIGH"
             asha_dispatch = True
         elif score >= 30:
-            level = "MODERATE DEVIATION"
+            level = "MODERATE"
 
         # Auto-Trigger WhatsApp Agent for High Risk
         broadcasted = False
         if asha_dispatch or data.get('emergency', False):
-            broadcasted = wa_agent.broadcast(data.get('name', 'User'), score, level)
+            broadcasted = wa_agent.broadcast(data.get('name', 'Patient'), score, level)
 
         # SHAP Explanations
         shap_vals = {}
@@ -166,25 +166,25 @@ def predict():
             except: pass
 
         return jsonify({
-            "wellness_score": score,
-            "insight_category": level,
-            "broadcast_status": broadcasted,
-            "factor_analysis": shap_vals,
+            "risk_score": score,
+            "risk_level": level,
+            "whatsapp_alert": broadcasted,
+            "shap_values": shap_vals,
             "proxy_mode": True,
-            "category": "Wellness Support Tool (Non-Diagnostic)"
+            "disclaimer": "Non-diagnostic wellness assessment."
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ── ROUTE: BATCH WELLNESS AUDIT ────────────────────────
+# ── ROUTE: BATCH RISK AUDIT ────────────────────────────
 @app.route('/api/batch', methods=['POST'])
 def batch_predict():
     if not model:
-        return jsonify({"error": "Engine offline"}), 503
+        return jsonify({"error": "Model offline"}), 503
     try:
         cases = request.get_json(force=True)
         if not isinstance(cases, list):
-            return jsonify({"error": "Payload must be a list"}), 400
+            return jsonify({"error": "Payload must be a list of cases"}), 400
         
         results = []
         for data in cases:
@@ -192,7 +192,7 @@ def batch_predict():
             fa = np.array(fa_list).reshape(1, -1)
             prob = float(model.predict_proba(fa)[0][1])
             score = round(prob * 100, 2)
-            results.append({"wellness_score": score, "level": "DEVIATION" if score >= 30 else "OPTIMAL"})
+            results.append({"risk_score": score, "level": "HIGH" if score >= 70 else "MODERATE" if score >= 30 else "LOW"})
         
         return jsonify({"count": len(results), "results": results})
     except Exception as e:
@@ -229,8 +229,8 @@ if __name__ == '__main__':
     print("╔══════════════════════════════════════════════════════╗")
     print("║     Hridai Agent OS (v4.8) — Boot Sequence active    ║")
     print("╚══════════════════════════════════════════════════════╝")
-    print("✓ Analysis Agent: Antigravity-22-XGBoost loaded.")
-    print("✓ Wellness Agent: Broadcast pipeline assigned.")
+    print("✓ Clinical Agent: Antigravity-22-XGBoost loaded.")
+    print("✓ WhatsApp Agent: Broadcast pipeline assigned.")
     print("✓ Proxy Agent: Internal secure tunneling active.")
     print(f"✓ Master Agent: Linked for Sonnet 3.5 ({'READY' if ANTHROPIC_API_KEY else 'STANDBY'}).")
     
