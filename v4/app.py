@@ -170,8 +170,27 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ── ROUTE: CLAUDE PROXY ────────────────────────────────
-@app.route('/api/chat', methods=['POST'])
+# ── ROUTE: BATCH RISK AUDIT ────────────────────────────
+@app.route('/api/batch', methods=['POST'])
+def batch_predict():
+    if not model:
+        return jsonify({"error": "Model offline"}), 503
+    try:
+        cases = request.get_json(force=True)
+        if not isinstance(cases, list):
+            return jsonify({"error": "Payload must be a list of cases"}), 400
+        
+        results = []
+        for data in cases:
+            fa_list = [float(data.get(f, 0)) for f in FEATURES]
+            fa = np.array(fa_list).reshape(1, -1)
+            prob = float(model.predict_proba(fa)[0][1])
+            score = round(prob * 100, 2)
+            results.append({"risk_score": score, "level": "HIGH" if score >= 70 else "MODERATE" if score >= 30 else "LOW"})
+        
+        return jsonify({"count": len(results), "results": results})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 @limiter.limit("5 per minute")
 def chat():
     if not ANTHROPIC_API_KEY:

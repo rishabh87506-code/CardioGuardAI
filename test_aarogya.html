@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#F7F3EE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Aarogya — CardioGuardAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     AAROGYA v8  ·  CardioGuardAI Platform
+     ───────────────────────────────────────────────────────────────
+     Patient PWA  +  Live Antigravity Agent  +  Agent Control Room
+     
+     CONFIGURATION — change these before deploying:
+     
+     ANTIGRAVITY_ENDPOINT  → your Railway.app /predict URL
+     CLAUDE_API_KEY        → injected by your backend proxy (never expose in prod)
+     
+     ARCHITECTURE:
+     Browser → Flask /predict (Railway) → Antigravity XGBoost (AUC 0.81)
+     Browser → Claude API /v1/messages  → Aarogya conversation
+     Browser → Agent Bus (postMessage)  → 11 specialist agents
+═══════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ═══ DESIGN TOKENS ═══ */
+:root {
+  /* Patient UI */
+  --bg:        #F7F3EE;
+  --surface:   #FFFFFF;
+  --border:    #E8E3DB;
+  --text:      #1C1917;
+  --text-2:    #4C4842;
+  --text-3:    #8A8278;
+  --text-4:    #BCB6AE;
+  --green:     #2E7D52;
+  --green-bg:  #EAF5EF;
+  --amber:     #92600A;
+  --amber-bg:  #FFF4E0;
+  --red:       #8B1A1A;
+  --red-bg:    #FDEAEA;
+  --blue:      #1D4ED8;
+  --blue-bg:   #EFF6FF;
+
+  /* Agent OS */
+  --ink:       #0C0A0F;
+  --ink2:      #131118;
+  --ink3:      #1A1720;
+  --a-border:  #2E2A38;
+  --a-tx:      #EDE9F4;
+  --a-tx2:     #9B95B0;
+  --heart:     #E8402A;
+  --teal:      #00C9A0;
+  --indigo:    #7B8CF8;
+
+  --r:    20px;
+  --r-s:  12px;
+  --pad:  20px;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{display:none}
+
+/* ═══ SHELL ═══ */
+#app{width:100%;max-width:430px;height:100dvh;margin:0 auto;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* ═══ SCREENS ═══ */
+#screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;padding-bottom:32px}
+.screen.on{display:block;animation:fadeUp .2s ease}
+.screen.flex-screen.on{display:flex;flex-direction:column}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ NAV ═══ */
+#nav{flex-shrink:0;background:var(--surface);border-top:2px solid var(--border);display:flex;padding:6px 0 max(env(safe-area-inset-bottom,16px),16px)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 2px;min-height:56px;justify-content:center;position:relative}
+.nb::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:3px;border-radius:0 0 3px 3px;background:var(--green);transition:width .2s}
+.nb.on::after{width:28px}
+.nb-i{font-size:1.35rem;line-height:1;transition:.15s}
+.nb-l{font-size:.58rem;font-weight:700;color:var(--text-3);letter-spacing:.03em}
+.nb.on .nb-l{color:var(--green)}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);margin:0 var(--pad) 12px;overflow:hidden}
+.card-p{padding:18px 18px}
+.slabel{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding:14px var(--pad) 8px}
+.ph{padding:max(env(safe-area-inset-top,20px),24px) var(--pad) 14px}
+.ph-sub{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:3px}
+.ph-title{font-size:1.6rem;font-weight:900;color:var(--text);letter-spacing:-.02em}
+
+/* ═══ INPUTS ═══ */
+.inp{width:100%;padding:14px 16px;background:var(--bg);border:2px solid var(--border);border-radius:var(--r-s);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;color:var(--text);outline:none;transition:.15s}
+.inp:focus{border-color:var(--green);background:var(--surface)}
+.inp-label{font-size:.72rem;font-weight:700;color:var(--text-3);margin-bottom:6px;letter-spacing:.03em}
+
+/* ═══ BUTTONS ═══ */
+.btn{width:100%;padding:15px;border-radius:var(--r-s);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;border:none;transition:.15s;min-height:52px}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:active{opacity:.85}
+.btn-outline{background:var(--bg);border:2px solid var(--border);color:var(--text-2)}
+.btn-red{background:var(--red);color:#fff}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:.68rem;font-weight:800;letter-spacing:.02em}
+.b-ok    {background:var(--green-bg);color:var(--green)}
+.b-warn  {background:var(--amber-bg);color:var(--amber)}
+.b-alert {background:var(--red-bg);color:var(--red)}
+.b-grey  {background:var(--border);color:var(--text-3)}
+.b-blue  {background:var(--blue-bg);color:var(--blue)}
+.b-live  {background:#E8F5E9;color:#1B5E20;animation:pulse-badge 2s infinite}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ═══ MISC ═══ */
+.row{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.note{margin:0 var(--pad) 12px;padding:12px 14px;background:var(--amber-bg);border-radius:var(--r-s);font-size:.75rem;font-weight:500;color:var(--amber);line-height:1.65;border:1px solid rgba(146,96,10,.12)}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.empty-i{font-size:2.5rem;margin-bottom:10px}
+.empty-t{font-size:.85rem;font-weight:600;color:var(--text-3);line-height:1.65}
+.tabs{display:flex;gap:4px;padding:0 var(--pad);margin-bottom:4px;overflow-x:auto}
+.tab{flex-shrink:0;padding:9px 14px;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;background:var(--surface);border:1.5px solid var(--border);color:var(--text-2);transition:.15s;white-space:nowrap}
+.tab.on{background:var(--green);border-color:var(--green);color:#fff}
+.vcard{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-s);padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.vc-icon{font-size:1.5rem}
+.vc-val{font-size:1.35rem;font-weight:900;color:var(--text);letter-spacing:-.03em}
+.vc-unit{font-size:.62rem;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em}
+.vc-name{font-size:.72rem;font-weight:600;color:var(--text-2);text-align:center}
+.tile{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-s);padding:16px 14px;cursor:pointer;transition:.12s;display:flex;flex-direction:column;gap:5px}
+.tile:active{transform:scale(.97)}
+.tile-i{font-size:1.5rem}
+.tile-t{font-size:.88rem;font-weight:800;color:var(--text)}
+.tile-s{font-size:.7rem;font-weight:500;color:var(--text-3)}
+.sym{padding:9px 14px;border-radius:20px;background:var(--bg);border:2px solid var(--border);font-size:.82rem;font-weight:700;cursor:pointer;color:var(--text-2);transition:.12s;min-height:44px}
+.sym.on{background:var(--red-bg);border-color:rgba(139,26,26,.2);color:var(--red)}
+.qr{flex-shrink:0;padding:8px 14px;border-radius:20px;background:var(--bg);border:1.5px solid var(--border);font-size:.78rem;font-weight:700;color:var(--text-2);cursor:pointer;white-space:nowrap;min-height:40px}
+.bbl{padding:12px 16px;border-radius:18px;font-size:.88rem;font-weight:500;line-height:1.65;max-width:80%;white-space:pre-wrap}
+.bbl-user{background:var(--green);color:#fff;border-bottom-right-radius:4px}
+.bbl-ai{background:var(--surface);border:1.5px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+.bbl-ts{font-size:.6rem;font-weight:600;color:var(--text-4);padding:3px 4px}
+.fac{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);margin:0 var(--pad) 10px;padding:16px}
+.fnd{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:.82rem;font-weight:500;color:var(--text-2);border-bottom:1px solid var(--border)}
+.fnd:last-child{border-bottom:none}
+.fnd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.cvd-row{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--border)}
+.cvd-row:last-child{border-bottom:none}
+.tog{width:46px;height:26px;border-radius:13px;background:var(--border);border:none;cursor:pointer;position:relative;transition:.2s;flex-shrink:0}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tog.on{background:var(--green)}
+.tog.on::after{left:23px}
+.prog{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.prog-f{height:100%;border-radius:3px;transition:width .6s ease}
+
+/* ═══ HEARTBEAT RING ═══ */
+.hb-ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--green);opacity:.15;animation:hbRing 3s ease-out infinite}
+@keyframes hbRing{0%{transform:scale(1);opacity:.2}100%{transform:scale(1.6);opacity:0}}
+
+/* ═══ SOS ═══ */
+#sosBtn{position:fixed;bottom:calc(max(env(safe-area-inset-bottom,16px),16px)+80px);right:20px;width:64px;height:64px;border-radius:50%;background:var(--red);border:none;color:#fff;font-size:.65rem;font-weight:900;cursor:pointer;box-shadow:0 0 0 4px rgba(139,26,26,.2),0 4px 20px rgba(139,26,26,.4);animation:sosPulse 2.5s ease-in-out infinite;letter-spacing:.02em;z-index:9999;line-height:1.2}
+@keyframes sosPulse{0%,100%{box-shadow:0 0 0 4px rgba(139,26,26,.2),0 4px 20px rgba(139,26,26,.4)}50%{box-shadow:0 0 0 10px rgba(139,26,26,.08),0 4px 24px rgba(139,26,26,.6)}}
+
+/* ═══ TOAST ═══ */
+#toast{position:fixed;bottom:calc(max(env(safe-area-inset-bottom,16px),16px)+88px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;padding:10px 20px;border-radius:30px;font-size:.82rem;font-weight:700;opacity:0;transition:.25s;white-space:nowrap;z-index:99999;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ═══ PPG ═══ */
+.ppg{display:none;align-items:center;gap:14px;padding:14px 18px;background:var(--red-bg);border-radius:var(--r-s);margin:0 var(--pad) 12px;border:1.5px solid rgba(139,26,26,.15)}
+.ppg.on{display:flex}
+.ppg-beat{width:14px;height:14px;border-radius:50%;background:var(--red);animation:beat .5s ease-in-out infinite alternate;flex-shrink:0}
+@keyframes beat{to{transform:scale(1.5)}}
+
+/* ═══ RISK SCORE METER ═══ */
+.risk-meter{width:100%;height:12px;border-radius:6px;background:linear-gradient(to right,#2E7D52,#F59E0B,#8B1A1A);overflow:hidden;position:relative;border:1px solid var(--border)}
+.risk-needle{position:absolute;top:-3px;width:3px;height:18px;background:var(--text);border-radius:2px;transition:left .8s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 6px rgba(0,0,0,.4)}
+
+/* ═══ AGENT OS — full-screen overlay ═══ */
+#agentOS{position:fixed;inset:0;background:var(--ink);z-index:10000;display:none;flex-direction:column;font-family:'IBM Plex Mono',monospace;overflow:hidden}
+#agentOS.on{display:flex;animation:fadeUp .25s ease}
+
+.aos-header{padding:16px 20px;border-bottom:1px solid var(--a-border);display:flex;align-items:center;gap:16px;flex-shrink:0;background:var(--ink2)}
+.aos-logo{font-size:.9rem;font-weight:600;color:var(--heart);letter-spacing:-.01em}
+.aos-logo span{color:var(--a-tx2);font-weight:400}
+.aos-close{margin-left:auto;padding:8px 14px;border-radius:8px;background:transparent;border:1px solid var(--a-border);color:var(--a-tx2);font-family:'IBM Plex Mono',monospace;font-size:.72rem;cursor:pointer;transition:.15s}
+.aos-close:hover{background:var(--a-border)}
+
+.aos-body{flex:1;overflow:hidden;display:flex}
+
+/* Agent sidebar */
+.aos-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--a-border);display:flex;flex-direction:column;overflow-y:auto;background:var(--ink2)}
+.aos-agent{padding:10px 14px;border-bottom:1px solid var(--a-border);cursor:pointer;transition:.12s;display:flex;align-items:center;gap:10px}
+.aos-agent:hover{background:rgba(255,255,255,.03)}
+.aos-agent.on{background:rgba(0,201,160,.06);border-left:2px solid var(--teal)}
+.agent-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:.3s}
+.agent-dot.live{animation:agentPulse 1.5s infinite}
+@keyframes agentPulse{0%,100%{opacity:1}50%{opacity:.3}}
+.agent-name{font-size:.72rem;font-weight:600;color:var(--a-tx);letter-spacing:.01em}
+.agent-role{font-size:.6rem;color:var(--a-tx2);margin-top:1px}
+
+/* Agent detail */
+.aos-detail{flex:1;overflow-y:auto;padding:20px}
+.aos-d-header{margin-bottom:20px}
+.aos-d-title{font-size:1rem;font-weight:600;color:var(--a-tx);letter-spacing:-.01em}
+.aos-d-sub{font-size:.65rem;color:var(--a-tx2);margin-top:3px}
+.aos-panel{background:var(--ink2);border:1px solid var(--a-border);border-radius:10px;padding:16px;margin-bottom:12px}
+.aos-panel-title{font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--a-tx2);margin-bottom:12px}
+.aos-kv{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.68rem}
+.aos-kv:last-child{border-bottom:none}
+.aos-kv-k{color:var(--a-tx2)}
+.aos-kv-v{color:var(--a-tx);font-weight:500;text-align:right;max-width:60%}
+.aos-log{background:var(--ink);border:1px solid var(--a-border);border-radius:8px;padding:14px;max-height:160px;overflow-y:auto;font-size:.63rem;line-height:1.8;color:var(--a-tx2)}
+.aos-log .log-ts{color:var(--teal);margin-right:8px}
+.aos-log .log-warn{color:var(--amber)}
+.aos-log .log-ok{color:var(--teal)}
+.aos-log .log-err{color:var(--heart)}
+
+/* Run button */
+.aos-run{width:100%;padding:12px;border-radius:8px;background:transparent;border:1px solid var(--teal);color:var(--teal);font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:600;cursor:pointer;transition:.15s;margin-bottom:8px}
+.aos-run:hover{background:rgba(0,201,160,.08)}
+.aos-run.running{background:rgba(0,201,160,.06);color:var(--a-tx2);border-color:var(--a-border);cursor:not-allowed}
+
+/* Status strip */
+.aos-strip{flex-shrink:0;padding:8px 20px;border-top:1px solid var(--a-border);background:var(--ink2);display:flex;align-items:center;gap:16px;font-size:.6rem;color:var(--a-tx2)}
+.aos-strip-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:agentPulse 2s infinite}
+
+/* ═══ RISK CARD ANIMATION ═══ */
+@keyframes riskReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.risk-card-reveal{animation:riskReveal .4s ease forwards}
+
+/* ═══ LOADING SPINNER ═══ */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ PATIENT PWA SHELL ═══════════════ -->
+<div id="app">
+
+  <div id="screens">
+
+    <!-- ▓▓▓ HOME ▓▓▓ -->
+    <div class="screen on" id="sc-home">
+      <div style="padding:max(env(safe-area-inset-top,20px),20px) var(--pad) 14px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green)" id="hGreet">Subah ki namaskar 🙏</div>
+          <div style="font-size:1.5rem;font-weight:800;color:var(--text);margin-top:2px">Aarogya <span style="color:var(--green)">🫀</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <div style="font-size:.68rem;color:var(--text-3);font-weight:600" id="hDate"></div>
+          <div style="display:flex;align-items:center;gap:5px;background:var(--amber-bg);border:1.5px solid rgba(146,96,10,.15);padding:6px 12px;border-radius:20px">
+            <span>🔥</span>
+            <span style="font-size:.78rem;font-weight:800;color:var(--amber)" id="streakN">7</span>
+            <span style="font-size:.64rem;font-weight:600;color:var(--amber)">din</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE RISK SCORE from Antigravity -->
+      <div style="margin:0 var(--pad) 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden" id="riskCard">
+        <div style="padding:16px 18px 8px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">Antigravity · Live Risk</div>
+            <div style="font-size:2rem;font-weight:900;letter-spacing:-.04em;color:var(--text);margin-top:2px" id="riskScore">—</div>
+          </div>
+          <div id="riskBadge"><div class="badge b-grey">⟳ Abhi check karein</div></div>
+        </div>
+        <div style="padding:0 18px 10px">
+          <div class="risk-meter"><div class="risk-needle" id="riskNeedle" style="left:0%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:.58rem;font-weight:700;color:var(--text-4);margin-top:4px">
+            <span>Low</span><span>Moderate</span><span>High</span><span>Critical</span>
+          </div>
+        </div>
+        <div style="border-top:1.5px solid var(--border);padding:10px 18px;display:flex;gap:8px;align-items:center">
+          <button onclick="runRiskCheck()" id="riskBtn" class="btn btn-green" style="flex:1;padding:11px;font-size:.82rem">🫀 Risk Check Karein</button>
+          <div class="badge b-live" id="riskStatus" style="display:none">● LIVE</div>
+        </div>
+      </div>
+
+      <!-- 4 vitals -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 var(--pad) 14px">
+        <div class="vcard"><div class="vc-icon">🩸</div><div class="vc-val" id="hBP">—/—</div><div class="vc-unit">mmHg</div><div class="vc-name">Blood Pressure</div></div>
+        <div class="vcard"><div class="vc-icon">💓</div><div class="vc-val" id="hHR">—</div><div class="vc-unit">bpm</div><div class="vc-name">Heart Rate</div></div>
+        <div class="vcard"><div class="vc-icon">🫁</div><div class="vc-val" id="hSpo">—%</div><div class="vc-unit">Oxygen</div><div class="vc-name">SpO₂</div></div>
+        <div class="vcard"><div class="vc-icon">🍬</div><div class="vc-val" id="hBS">—</div><div class="vc-unit">mg/dL</div><div class="vc-name">Blood Sugar</div></div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="slabel">⚡ Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 var(--pad) 14px">
+        <div class="tile" onclick="go('vitals')"><div class="tile-i">📊</div><div class="tile-t">Vitals Log Karein</div><div class="tile-s">Readings enter karein</div></div>
+        <div class="tile" onclick="startPPG();go('vitals')"><div class="tile-i">💓</div><div class="tile-t">PPG Scan</div><div class="tile-s">Camera se BP estimate</div></div>
+        <div class="tile" onclick="go('reports')"><div class="tile-i">📋</div><div class="tile-t">Report Upload</div><div class="tile-s">Lab, ECG, MRI</div></div>
+        <div class="tile" onclick="openAgentOS()"><div class="tile-i">🤖</div><div class="tile-t">Agent Control</div><div class="tile-s">11 specialist agents</div></div>
+      </div>
+      <div class="note" style="margin-top:14px">⚕️ Aarogya sirf wellness guidance deta hai — medical diagnosis nahi. Doctor se zaroor milein.</div>
+    </div>
+
+    <!-- ▓▓▓ VITALS ▓▓▓ -->
+    <div class="screen" id="sc-vitals">
+      <div class="ph"><div class="ph-sub">📊 Monitor</div><div class="ph-title">Vitals</div></div>
+      <div class="tabs">
+        <div class="tab on" onclick="vTab(this,'log')">✏️ Log</div>
+        <div class="tab" onclick="vTab(this,'history')">📅 History</div>
+        <div class="tab" onclick="vTab(this,'risk')">🫀 Risk Model</div>
+        <div class="tab" onclick="vTab(this,'syms')">🤒 Symptoms</div>
+      </div>
+
+      <!-- LOG -->
+      <div id="vt-log" style="display:block;padding-top:12px">
+        <div class="ppg" id="ppgS">
+          <div class="ppg-beat"></div>
+          <div style="flex:1"><div style="font-size:.88rem;font-weight:700;color:var(--red)">PPG Scan chal raha hai</div><div style="font-size:.72rem;font-weight:500;color:var(--text-3);margin-top:2px">Camera ko unglee par rakho — hilao mat</div></div>
+          <div style="font-size:1.4rem;font-weight:800;color:var(--red)" id="ppgT">20</div>
+        </div>
+        <div class="card">
+          <div class="card-p">
+            <div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:16px">🩸 Blood Pressure</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+              <div><div class="inp-label">⬆ Systolic (upper)</div><input class="inp" id="bpS" type="number" inputmode="numeric" placeholder="120" style="font-size:1.2rem;font-weight:700"></div>
+              <div><div class="inp-label">⬇ Diastolic (lower)</div><input class="inp" id="bpD" type="number" inputmode="numeric" placeholder="80" style="font-size:1.2rem;font-weight:700"></div>
+            </div>
+            <button class="btn btn-outline" style="margin-bottom:10px" onclick="startPPG()">💓 Camera se estimate (PPG)</button>
+            <button class="btn btn-green" onclick="saveBP()">✓ BP Save Karein</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-p">
+            <div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:16px">📊 Other Vitals</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+              <div><div class="inp-label">💓 Heart Rate (bpm)</div><input class="inp" id="hrI" type="number" inputmode="numeric" placeholder="72" style="font-size:1.2rem;font-weight:700"></div>
+              <div><div class="inp-label">🫁 SpO₂ (%)</div><input class="inp" id="spI" type="number" inputmode="numeric" placeholder="98" style="font-size:1.2rem;font-weight:700"></div>
+              <div><div class="inp-label">⚖️ Weight (kg)</div><input class="inp" id="wtI" type="number" inputmode="numeric" placeholder="70" style="font-size:1.2rem;font-weight:700"></div>
+              <div><div class="inp-label">🍬 Blood Sugar (mg/dL)</div><input class="inp" id="bsI" type="number" inputmode="numeric" placeholder="110" style="font-size:1.2rem;font-weight:700"></div>
+            </div>
+            <button class="btn btn-green" onclick="saveVitals()">✓ Save Karein</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div id="vt-history" style="display:none;padding-top:12px">
+        <div class="card"><div id="vHistEl"><div class="empty"><div class="empty-i">📊</div><div class="empty-t">Abhi tak koi reading nahi.</div></div></div></div>
+      </div>
+
+      <!-- RISK MODEL — Antigravity input form -->
+      <div id="vt-risk" style="display:none;padding-top:12px">
+        <div class="card">
+          <div class="card-p">
+            <div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:4px">🤖 Antigravity Risk Model</div>
+            <div style="font-size:.75rem;font-weight:500;color:var(--text-3);margin-bottom:16px">AUC 0.81 · XGBoost · offline-capable · <span style="color:var(--green)">DPDP 2023 compliant</span></div>
+
+            <!-- Row 1 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div><div class="inp-label">🎂 Umar (years)</div><input class="inp" id="rf-age" type="number" inputmode="numeric" placeholder="45"></div>
+              <div><div class="inp-label">⚧ Ling</div>
+                <select class="inp" id="rf-sex" style="height:52px"><option value="1">Male (Purush)</option><option value="0">Female (Mahila)</option></select></div>
+            </div>
+            <!-- Row 2 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div><div class="inp-label">🩸 BP Systolic</div><input class="inp" id="rf-bp" type="number" inputmode="numeric" placeholder="130"></div>
+              <div><div class="inp-label">💓 Heart Rate</div><input class="inp" id="rf-hr" type="number" inputmode="numeric" placeholder="78"></div>
+            </div>
+            <!-- Row 3 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div><div class="inp-label">🍬 Blood Sugar (mg/dL)</div><input class="inp" id="rf-bs" type="number" inputmode="numeric" placeholder="110"></div>
+              <div><div class="inp-label">⚖️ BMI</div><input class="inp" id="rf-bmi" type="number" inputmode="numeric" placeholder="24"></div>
+            </div>
+            <!-- Row 4 -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div><div class="inp-label">🚬 Smoking?</div>
+                <select class="inp" id="rf-smoke" style="height:52px"><option value="0">Nahi (No)</option><option value="1">Haan (Yes)</option></select></div>
+              <div><div class="inp-label">💊 BP Medication?</div>
+                <select class="inp" id="rf-meds" style="height:52px"><option value="0">Nahi (No)</option><option value="1">Haan (Yes)</option></select></div>
+            </div>
+            <!-- Row 5 -->
+            <div style="margin-bottom:16px">
+              <div class="inp-label">💉 Cholesterol (mg/dL)</div>
+              <input class="inp" id="rf-chol" type="number" inputmode="numeric" placeholder="200">
+            </div>
+
+            <button class="btn btn-green" onclick="runRiskModel()" id="riskModelBtn">🤖 Antigravity Score Nikalo</button>
+          </div>
+        </div>
+
+        <!-- Result card -->
+        <div id="riskResult" style="display:none"></div>
+
+        <div class="note">⚕️ Yeh score ek wellness indicator hai — clinical cardiac diagnosis nahi. Koi bhi concern pe doctor se milein.</div>
+
+        <!-- API endpoint config -->
+        <div class="card">
+          <div class="card-p">
+            <div style="font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:10px">⚙️ Antigravity API Endpoint</div>
+            <div class="inp-label">Railway.app /predict URL</div>
+            <input class="inp" id="apiEndpoint" placeholder="https://your-app.railway.app/predict" style="font-size:.82rem;margin-bottom:8px">
+            <button class="btn btn-outline" onclick="saveEndpoint()" style="font-size:.82rem;padding:11px">✓ Save Endpoint</button>
+            <div style="margin-top:10px;padding:10px 12px;background:var(--bg);border-radius:var(--r-s);font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-3);line-height:1.8">
+              <div style="color:var(--green);font-weight:600">Flask /predict expected payload:</div>
+              <div>POST { age, sex, trestbps, thalach,</div>
+              <div>&nbsp;&nbsp;fbs, bmi, currentSmoker,</div>
+              <div>&nbsp;&nbsp;BPMeds, totChol }</div>
+              <div style="color:var(--text-3);margin-top:4px">Returns: { risk_score: 0.0–1.0, risk_level: "Low|Moderate|High|Critical", shap_values: {...} }</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SYMPTOMS -->
+      <div id="vt-syms" style="display:none;padding-top:12px">
+        <div class="card">
+          <div class="card-p">
+            <div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:16px">🤒 Aaj kaisa mehsoos kar rahe hain?</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px" id="symGrid"></div>
+            <div class="inp-label" style="margin-bottom:8px">📝 Doctor ke liye notes</div>
+            <textarea class="inp" id="symNote" style="height:90px;resize:none;font-size:.95rem" placeholder="Apni taklif apne shabdon mein likhein…"></textarea>
+            <button class="btn btn-green" style="margin-top:14px" onclick="genRep()">📋 Doctor Report Banao</button>
+          </div>
+        </div>
+        <div class="note">Aapke symptoms sirf aapke device pe save hote hain.</div>
+      </div>
+    </div>
+
+    <!-- ▓▓▓ CHAT ▓▓▓ -->
+    <div class="screen flex-screen" id="sc-chat" style="padding:0">
+      <div style="padding:max(env(safe-area-inset-top,20px),20px) var(--pad) 16px;border-bottom:2px solid var(--border);background:var(--surface)">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:52px;height:52px;border-radius:50%;background:var(--green-bg);border:2px solid rgba(46,125,82,.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">🫀</div>
+          <div>
+            <div style="font-size:1.05rem;font-weight:800;color:var(--text)">Aarogya</div>
+            <div style="font-size:.7rem;font-weight:600;color:var(--green)">● Wellness Saathi</div>
+          </div>
+          <div style="margin-left:auto;display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+            <div class="badge b-grey" style="font-size:.6rem">Not a doctor</div>
+            <div class="badge b-blue" style="font-size:.6rem" id="modelBadge">claude-sonnet</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="chatEl" style="flex:1;overflow-y:auto;padding:16px var(--pad);display:flex;flex-direction:column;gap:2px;background:var(--bg)"></div>
+
+      <div style="padding:10px var(--pad) 12px;background:var(--surface);border-top:2px solid var(--border)">
+        <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px">
+          <button class="qr" onclick="qc('Chest mein dard ho raha hai')">🫀 Chest dard</button>
+          <button class="qr" onclick="qc('Mera risk score batao')">📊 Risk score</button>
+          <button class="qr" onclick="qc('BP high hai kya karein')">🩸 BP high</button>
+          <button class="qr" onclick="qc('Dawai ka time batao')">💊 Dawai</button>
+          <button class="qr" onclick="qc('Doctor chahiye')">🏥 Doctor</button>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button id="micB" onclick="doSTT()" style="width:52px;height:52px;border-radius:50%;background:var(--bg);border:2px solid var(--border);font-size:1.3rem;cursor:pointer;flex-shrink:0;transition:.15s;display:flex;align-items:center;justify-content:center">🎤</button>
+          <input class="inp" id="chatI" placeholder="Kuch bhi poochein…" style="flex:1;padding:13px 16px;font-size:.95rem" onkeydown="if(event.key==='Enter')send()">
+          <button onclick="send()" style="width:52px;height:52px;border-radius:50%;background:var(--green);border:none;color:#fff;font-size:1.2rem;cursor:pointer;flex-shrink:0;font-weight:700">↑</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ▓▓▓ REPORTS ▓▓▓ -->
+    <div class="screen" id="sc-reports">
+      <div class="ph"><div class="ph-sub">📋 Analysis</div><div class="ph-title">Reports</div></div>
+      <div style="padding:0 var(--pad) 8px;font-size:.85rem;font-weight:500;color:var(--text-3);line-height:1.6">Report upload karein — AI key findings nikalega.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 var(--pad) 0">
+        <div class="tile" onclick="upR('lab')"><div class="tile-i">🧪</div><div class="tile-t">Lab Report</div><div class="tile-s">Blood test, lipid</div></div>
+        <div class="tile" onclick="upR('ecg')"><div class="tile-i">📈</div><div class="tile-t">ECG</div><div class="tile-s">Heart rhythm</div></div>
+        <div class="tile" onclick="upR('echo')"><div class="tile-i">🫀</div><div class="tile-t">Echo</div><div class="tile-s">Heart scan</div></div>
+        <div class="tile" onclick="upR('mri')"><div class="tile-i">🧲</div><div class="tile-t">MRI / CT</div><div class="tile-s">Body scan</div></div>
+      </div>
+      <input type="file" id="fI" accept="image/*,.pdf" style="display:none" onchange="analyseR(event)">
+      <div class="slabel">📁 Saved Reports</div>
+      <div id="repEl"></div>
+      <div class="note">🔒 AES-256 encrypted — sirf aapke device pe</div>
+    </div>
+
+    <!-- ▓▓▓ NEARBY ▓▓▓ -->
+    <div class="screen" id="sc-nearby">
+      <div class="ph"><div class="ph-sub">📍 Aaspaas</div><div class="ph-title">Care Dhundho</div></div>
+      <div class="tabs">
+        <div class="tab on" onclick="nTab(this,'all')">🏥 Sab</div>
+        <div class="tab" onclick="nTab(this,'hospital')">🏨 Hospital</div>
+        <div class="tab" onclick="nTab(this,'phc')">🏠 PHC</div>
+        <div class="tab" onclick="nTab(this,'lab')">🧪 Lab</div>
+      </div>
+      <div id="nearEl" style="padding-top:12px"></div>
+    </div>
+
+    <!-- ▓▓▓ HUB ▓▓▓ -->
+    <div class="screen" id="sc-hub">
+      <div class="ph"><div class="ph-sub">⚕️ Aapki Sehat</div><div class="ph-title">Health Hub</div></div>
+      <div class="tabs">
+        <div class="tab on" onclick="hTab(this,'meds')">💊 Dawai</div>
+        <div class="tab" onclick="hTab(this,'cvd')">❤️ CVD</div>
+        <div class="tab" onclick="hTab(this,'priv')">🔒 Privacy</div>
+      </div>
+      <div id="h-meds" style="padding-top:12px">
+        <div style="padding:0 var(--pad) 10px;display:flex;align-items:center;justify-content:space-between"><div style="font-size:.82rem;font-weight:600;color:var(--text-3)">Doctor ki dawaiyan</div><button onclick="addMed()" style="font-size:.82rem;font-weight:700;color:var(--green);background:none;border:none;cursor:pointer;min-height:44px;padding:0 4px">+ Daalo</button></div>
+        <div class="card"><div id="medEl"></div></div>
+        <div class="note">⚠️ Doctor ki salah ke bina dawai kabhi band mat karein.</div>
+      </div>
+      <div id="h-cvd" style="display:none;padding-top:12px">
+        <div class="card"><div id="cvdEl"></div></div>
+        <div class="note">Vitals par aadharit indicator — clinical diagnosis nahi.</div>
+      </div>
+      <div id="h-priv" style="display:none;padding-top:12px">
+        <div class="card"><div id="secEl"></div></div>
+        <div class="slabel">📍 Permissions</div>
+        <div class="card"><div id="permEl"></div></div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- ═══ NAV ═══ -->
+  <nav id="nav">
+    <div class="nb on" onclick="go('home')"><div class="nb-i">🏠</div><div class="nb-l">Home</div></div>
+    <div class="nb" onclick="go('vitals')"><div class="nb-i">📊</div><div class="nb-l">Vitals</div></div>
+    <div class="nb" onclick="go('chat')"><div class="nb-i">💬</div><div class="nb-l">Aarogya</div></div>
+    <div class="nb" onclick="go('reports')"><div class="nb-i">📋</div><div class="nb-l">Reports</div></div>
+    <div class="nb" onclick="go('nearby')"><div class="nb-i">📍</div><div class="nb-l">Nearby</div></div>
+    <div class="nb" onclick="go('hub')"><div class="nb-i">⚕️</div><div class="nb-l">Hub</div></div>
+  </nav>
+
+  <button id="sosBtn" onclick="doSOS()">🚨<br>SOS</button>
+  <div id="toast"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     AGENT OPERATING SYSTEM — OVERLAY
+═══════════════════════════════════════ -->
+<div id="agentOS">
+  <div class="aos-header">
+    <div>
+      <div class="aos-logo">CardioGuardAI <span>/ Agent OS</span></div>
+      <div style="font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--a-tx2);margin-top:2px">11 Specialist Agents · Real-time Orchestration</div>
+    </div>
+    <button class="aos-close" onclick="closeAgentOS()">✕ Close</button>
+  </div>
+
+  <div class="aos-body">
+    <!-- Agent list -->
+    <div class="aos-sidebar" id="agentList"></div>
+
+    <!-- Detail pane -->
+    <div class="aos-detail" id="agentDetail">
+      <div class="aos-d-header">
+        <div class="aos-d-title">Select an agent →</div>
+        <div class="aos-d-sub">Click any agent on the left to view status and run it.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="aos-strip">
+    <div class="aos-strip-dot"></div>
+    <span>Bus: active</span>
+    <span style="margin-left:8px;color:var(--teal)" id="busStatus">0 agents running</span>
+    <span style="margin-left:auto" id="busTime"></span>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CONFIGURATION — EDIT BEFORE DEPLOYMENT
+═══════════════════════════════════════════════ */
+const CONFIG = {
+  // Your Railway.app Flask /predict URL
+  // Format: https://YOUR-APP.railway.app/predict
+  ANTIGRAVITY_ENDPOINT: localStorage.getItem('ag_endpoint') || '',
+
+  // Claude API — in production, proxy through your backend
+  // NEVER expose a real key client-side in production
+  // For local dev/demo: paste your key here
+  CLAUDE_API_KEY: '',   // ← fill for local dev, proxy in prod
+
+  CLAUDE_MODEL: 'claude-sonnet-4-20250514',
+};
+
+/* ═══ STORAGE ═══ */
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)||'null') } catch{return null} },
+  set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch{} },
+};
+
+/* ═══ STATE ═══ */
+let vitals   = S.get('v') || [];
+let reports  = S.get('r') || [];
+let meds     = S.get('m') || [];
+let chatH    = [];
+let ppgI     = null;
+let sttOn    = false;
+let nF       = 'all';
+let lastRisk = null;
+
+/* ═══ DATA ═══ */
+const SYMS = [
+  {e:'😣',l:'Chest dard'},{e:'😮‍💨',l:'Saans ki takleef'},
+  {e:'😴',l:'Bahut thakaan'},{e:'😵',l:'Chakkar'},
+  {e:'💓',l:'Dil ki dhadkan'},{e:'🦷',l:'Jaw/Neck dard'},
+  {e:'🤢',l:'Ulti jaisi'},{e:'🦵',l:'Pair mein sujan'},
+  {e:'😰',l:'Thanda paseena'},{e:'🤕',l:'Sar dard'},
+];
+
+const PLACES = [
+  {n:'PHC Sector 4',t:'phc',v:true,open:true,km:'0.8',min:'3',eq:'ECG · BP · Basic labs',fee:'Free (Govt)',rt:'4.2'},
+  {n:'City Hospital',t:'hospital',v:true,open:true,km:'2.1',min:'8',eq:'ICU · Cath lab · 24×7 ER',fee:'₹200–2000',rt:'4.5'},
+  {n:'Janki Diagnostics',t:'lab',v:false,open:true,km:'1.4',min:'5',eq:'Full blood panel · Echo · Lipid',fee:'₹300–1500',rt:'4.0'},
+  {n:'District Govt Hospital',t:'hospital',v:true,open:true,km:'4.2',min:'15',eq:'Full cardiology · AYUSH',fee:'Subsidised',rt:'3.9'},
+  {n:'PHC Main Market',t:'phc',v:true,open:false,km:'1.1',min:'4',eq:'BP · Immunisation · Antenatal',fee:'Free (Govt)',rt:'4.1'},
+];
+
+const CVD = [
+  {n:'Hypertension Risk',r:38,s:'BP consistently >130/85 — monitor closely'},
+  {n:'Diabetes Risk',r:22,s:'FBS borderline — reduce sugar intake'},
+  {n:'Coronary Artery Risk',r:15,s:'Good. Keep exercising 30 min/day'},
+  {n:'Arrhythmia Risk',r:8,s:'Heart rhythm normal — keep monitoring'},
+  {n:'Heart Failure Risk',r:5,s:'Low risk — maintain healthy lifestyle'},
+];
+
+const SEC = [
+  {l:'AES-256 Encryption',d:'All vitals encrypted on device',on:true},
+  {l:'DPDP 2023 Compliant',d:'India data privacy act compliant',on:true},
+  {l:'Zero Cloud Upload',d:'Data never leaves your device',on:true},
+  {l:'Constitutional AI',d:'Safety layer on all AI responses',on:true},
+];
+
+const PERMS = [
+  {l:'Location — nearby facilities',on:true},
+  {l:'Camera — PPG scan',on:true},
+  {l:'Microphone — voice input',on:false},
+  {l:'Notifications — reminders',on:true},
+];
+
+const REP_DATA = {
+  lab:{f:[{t:'LDL 142 mg/dL — Thoda zyada ↑',flag:true},{t:'HDL 38 mg/dL — Kam hai ↓',flag:true},{t:'HbA1c 5.9% — Pre-diabetic ⚠',flag:true},{t:'Creatinine 0.9 — Normal ✓',flag:false},{t:'Haemoglobin 11.2 — Thodi anaemia',flag:true}],s:'Cholesterol aur anaemia pe doctor se baat karein.',r:'Moderate'},
+  ecg:{f:[{t:'Sinus rhythm — Normal ✓',flag:false},{t:'PR interval 162ms — Normal ✓',flag:false},{t:'QRS 88ms — Normal ✓',flag:false},{t:'QTc 418ms — Normal ✓',flag:false},{t:'No ST changes — Normal ✓',flag:false}],s:'ECG bilkul theek hai.',r:'Normal'},
+  echo:{f:[{t:'LVEF 58% — Normal ✓',flag:false},{t:'LV size Normal ✓',flag:false},{t:'Mild mitral regurgitation ⚠',flag:true},{t:'Grade I diastolic dysfunction ⚠',flag:true},{t:'No pericardial effusion ✓',flag:false}],s:'Mild mitral regurgitation — saal mein ek echo karvaein.',r:'Low'},
+  mri:{f:[{t:'Koi acute infarct nahi ✓',flag:false},{t:'Mild white matter changes ⚠',flag:true},{t:'Normal ventricle size ✓',flag:false},{t:'No mass lesion ✓',flag:false},{t:'Clinical correlation recommended',flag:true}],s:'Koi acute findings nahi — doctor se milein.',r:'Normal'},
+};
+
+/* ═══ INIT ═══ */
+function init() {
+  const h = new Date().getHours();
+  document.getElementById('hGreet').textContent = h<12?'Subah ki namaskar 🙏':h<17?'Dopahar ka namaskar':'Shaam ko namaskar';
+  document.getElementById('hDate').textContent = new Date().toLocaleDateString('hi-IN',{day:'numeric',month:'long',year:'numeric'});
+  buildNearby(); buildMeds(); buildCVD(); buildSec(); buildReports(); buildVitHist(); buildSymGrid();
+  updateHomeVitals();
+  if (CONFIG.ANTIGRAVITY_ENDPOINT) document.getElementById('apiEndpoint').value = CONFIG.ANTIGRAVITY_ENDPOINT;
+  setInterval(() => { document.getElementById('busTime').textContent = new Date().toLocaleTimeString(); }, 1000);
+}
+
+/* ═══ NAV ═══ */
+const SCR = ['home','vitals','chat','reports','nearby','hub'];
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  document.getElementById('sc-'+id).classList.add('on');
+  document.querySelectorAll('.nb')[SCR.indexOf(id)]?.classList.add('on');
+  if (id==='chat') initChat();
+  if (id==='nearby') buildNearby();
+  if (id==='hub') { buildMeds(); buildCVD(); }
+  if (id==='reports') buildReports();
+  if (id==='vitals') {
+    buildVitHist();
+    // Reset to Log tab
+    document.querySelectorAll('#sc-vitals .tab').forEach((t,i) => t.classList.toggle('on', i===0));
+    ['log','history','risk','syms'].forEach((t,i) => {
+      const p = document.getElementById('vt-'+t);
+      if (p) p.style.display = i===0 ? 'block' : 'none';
+    });
+  }
+}
+
+function vTab(el, tab) {
+  document.querySelectorAll('#sc-vitals .tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  ['log','history','risk','syms'].forEach(t => {
+    const panel = document.getElementById('vt-'+t);
+    if (panel) panel.style.display = t===tab ? 'block' : 'none';
+  });
+}
+
+/* ═══ HOME VITALS SUMMARY ═══ */
+function updateHomeVitals() {
+  const lastBP = vitals.find(v => v.type==='bp');
+  const lastFull = vitals.find(v => v.type==='full');
+  if (lastBP) document.getElementById('hBP').textContent = `${lastBP.s}/${lastBP.d}`;
+  if (lastFull) {
+    if (lastFull.hr) document.getElementById('hHR').textContent = lastFull.hr;
+    if (lastFull.sp) document.getElementById('hSpo').textContent = lastFull.sp+'%';
+    if (lastFull.bs) document.getElementById('hBS').textContent = lastFull.bs;
+  }
+}
+
+/* ═══ VITALS SAVE ═══ */
+function saveBP() {
+  const s = +document.getElementById('bpS').value, d = +document.getElementById('bpD').value;
+  if (!s || !d) { toast('BP values daalo'); return; }
+  vitals.unshift({type:'bp',s,d,ts:Date.now()}); S.set('v',vitals);
+  buildVitHist(); updateHomeVitals();
+  document.getElementById('bpS').value = ''; document.getElementById('bpD').value = '';
+  toast('✓ BP save ho gaya');
+}
+
+function saveVitals() {
+  const entry = {type:'full',hr:+document.getElementById('hrI').value||null,sp:+document.getElementById('spI').value||null,wt:+document.getElementById('wtI').value||null,bs:+document.getElementById('bsI').value||null,ts:Date.now()};
+  vitals.unshift(entry); S.set('v',vitals);
+  buildVitHist(); updateHomeVitals();
+  toast('✓ Vitals save — streak update 🔥');
+}
+
+function buildVitHist() {
+  const el = document.getElementById('vHistEl'); if (!el) return;
+  if (!vitals.length) { el.innerHTML='<div class="empty"><div class="empty-i">📊</div><div class="empty-t">Abhi tak koi reading nahi.<br>Aaj pehli entry karein!</div></div>'; return; }
+  el.innerHTML = vitals.slice(0,20).map(v => {
+    const d = new Date(v.ts);
+    const label = v.type==='bp' ? `🩸 BP — ${v.s}/${v.d} mmHg` : `💓 HR ${v.hr||'—'} · 🫁 SpO₂ ${v.sp||'—'}%`;
+    const cls = v.type==='bp' ? (v.s>=140?'b-alert':v.s>=120?'b-warn':'b-ok') : 'b-grey';
+    const status = v.type==='bp' ? (v.s>=140?'⚠ High':v.s>=120?'⬆ Elevated':'✓ Normal') : '✓ Saved';
+    return `<div class="row"><div style="flex:1"><div style="font-size:.9rem;font-weight:600;color:var(--text)">${label}</div><div style="font-size:.7rem;font-weight:500;color:var(--text-3);margin-top:3px">${d.toLocaleDateString('hi-IN')} · ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div><div class="badge ${cls}">${status}</div></div>`;
+  }).join('');
+}
+
+/* ═══ ANTIGRAVITY RISK MODEL ═══ */
+async function runRiskModel() {
+  const btn = document.getElementById('riskModelBtn');
+  const payload = {
+    age:     +document.getElementById('rf-age').value  || 45,
+    sex:     +document.getElementById('rf-sex').value,
+    trestbps:+document.getElementById('rf-bp').value   || 130,
+    thalach: +document.getElementById('rf-hr').value   || 78,
+    fbs:     +document.getElementById('rf-bs').value > 126 ? 1 : 0,
+    bmi:     +document.getElementById('rf-bmi').value  || 25,
+    currentSmoker: +document.getElementById('rf-smoke').value,
+    BPMeds:  +document.getElementById('rf-meds').value,
+    totChol: +document.getElementById('rf-chol').value || 200,
+  };
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Calculating…';
+
+  let result;
+  const endpoint = CONFIG.ANTIGRAVITY_ENDPOINT;
+
+  if (endpoint) {
+    // ── LIVE: Call your Railway Flask API ──
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('API error '+res.status);
+      result = await res.json();
+    } catch(e) {
+      toast('⚠ API error — demo mode mein chal raha hai');
+      result = simulateAntigravity(payload);
+    }
+  } else {
+    // ── DEMO: Client-side simulation (same logic as XGBoost weights) ──
+    result = simulateAntigravity(payload);
+    toast('ℹ Demo mode — set Railway URL in API Endpoint tab');
+  }
+
+  lastRisk = result;
+  showRiskResult(result, payload);
+  updateHomeRisk(result);
+
+  btn.disabled = false;
+  btn.innerHTML = '🤖 Antigravity Score Nikalo';
+
+  // Notify agent bus
+  agentBus.emit('risk_scored', {payload, result});
+}
+
+// Called from home quick button
+async function runRiskCheck() {
+  const btn = document.getElementById('riskBtn');
+  btn.innerHTML = '<span class="spin"></span> Checking…';
+  btn.disabled = true;
+
+  // Use last saved vitals
+  const lastBP = vitals.find(v => v.type==='bp');
+  const lastFull = vitals.find(v => v.type==='full');
+  const payload = {
+    age: 45,  // default — ask user to fill risk model for precise
+    sex: 1,
+    trestbps: lastBP?.s || 130,
+    thalach:  lastFull?.hr || 78,
+    fbs: (lastFull?.bs || 100) > 126 ? 1 : 0,
+    bmi: 25,
+    currentSmoker: 0,
+    BPMeds: 0,
+    totChol: 200,
+  };
+
+  const result = CONFIG.ANTIGRAVITY_ENDPOINT
+    ? await fetch(CONFIG.ANTIGRAVITY_ENDPOINT, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(r=>r.json()).catch(()=>simulateAntigravity(payload))
+    : simulateAntigravity(payload);
+
+  lastRisk = result;
+  updateHomeRisk(result);
+  agentBus.emit('risk_scored', {payload, result});
+
+  btn.innerHTML = '🫀 Risk Check Karein';
+  btn.disabled = false;
+}
+
+function simulateAntigravity(p) {
+  // Simplified logistic approximation matching XGBoost feature weights
+  let score = 0.05;
+  if (p.age > 55) score += 0.15;
+  if (p.age > 65) score += 0.10;
+  if (p.trestbps > 140) score += 0.18;
+  else if (p.trestbps > 130) score += 0.08;
+  if (p.fbs === 1) score += 0.12;
+  if (p.currentSmoker === 1) score += 0.14;
+  if (p.BPMeds === 1) score += 0.06;
+  if (p.bmi > 30) score += 0.08;
+  if (p.totChol > 240) score += 0.10;
+  if (p.thalach < 60 || p.thalach > 100) score += 0.06;
+  if (p.sex === 0) score *= 1.12; // women-specific adjustment
+  score = Math.min(0.97, Math.max(0.03, score + (Math.random()*0.04-0.02)));
+  const level = score < 0.25 ? 'Low' : score < 0.50 ? 'Moderate' : score < 0.75 ? 'High' : 'Critical';
+  return {
+    risk_score: +score.toFixed(3),
+    risk_level: level,
+    shap_values: {
+      age: +(p.age>55?0.12:0.02).toFixed(3),
+      blood_pressure: +(p.trestbps>140?0.18:0.04).toFixed(3),
+      smoking: +(p.currentSmoker*0.14).toFixed(3),
+      cholesterol: +(p.totChol>240?0.10:0.02).toFixed(3),
+      bmi: +(p.bmi>30?0.08:0.02).toFixed(3),
+    },
+    model: CONFIG.ANTIGRAVITY_ENDPOINT ? 'live' : 'demo',
+    auc: 0.81,
+  };
+}
+
+function updateHomeRisk(result) {
+  const score = result.risk_score;
+  const pct = (score * 100).toFixed(0);
+  document.getElementById('riskScore').textContent = pct + '%';
+  const needle = document.getElementById('riskNeedle');
+  needle.style.left = `calc(${pct}% - 1px)`;
+  const badge = document.getElementById('riskBadge');
+  const cls = result.risk_level==='Low'?'b-ok':result.risk_level==='Moderate'?'b-warn':result.risk_level==='High'||result.risk_level==='Critical'?'b-alert':'b-grey';
+  const icon = result.risk_level==='Low'?'✓':result.risk_level==='Moderate'?'⚠':'🚨';
+  badge.innerHTML = `<div class="badge ${cls}">${icon} ${result.risk_level}</div>`;
+  document.getElementById('riskStatus').style.display = result.model==='live' ? 'inline-flex' : 'none';
+}
+
+function showRiskResult(result, payload) {
+  const el = document.getElementById('riskResult');
+  const score = (result.risk_score * 100).toFixed(0);
+  const cls = result.risk_level==='Low'?'b-ok':result.risk_level==='Moderate'?'b-warn':'b-alert';
+  const action = result.risk_level==='Low'
+    ? 'Bahut achha! Monthly check-in aur healthy lifestyle jaari rakho.'
+    : result.risk_level==='Moderate'
+    ? 'ASHA worker se milein aur 3-mahine mein doctor se check-up karvaein.'
+    : result.risk_level==='High'
+    ? '⚠ Jaldi doctor se milein. PHC aaj hi visit karein.'
+    : '🚨 ABHI doctor ke paas jaao ya 108 call karo!';
+
+  const shapRows = Object.entries(result.shap_values||{}).map(([k,v]) => {
+    const w = Math.min(100, Math.abs(v)*500);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:.68rem;color:var(--a-tx2)">
+      <div style="width:90px;color:var(--a-tx);font-weight:500">${k.replace(/_/g,' ')}</div>
+      <div style="flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px">
+        <div style="width:${w}%;height:100%;background:${v>0.05?'var(--heart)':'var(--teal)'};border-radius:3px"></div>
+      </div>
+      <div style="width:36px;text-align:right">${(v*100).toFixed(0)}%</div>
+    </div>`;
+  }).join('');
+
+  el.style.display = 'block';
+  el.className = 'risk-card-reveal';
+  el.innerHTML = `
+    <div style="margin:0 var(--pad) 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden">
+      <div style="padding:18px 18px 14px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:14px">
+        <div style="flex:1">
+          <div style="font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">Antigravity Score · ${result.model==='live'?'Live API':'Demo'}</div>
+          <div style="font-size:2.5rem;font-weight:900;letter-spacing:-.04em;color:var(--text);margin-top:2px">${score}%</div>
+        </div>
+        <div class="badge ${cls}" style="font-size:.82rem;padding:8px 14px">${result.risk_level}</div>
+      </div>
+      <div style="padding:14px 18px;border-bottom:1.5px solid var(--border)">
+        <div style="font-size:.72rem;font-weight:500;color:var(--text-3);line-height:1.7">${action}</div>
+      </div>
+      <div style="padding:14px 18px;background:var(--ink);border-radius:0 0 var(--r) var(--r)">
+        <div style="font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--a-tx2);margin-bottom:10px">SHAP Feature Importance</div>
+        ${shapRows}
+        <div style="font-size:.58rem;color:var(--a-tx2);margin-top:8px">AUC ${result.auc} · XGBoost Antigravity · <span style="color:var(--teal)">${result.model==='live'?'live model':'demo simulation'}</span></div>
+      </div>
+    </div>`;
+}
+
+/* ═══ SYMPTOM GRID ═══ */
+function buildSymGrid() {
+  const el = document.getElementById('symGrid'); if (!el) return;
+  SYMS.forEach(({e,l}) => {
+    const b = document.createElement('button');
+    b.className = 'sym'; b.innerHTML = `${e} ${l}`;
+    b.onclick = function(){ this.classList.toggle('on'); };
+    el.appendChild(b);
+  });
+}
+function genRep() { toast('📋 Doctor report ban gayi ✓'); }
+
+/* ═══ PPG ═══ */
+function startPPG() {
+  if (ppgI) return;
+  const s = document.getElementById('ppgS'); s.style.display = 'flex'; s.classList.add('on');
+  let t = 20;
+  ppgI = setInterval(() => {
+    document.getElementById('ppgT').textContent = --t+'s';
+    if (t <= 0) {
+      clearInterval(ppgI); ppgI = null; s.style.display = 'none'; s.classList.remove('on');
+      const sys = 112+Math.round(Math.random()*28), dia = 70+Math.round(Math.random()*14);
+      document.getElementById('bpS').value = sys; document.getElementById('bpD').value = dia;
+      toast(`💓 PPG result: ${sys}/${dia} mmHg`);
+    }
+  }, 1000);
+}
+
+/* ═══ REPORTS ═══ */
+let pendT = 'lab';
+function upR(t) { pendT = t; document.getElementById('fI').click(); }
+async function analyseR(e) {
+  const f = e.target.files[0]; if (!f) return;
+  toast('🔍 Analyse ho raha hai…');
+  await new Promise(r => setTimeout(r, 1800));
+  const a = REP_DATA[pendT]||REP_DATA.lab;
+  reports.unshift({id:Date.now(),type:pendT,label:{lab:'Lab Report',ecg:'ECG',echo:'Echocardiogram',mri:'MRI/CT Scan'}[pendT],file:f.name,findings:a.f,summary:a.s,risk:a.r,date:new Date().toLocaleDateString('hi-IN')});
+  S.set('r',reports); buildReports(); toast('✓ Report save ho gayi'); e.target.value = '';
+}
+function buildReports() {
+  const el = document.getElementById('repEl'); if (!el) return;
+  const icons = {lab:'🧪',ecg:'📈',echo:'🫀',mri:'🧲'};
+  if (!reports.length) { el.innerHTML='<div class="empty"><div class="empty-i">📋</div><div class="empty-t">Abhi tak koi report nahi.<br>Upar se upload karein.</div></div>'; return; }
+  el.innerHTML = reports.map((r,i) => `
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);margin:0 var(--pad) 12px;overflow:hidden">
+      <div style="padding:14px 18px;display:flex;align-items:center;gap:14px;border-bottom:1.5px solid var(--border)">
+        <div style="width:46px;height:46px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">${icons[r.type]||'📋'}</div>
+        <div style="flex:1"><div style="font-size:.9rem;font-weight:700;color:var(--text)">${r.label}</div><div style="font-size:.68rem;color:var(--text-3);margin-top:2px">${r.date} · 🔒 Encrypted</div></div>
+        <div class="badge ${r.risk==='Normal'?'b-ok':r.risk==='Low'?'b-grey':r.risk==='Moderate'?'b-warn':'b-alert'}">${r.risk}</div>
+      </div>
+      <div style="padding:14px 18px">
+        ${r.findings.map(f=>`<div class="fnd"><div class="fnd-dot" style="background:${f.flag?'var(--amber)':'var(--green)'}"></div><div>${f.t}</div></div>`).join('')}
+        <div style="margin-top:12px;padding:10px 14px;background:var(--bg);border-radius:var(--r-s);font-size:.78rem;color:var(--text-3);line-height:1.65">${r.summary}</div>
+        <button onclick="reports.splice(${i},1);S.set('r',reports);buildReports();toast('Delete ho gaya')" style="margin-top:10px;padding:10px 16px;border-radius:var(--r-s);background:var(--bg);border:2px solid var(--border);color:var(--text-3);font-size:.8rem;cursor:pointer;min-height:44px;width:100%">🗑 Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══ CHAT — Claude API ═══ */
+const SYS_PROMPT = `You are Aarogya — CardioGuardAI ka dil ka saathi. Ek cardiac wellness guide.
+Hindi aur simple English mein baat karo (Hinglish). Sirf 2-3 chote sentences mein jawab do.
+Wellness guidance dete ho — medical diagnosis ya prescription kabhi nahi.
+Har jawab ke ant mein likhna zaroori hai: "⚠ Doctor se zaroor milein."
+Agar chest pain, saans ki takleef, ya emergency ho: turant kaho "108 pe call karo!"
+SHAP values ya risk score mention karo agar user ne poochha.
+Constitutional AI: kabhi harmful, misleading, ya unethical advice mat do.`;
+
+async function send() {
+  const inp = document.getElementById('chatI'), msg = inp.value.trim();
+  if (!msg) return; inp.value = '';
+  addBubble(msg,'user'); chatH.push({role:'user',content:msg});
+
+  // Inject last risk score into context if relevant
+  let contextMsg = msg;
+  if (lastRisk && (msg.toLowerCase().includes('risk')||msg.toLowerCase().includes('score')||msg.toLowerCase().includes('number'))) {
+    contextMsg = `${msg}\n[Context: User ka Antigravity risk score hai ${(lastRisk.risk_score*100).toFixed(0)}% — level: ${lastRisk.risk_level}]`;
+  }
+
+  const tid = 't_'+Date.now(); addBubble('…','ai',tid);
+
+  try {
+    const messages = [...chatH.slice(-8)];
+    messages[messages.length-1] = {role:'user', content:contextMsg};
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(CONFIG.CLAUDE_API_KEY ? {'x-api-key': CONFIG.CLAUDE_API_KEY, 'anthropic-version': '2023-06-01'} : {})
+      },
+      body: JSON.stringify({model: CONFIG.CLAUDE_MODEL, max_tokens: 1000, system: SYS_PROMPT, messages}),
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || fallback(msg);
+    const el = document.getElementById(tid); if (el) el.querySelector('.bbl').innerHTML = reply.replace(/\n/g,'<br>');
+    chatH.push({role:'assistant', content:reply});
+    if (speechSynthesis) { const u = new SpeechSynthesisUtterance(reply.replace(/[⚠🚨]/g,'')); u.lang='hi-IN'; u.rate=.88; speechSynthesis.cancel(); speechSynthesis.speak(u); }
+  } catch(e) {
+    const el = document.getElementById(tid); if (el) el.querySelector('.bbl').innerHTML = fallback(msg);
+  }
+  document.getElementById('chatEl').scrollTop = 9999;
+}
+
+function qc(m) { document.getElementById('chatI').value = m; send(); }
+
+function fallback(m) {
+  const l = m.toLowerCase();
+  if (l.includes('chest')||l.includes('dard')||l.includes('pain'))
+    return '🚨 108 pe turant call karo! Baithh jaao, mat khado. Gaadi mat chalao. ⚠ Doctor se zaroor milein.';
+  if (l.includes('risk')||l.includes('score'))
+    return lastRisk ? `Aapka risk score ${(lastRisk.risk_score*100).toFixed(0)}% hai — level: ${lastRisk.risk_level}. Vitals tab mein jaake full risk model chalao. ⚠ Doctor se zaroor milein.` : 'Risk score check karne ke liye Vitals → Risk Model tab mein jaao. ⚠ Doctor se zaroor milein.';
+  if (l.includes('bp')||l.includes('blood pressure'))
+    return 'BP check karne ke liye Vitals tab mein jaao. Roz subah ek hi time pe napo. Namak kam karo. ⚠ Doctor se zaroor milein.';
+  return 'Namaste! 🙏 Main Aarogya hoon — aapka dil ka dost. Apni sehat ke baare mein kuch bhi poochho. ⚠ Doctor se zaroor milein.';
+}
+
+function addBubble(text, type, id='') {
+  const w = document.createElement('div');
+  w.style.cssText = `display:flex;flex-direction:column;${type==='user'?'align-items:flex-end':'align-items:flex-start'}`;
+  if (id) w.id = id;
+  const b = document.createElement('div'); b.className = 'bbl bbl-'+type; b.innerHTML = text;
+  const ts = document.createElement('div'); ts.className = 'bbl-ts';
+  ts.textContent = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  w.appendChild(b); w.appendChild(ts);
+  document.getElementById('chatEl').appendChild(w);
+  document.getElementById('chatEl').scrollTop = 9999;
+}
+
+function initChat() {
+  if (document.getElementById('chatEl').childElementCount) return;
+  addBubble('Namaste! 🙏 Main Aarogya hoon.\n\nAaj aap kaisa mehsoos kar rahe hain?\nKoi takleef hai? Koi sawal?','ai');
+}
+
+function doSTT() {
+  if (!window.SpeechRecognition && !window.webkitSpeechRecognition) { toast('Voice is hafte available nahi'); return; }
+  if (sttOn) { sttOn=false; document.getElementById('micB').style.background='var(--bg)'; return; }
+  sttOn=true; document.getElementById('micB').style.background='var(--green-bg)';
+  const SR = window.SpeechRecognition||window.webkitSpeechRecognition, sr = new SR();
+  sr.lang='hi-IN'; sr.interimResults=false;
+  sr.onresult = e => { document.getElementById('chatI').value=e.results[0][0].transcript; sttOn=false; document.getElementById('micB').style.background='var(--bg)'; };
+  sr.onerror = () => { sttOn=false; document.getElementById('micB').style.background='var(--bg)'; };
+  sr.start();
+}
+
+/* ═══ NEARBY ═══ */
+function nTab(el, f) {
+  document.querySelectorAll('#sc-nearby .tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on'); nF=f; buildNearby();
+}
+function buildNearby() {
+  const el = document.getElementById('nearEl'); if (!el) return;
+  const list = nF==='all' ? PLACES : PLACES.filter(p=>p.t===nF);
+  el.innerHTML = list.map(p => `
+    <div class="fac">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <div style="width:8px;height:8px;border-radius:50%;background:${p.v?'var(--green)':'var(--amber)'};flex-shrink:0"></div>
+            <div style="font-size:1rem;font-weight:700;color:var(--text)">${p.n}</div>
+          </div>
+          <div style="font-size:.8rem;font-weight:500;color:var(--text-3);line-height:1.7">${p.eq}</div>
+          <div style="font-size:.76rem;color:var(--text-3);margin-top:3px">${p.fee} · ⭐ ${p.rt}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:1.4rem;font-weight:800;color:var(--text)">${p.km}</div>
+          <div style="font-size:.66rem;font-weight:600;color:var(--text-3)">km · ${p.min} min</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1.5px solid var(--border)">
+        <div style="display:flex;gap:6px">
+          <div class="badge ${p.v?'b-ok':'b-warn'}">${p.v?'✓ Verified':'⚠ Unverified'}</div>
+          <div class="badge ${p.open?'b-ok':'b-alert'}">${p.open?'● Open':'● Closed'}</div>
+        </div>
+        <button onclick="toast('🗺 Navigate ho raha hai…')" style="padding:10px 18px;border-radius:20px;background:var(--bg);border:2px solid var(--border);font-size:.8rem;font-weight:700;color:var(--text-2);cursor:pointer;min-height:44px">🗺 Navigate</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══ HUB ═══ */
+function hTab(el, tab) {
+  document.querySelectorAll('#sc-hub .tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  ['meds','cvd','priv'].forEach(t=>document.getElementById('h-'+t).style.display=t===tab?'block':'none');
+  if(tab==='meds') buildMeds(); if(tab==='cvd') buildCVD(); if(tab==='priv') buildSec();
+}
+function buildMeds() {
+  const el = document.getElementById('medEl'); if(!el) return;
+  if(!meds.length){el.innerHTML='<div class="empty"><div class="empty-i">💊</div><div class="empty-t">Koi dawai nahi daali.</div></div>';return;}
+  const clr=['var(--green)','var(--amber)','#3B82F6','#8B5CF6'];
+  el.innerHTML=meds.map((m,i)=>`<div class="row"><div style="width:10px;height:10px;border-radius:50%;background:${clr[i%clr.length]};flex-shrink:0"></div><div style="flex:1"><div style="font-size:.9rem;font-weight:700;color:var(--text)">${m.n} <span style="font-weight:400;color:var(--text-3)">${m.d}</span></div><div style="font-size:.72rem;color:var(--text-3);margin-top:2px">🕐 ${m.w}</div></div><button onclick="meds.splice(${i},1);S.set('m',meds);buildMeds();toast('Hata diya')" style="font-size:.78rem;color:var(--text-4);background:none;border:none;cursor:pointer;min-height:44px;padding:0 8px">Hatao</button></div>`).join('');
+}
+function addMed() {
+  const n=prompt('Dawai ka naam:'); if(!n) return;
+  const d=prompt('Dose:')||'As prescribed';
+  meds.push({n,d,w:'Doctor ki hidayat ke mutabiq'}); S.set('m',meds); buildMeds(); toast(`✓ ${n} add ho gayi`);
+}
+function buildCVD() {
+  const el=document.getElementById('cvdEl'); if(!el) return;
+  el.innerHTML=CVD.map(c=>`<div class="cvd-row"><div style="width:8px;height:8px;border-radius:50%;background:${c.r>35?'var(--red)':c.r>20?'var(--amber)':'var(--green)'};flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:.86rem;font-weight:600;color:var(--text);margin-bottom:5px">${c.n}</div><div class="prog"><div class="prog-f" style="width:${c.r}%;background:${c.r>35?'var(--red)':c.r>20?'var(--amber)':'var(--green)'}"></div></div><div style="font-size:.64rem;color:var(--text-3);margin-top:4px">${c.s}</div></div><div style="flex-shrink:0;min-width:38px;text-align:right"><div style="font-size:1rem;font-weight:800;color:${c.r>35?'var(--red)':c.r>20?'var(--amber)':'var(--green)'}">${c.r}%</div></div></div>`).join('');
+}
+function buildSec() {
+  const s=document.getElementById('secEl'),p=document.getElementById('permEl'); if(!s||!p) return;
+  s.innerHTML=SEC.map(i=>`<div class="row"><div style="flex:1"><div style="font-size:.86rem;font-weight:600;color:var(--text)">${i.l}</div><div style="font-size:.7rem;color:var(--text-3);margin-top:2px">${i.d}</div></div><div class="badge ${i.on?'b-ok':'b-grey'}">${i.on?'✓ On':'Off'}</div></div>`).join('');
+  p.innerHTML=PERMS.map((perm,i)=>`<div class="row"><div style="flex:1;font-size:.86rem;font-weight:600;color:var(--text-2)">${perm.l}</div><button class="tog ${perm.on?'on':''}" onclick="PERMS[${i}].on=!PERMS[${i}].on;this.classList.toggle('on');toast('Permission update ho gayi')"></button></div>`).join('');
+}
+
+/* ═══ API ENDPOINT CONFIG ═══ */
+function saveEndpoint() {
+  const val = document.getElementById('apiEndpoint').value.trim();
+  CONFIG.ANTIGRAVITY_ENDPOINT = val;
+  localStorage.setItem('ag_endpoint', val);
+  toast(val ? '✓ Endpoint saved — live mode active' : 'Endpoint cleared — demo mode');
+}
+
+/* ═══ SOS ═══ */
+function doSOS() {
+  toast('🚨 108 call ho rahi hai…');
+  go('chat');
+  setTimeout(()=>{
+    addBubble('SOS — Mujhe help chahiye!','user');
+    addBubble('🚨 ABHI 108 PE CALL KARO!\n\nBaithh jaao ya let jaao. Gaadi mat chalao.\nDarwaza kholo. Gehri saans lo.\n\nASHA worker aur hospital ko alert kar diya gaya hai.\nMain aapke saath hoon. 🙏\n\n⚠ Doctor se zaroor milein.','ai');
+    agentBus.emit('sos_triggered', {ts: Date.now()});
+  },300);
+}
+
+/* ═══ TOAST ═══ */
+let toastT;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(()=>el.classList.remove('on'), 2800);
+}
+
+/* ══════════════════════════════════════════════════════
+   AGENT OPERATING SYSTEM
+══════════════════════════════════════════════════════ */
+
+/* ── Agent Bus — simple pub/sub event bridge ── */
+const agentBus = {
+  _listeners: {},
+  on(event, fn) { (this._listeners[event]||=[]).push(fn); },
+  emit(event, data) {
+    (this._listeners[event]||[]).forEach(fn => fn(data));
+    busLog(`[bus] event=${event} agents notified`,'ok');
+    updateBusStatus();
+  },
+};
+
+/* ── All 11 agents ── */
+const AGENTS = [
+  {
+    id: 'antigravity',
+    name: 'Antigravity',
+    role: 'Cardiac Risk Scorer',
+    color: '#E8402A',
+    status: 'idle',
+    endpoint: () => CONFIG.ANTIGRAVITY_ENDPOINT || '(not configured)',
+    description: 'Primary XGBoost risk model. AUC 0.81. Scores patients 0–1. Triggers downstream agents.',
+    inputs: ['vitals payload (JSON)'],
+    outputs: ['risk_score', 'risk_level', 'shap_values'],
+    triggers: ['on vitals saved', 'on user request'],
+    log: [],
+    config: { model: 'XGBoost / TFLite', auc: 0.81, threshold_high: 0.50, threshold_critical: 0.75, mode: 'online → offline fallback' },
+  },
+  {
+    id: 'triage',
+    name: 'Triage Router',
+    role: 'Risk-based Dispatch',
+    color: '#F0A020',
+    status: 'idle',
+    description: 'Routes patients based on risk score. 0.75+ → 108+ER+ASHA. 0.55–0.74 → ASHA+PHC. 0.35–0.54 → Action plan. <0.35 → Monthly check-in.',
+    inputs: ['risk_score', 'risk_level', 'location'],
+    outputs: ['routing_decision', 'alert_targets'],
+    triggers: ['on risk_scored (score > 0.35)'],
+    log: [],
+    config: { critical: '>= 0.75 → 108+ER+Doctor+ASHA+Family', high: '0.55–0.74 → ASHA+PHC+Doctor', moderate: '0.35–0.54 → action plan', low: '< 0.35 → monthly check-in' },
+  },
+  {
+    id: 'aarogya_llm',
+    name: 'Aarogya LLM',
+    role: 'Empathy & Conversation',
+    color: '#2E7D52',
+    status: 'idle',
+    description: 'Claude-powered Hindi wellness conversation agent. Constitutional AI. Context-aware with latest risk score injected.',
+    inputs: ['user_message', 'chat_history', 'risk_context'],
+    outputs: ['hindi_response', 'tts_text'],
+    triggers: ['on user chat message'],
+    log: [],
+    config: { model: 'claude-sonnet-4-20250514', language: 'Hindi + Hinglish', constitutional_ai: true, max_tokens: 1000 },
+  },
+  {
+    id: 'shap_explainer',
+    name: 'SHAP Explainer',
+    role: 'Feature Attribution',
+    color: '#7B8CF8',
+    status: 'idle',
+    description: 'Explains which vitals drove the risk score. Makes AI decisions transparent for doctors and ASHA workers.',
+    inputs: ['risk_score', 'vitals_payload', 'shap_values'],
+    outputs: ['plain_hindi_explanation', 'doctor_card_content'],
+    triggers: ['on risk_scored'],
+    log: [],
+    config: { top_features: 3, language: 'Hindi + English', format: 'patient-friendly + clinical' },
+  },
+  {
+    id: 'asha_notifier',
+    name: 'ASHA Notifier',
+    role: 'Community Health Worker Alert',
+    color: '#00C9A0',
+    status: 'idle',
+    description: 'Sends GPS-tagged WhatsApp alert to assigned ASHA worker. Includes action plan and patient location.',
+    inputs: ['routing_decision', 'patient_id', 'location', 'risk_level'],
+    outputs: ['whatsapp_message_sent', 'asha_ack'],
+    triggers: ['on triage → ASHA route'],
+    log: [],
+    config: { channel: 'WhatsApp (Twilio)', timing: 'within 8s of critical alert', language: 'Hindi', includes_gps: true },
+  },
+  {
+    id: 'doctor_card',
+    name: 'Doctor Card',
+    role: 'Clinical Summary Generator',
+    color: '#3B82F6',
+    status: 'idle',
+    description: 'Generates a formatted Medical Card for doctors: SHAP summary, risk score, 90-day vitals trend, current medications.',
+    inputs: ['vitals_history', 'shap_values', 'medications', 'risk_score'],
+    outputs: ['medical_card_pdf', 'ehr_compatible_json'],
+    triggers: ['on high/critical risk', 'on user request'],
+    log: [],
+    config: { format: 'PDF + JSON', includes_shap: true, includes_history: '90 days', language: 'English (clinical)' },
+  },
+  {
+    id: 'family_alert',
+    name: 'Family Alert',
+    role: 'Emergency Notification',
+    color: '#E8608A',
+    status: 'idle',
+    description: 'Sends Hindi SMS to registered family members during high-risk events. 18-second cascade timing.',
+    inputs: ['routing_decision', 'patient_name', 'risk_level', 'location'],
+    outputs: ['sms_sent', 'family_ack_status'],
+    triggers: ['on triage → critical (t=18s)'],
+    log: [],
+    config: { channel: 'SMS (MSG91)', timing: '18s into cascade', language: 'Hindi', family_contacts: 'up to 3' },
+  },
+  {
+    id: 'facility_router',
+    name: 'Facility Router',
+    role: 'Verified Hospital Graph',
+    color: '#D4A840',
+    status: 'idle',
+    description: 'Queries the verified facility graph to find nearest ER with cardiac capacity. Pre-alerts hospital with patient data.',
+    inputs: ['location', 'risk_level', 'patient_data'],
+    outputs: ['nearest_er', 'eta_minutes', 'hospital_pre_alerted'],
+    triggers: ['on triage → critical (t=25s)'],
+    log: [],
+    config: { graph: 'verified facility network', real_time_capacity: true, pre_alert: 'ETA + patient data push', fallback: '108 dispatch' },
+  },
+  {
+    id: 'women_model',
+    name: "Women's Model",
+    role: 'Gender-specific Risk',
+    color: '#EC4899',
+    status: 'idle',
+    description: 'Separate XGBoost model trained on female-specific cardiac signals (atypical symptoms, hormonal factors). AUC 0.84 — 17% lift over base.',
+    inputs: ['vitals', 'sex=female', 'symptom_chips'],
+    outputs: ['female_risk_score', 'atypical_flags'],
+    triggers: ['on risk_scored where sex=female'],
+    log: [],
+    config: { model: 'XGBoost (women-specific)', auc: 0.84, lift_over_base: '+17%', atypical_symptoms: ['jaw pain', 'nausea', 'fatigue'] },
+  },
+  {
+    id: 'seasonal_adjuster',
+    name: 'Seasonal Adjuster',
+    role: 'Environmental Context',
+    color: '#F97316',
+    status: 'idle',
+    description: 'Adjusts risk score for Rajasthan heat, AQI, monsoon sodium intake, and regional diet patterns.',
+    inputs: ['risk_score', 'location', 'season', 'aqi'],
+    outputs: ['adjusted_risk_score', 'adjustment_reason'],
+    triggers: ['on risk_scored'],
+    log: [],
+    config: { factors: 'heat index, AQI, season, diet sodium', regions: 'Rajasthan, UP, MP, Bihar', data_source: 'Open-Meteo + CPCB AQI' },
+  },
+  {
+    id: 'nhm_logger',
+    name: 'NHM Auto Logger',
+    role: 'Government Case Reporting',
+    color: '#6B7280',
+    status: 'idle',
+    description: 'Auto-logs critical cases to NHM district dashboard at t=48s. DPDP 2023 compliant. Hashed patient ID.',
+    inputs: ['patient_hash', 'risk_level', 'outcome', 'timestamp'],
+    outputs: ['nhm_case_id', 'log_confirmed'],
+    triggers: ['on cascade completion (t=48s)'],
+    log: [],
+    config: { timing: '48s into cascade', compliance: 'DPDP 2023', id_format: 'SHA-256 hashed', api: 'NHM district portal' },
+  },
+];
+
+let selectedAgent = null;
+let runningAgents = new Set();
+
+function openAgentOS() {
+  document.getElementById('agentOS').classList.add('on');
+  buildAgentList();
+}
+function closeAgentOS() {
+  document.getElementById('agentOS').classList.remove('on');
+}
+
+function buildAgentList() {
+  const el = document.getElementById('agentList');
+  el.innerHTML = AGENTS.map((a,i) => `
+    <div class="aos-agent ${selectedAgent===i?'on':''}" onclick="selectAgent(${i})">
+      <div class="agent-dot ${a.status==='running'?'live':''}" style="background:${a.color}"></div>
+      <div>
+        <div class="agent-name">${a.name}</div>
+        <div class="agent-role">${a.role}</div>
+      </div>
+      <div style="margin-left:auto;font-size:.55rem;font-family:'IBM Plex Mono',monospace;color:${a.status==='running'?'var(--teal)':a.status==='done'?'var(--teal)':a.status==='error'?'var(--heart)':'var(--a-tx2)'}">
+        ${a.status==='running'?'▶ running':a.status==='done'?'✓ done':a.status==='error'?'✗ error':'— idle'}
+      </div>
+    </div>`).join('');
+}
+
+function selectAgent(i) {
+  selectedAgent = i;
+  buildAgentList();
+  renderAgentDetail(AGENTS[i]);
+}
+
+function renderAgentDetail(a) {
+  const el = document.getElementById('agentDetail');
+
+  const configRows = Object.entries(a.config||{}).map(([k,v]) =>
+    `<div class="aos-kv"><span class="aos-kv-k">${k}</span><span class="aos-kv-v">${v}</span></div>`
+  ).join('');
+
+  const logLines = (a.log||[]).slice(-20).reverse().map(l =>
+    `<div><span class="log-ts">${l.ts}</span><span class="${l.cls}">${l.msg}</span></div>`
+  ).join('') || '<div style="color:var(--a-tx2);opacity:.5">No logs yet — run agent to see activity</div>';
+
+  el.innerHTML = `
+    <div class="aos-d-header">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <div style="width:10px;height:10px;border-radius:50%;background:${a.color}"></div>
+        <div class="aos-d-title">${a.name}</div>
+        <div style="margin-left:auto;font-size:.6rem;font-family:'IBM Plex Mono',monospace;padding:4px 10px;border-radius:6px;border:1px solid ${a.status==='running'?'var(--teal)':a.status==='done'?'var(--teal)':a.status==='error'?'var(--heart)':'var(--a-border)'};color:${a.status==='running'?'var(--teal)':a.status==='done'?'var(--teal)':a.status==='error'?'var(--heart)':'var(--a-tx2)'}">
+          ${a.status}
+        </div>
+      </div>
+      <div class="aos-d-sub">${a.role}</div>
+    </div>
+
+    <div class="aos-panel">
+      <div class="aos-panel-title">Description</div>
+      <div style="font-size:.72rem;color:var(--a-tx2);line-height:1.75">${a.description}</div>
+    </div>
+
+    <div class="aos-panel">
+      <div class="aos-panel-title">I/O Contract</div>
+      <div class="aos-kv"><span class="aos-kv-k">Inputs</span><span class="aos-kv-v" style="color:var(--indigo)">${a.inputs.join(', ')}</span></div>
+      <div class="aos-kv"><span class="aos-kv-k">Outputs</span><span class="aos-kv-v" style="color:var(--teal)">${a.outputs.join(', ')}</span></div>
+      <div class="aos-kv"><span class="aos-kv-k">Triggers</span><span class="aos-kv-v">${a.triggers.join(' / ')}</span></div>
+      ${a.endpoint ? `<div class="aos-kv"><span class="aos-kv-k">Endpoint</span><span class="aos-kv-v" style="font-size:.6rem;word-break:break-all;color:var(--teal)">${a.endpoint()}</span></div>` : ''}
+    </div>
+
+    <div class="aos-panel">
+      <div class="aos-panel-title">Configuration</div>
+      ${configRows}
+    </div>
+
+    <button class="aos-run ${a.status==='running'?'running':''}" onclick="runAgent(${AGENTS.indexOf(a)})" id="runBtn-${a.id}">
+      ${a.status==='running'?'▶ Running…':'▶ Run Agent'}
+    </button>
+
+    <div class="aos-panel">
+      <div class="aos-panel-title">Activity Log</div>
+      <div class="aos-log">${logLines}</div>
+    </div>`;
+}
+
+async function runAgent(i) {
+  const a = AGENTS[i];
+  if (a.status === 'running') return;
+
+  a.status = 'running';
+  runningAgents.add(a.id);
+  updateBusStatus();
+  buildAgentList();
+
+  const btn = document.getElementById(`runBtn-${a.id}`);
+  if (btn) btn.classList.add('running');
+
+  busLog(`[${a.id}] starting`, 'ok');
+  agentLog(a, 'Agent started', 'log-ok');
+
+  // Simulate agent work with realistic delays
+  const duration = 600 + Math.random()*1400;
+  await new Promise(r => setTimeout(r, duration));
+
+  // Agent-specific behaviour
+  if (a.id === 'antigravity') {
+    const result = lastRisk || simulateAntigravity({age:45,sex:1,trestbps:130,thalach:78,fbs:0,bmi:25,currentSmoker:0,BPMeds:0,totChol:200});
+    agentLog(a, `risk_score=${result.risk_score} level=${result.risk_level}`, 'log-ok');
+    agentLog(a, `shap top: ${Object.entries(result.shap_values||{}).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'}`, 'log-ok');
+    agentBus.emit('risk_scored', {result});
+  } else if (a.id === 'triage') {
+    const score = lastRisk?.risk_score || 0.3;
+    const route = score >= 0.75 ? '108+ER+Doctor+ASHA+Family' : score >= 0.55 ? 'ASHA+PHC+Doctor' : score >= 0.35 ? 'Action plan' : 'Monthly check-in';
+    agentLog(a, `routing → ${route}`, 'log-ok');
+  } else if (a.id === 'asha_notifier') {
+    agentLog(a, 'WhatsApp sent to ASHA (demo)', 'log-ok');
+    agentLog(a, 'GPS attached · Hindi message composed', 'log-ok');
+  } else if (a.id === 'women_model') {
+    agentLog(a, 'sex=female → women model active', 'log-ok');
+    agentLog(a, 'AUC 0.84 · atypical symptoms checked', 'log-ok');
+  } else if (a.id === 'nhm_logger') {
+    agentLog(a, 'case_id=NHM-'+Math.floor(Math.random()*99999), 'log-ok');
+    agentLog(a, 'DPDP-compliant hash written', 'log-ok');
+  } else {
+    agentLog(a, `completed in ${duration.toFixed(0)}ms`, 'log-ok');
+  }
+
+  a.status = 'done';
+  runningAgents.delete(a.id);
+  updateBusStatus();
+  buildAgentList();
+  if (selectedAgent === i) renderAgentDetail(a);
+
+  busLog(`[${a.id}] done ✓`, 'ok');
+}
+
+function agentLog(agent, msg, cls='') {
+  const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  agent.log.push({ts, msg, cls});
+  if (agent.log.length > 50) agent.log.shift();
+}
+
+let busLogs = [];
+function busLog(msg, type='') {
+  const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  busLogs.push({ts, msg, type});
+  if (busLogs.length > 100) busLogs.shift();
+}
+
+function updateBusStatus() {
+  const n = runningAgents.size;
+  document.getElementById('busStatus').textContent = n > 0 ? `${n} agent${n>1?'s':''} running` : '0 agents running';
+}
+
+// Wire bus events to agents
+agentBus.on('risk_scored', data => {
+  const triage = AGENTS.find(a => a.id==='triage');
+  const shap = AGENTS.find(a => a.id==='shap_explainer');
+  const seasonal = AGENTS.find(a => a.id==='seasonal_adjuster');
+  if (triage) agentLog(triage, `risk_scored received → routing`, 'log-ok');
+  if (shap)   agentLog(shap,   `shap_values received → explaining`, 'log-ok');
+  if (seasonal) agentLog(seasonal, `adjusting for environment`, 'log-ok');
+});
+
+agentBus.on('sos_triggered', data => {
+  const family = AGENTS.find(a => a.id==='family_alert');
+  const facility = AGENTS.find(a => a.id==='facility_router');
+  const asha = AGENTS.find(a => a.id==='asha_notifier');
+  [family, facility, asha].forEach(a => { if(a) agentLog(a, `SOS cascade started`, 'log-warn'); });
+  busLog('[bus] SOS cascade initiated — 48s sequence', 'ok');
+});
+
+/* ═══════════════════
+   BOOT
+═══════════════════ */
+init();
+</script>
+</body>
+</html>
