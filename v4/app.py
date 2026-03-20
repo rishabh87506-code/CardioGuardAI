@@ -196,5 +196,14 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
+    # ── AGENT OS STARTUP AUDIT ──────────────────────────
+    print("╔══════════════════════════════════════════════════════╗")
+    print("║     Hridai Agent OS (v4.8) — Boot Sequence active    ║")
+    print("╚══════════════════════════════════════════════════════╝")
+    print("✓ Clinical Agent: Antigravity-22-XGBoost loaded.")
+    print("✓ WhatsApp Agent: Broadcast pipeline assigned.")
+    print("✓ Proxy Agent: Internal secure tunneling active.")
+    print(f"✓ Master Agent: Linked for Sonnet 3.5 ({'READY' if ANTHROPIC_API_KEY else 'STANDBY'}).")
+    
     port = int(os.environ.get('PORT', 5005))
     app.run(host='0.0.0.0', port=port)

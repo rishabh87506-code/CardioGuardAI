@@ -50,8 +50,32 @@
   --safe-bot: max(env(safe-area-inset-bottom),0px);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--fbody);-webkit-font-smoothing:antialiased}
-::selection{background:rgba(200,30,53,.35)}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--fbody);-webkit-font-smoothing:antialiased;transition:background .8s cubic-bezier(0.4, 0, 0.2, 1), color .4s ease}
+::selection{background:rgba(200,10,50,.35)}
+
+/* ─── BLUE THEME (WELLNESS) ─────────────────── */
+body.blue-theme {
+  --bg:    #020817;
+  --bg1:   #040E26;
+  --bg2:   #06163A;
+  --bg3:   #0A1F52;
+  --bg4:   #0F2D72;
+  --red:   #00D1FF;
+  --red2:  #2D72F0;
+  --rose:  #64FFDA;
+  --teal:  #64FFDA;
+  --tl2:   #00F0C4;
+  --blue:  #2D72F0;
+  --ink:   #F1F7FF;
+  --ink2:  #94A3B8;
+  --ink3:  #475569;
+}
+body.blue-theme::before {
+  background:
+    radial-gradient(ellipse 80% 55% at 10% 0%,rgba(0,209,255,.11) 0%,transparent 55%),
+    radial-gradient(ellipse 55% 65% at 88% 90%,rgba(100,255,218,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 65% 45% at 50% 50%,rgba(45,114,240,.05) 0%,transparent 65%);
+}
 
 /* Ambient glow */
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -133,7 +157,11 @@ select.iinp option{background:var(--bg3)}
 .hname em{font-style:normal;color:var(--red2)}
 .hstatus{font-size:.6rem;color:var(--ink2);margin-top:1px;transition:color .25s}
 .hstatus.think{color:var(--gold)}
-.hr{margin-left:auto;display:flex;gap:5px;align-items:center}
+.hr{margin-left:auto;display:flex;gap:7px;align-items:center}
+.hdr-r{margin-left:auto;display:flex;gap:7px;align-items:center}
+.btn-theme{width:34px;height:34px;border-radius:10px;background:var(--bg3);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .22s;box-shadow:0 4px 15px rgba(0,0,0,.18)}
+.btn-theme:hover{transform:rotate(12deg);border-color:var(--teal)}
+.badge-tag{display:flex;align-items:center;background:var(--bg3);border:1.5px solid var(--bd);border-radius:20px;padding:3px 8px;cursor:pointer}
 .spill{padding:3px 8px;border-radius:16px;font-size:.6rem;font-weight:700;display:none}
 .sp-lo{background:rgba(0,196,122,.1);border:1px solid rgba(0,196,122,.2);color:var(--grn)}
 .sp-md{background:rgba(237,160,32,.1);border:1px solid rgba(237,160,32,.2);color:var(--gold)}
@@ -668,11 +696,16 @@ select.iinp option{background:var(--bg3)}
       </div>
       <div>
         <div class="hname">Cardio<em>GuardAI</em></div>
-        <div class="hstatus" id="HSTATUS">Hridai · Master Agent · Ready</div>
+        <div class="hdr-l">
+          <div class="hstatus" id="HSTATUS">Hridai · Master Agent · Ready</div>
+        </div>
       </div>
-      <div class="hr">
-        <div class="spill" id="SPILL"></div>
-        <div class="wbadge">⚕ Wellness</div>
+      <div class="hdr-r">
+        <div class="btn-theme" onclick="toggleTheme()" title="Switch Theme">🌗</div>
+        <div class="badge-tag" id="BSTAT" onclick="goS('agents')">
+          <div class="spill" id="SPILL"></div>
+          <div class="wbadge">⚕ Wellness</div>
+        </div>
         <button class="hbtn" onclick="openCard()" title="Health Card">📋</button>
         <button class="hbtn" onclick="openModal('PROXMODAL')" title="Settings">⚙️</button>
       </div>
@@ -1131,8 +1164,10 @@ function launch() {
   document.getElementById('app').style.display = 'flex';
   buildQR('default'); buildAgentList(); buildFeed();
   buildVHist(); buildMedList(); buildContList(); buildRepList();
-  updateDash(); updateProfile(); syncKeyPrev(); initRiskForm();
-  chatWelcome(); updateStreak();
+  updateDash(); updateProfile(); syncKeyPrev();  loadTheme();
+  initRiskForm();
+  chatWelcome();
+ updateStreak();
   setTimeout(bgAgents, 2800);
 }
 
@@ -1909,6 +1944,18 @@ function changeKey(){
   const k=prompt('Naya Anthropic API key:');
   if(k&&(k.startsWith('sk-ant-')||k.startsWith('sk-'))){KEY=k;ST.s('key',k);syncKeyPrev();toast('✓ API key updated');}
   else if(k)toast('❌ Invalid key format');
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('blue-theme');
+  const isBlue = document.body.classList.contains('blue-theme');
+  ST.s('theme', isBlue ? 'blue' : 'dark');
+  toast(`✓ ${isBlue ? 'Blue Wellness' : 'Midnight'} mode active`);
+}
+
+function loadTheme() {
+  const t = ST.g('theme');
+  if(t === 'blue') document.body.classList.add('blue-theme');
 }
 
 function togglePref(k,el){prefs[k]=!prefs[k];el.classList.toggle('on',prefs[k]);ST.s('prefs',prefs);toast(`${k} ${prefs[k]?'on':'off'}`);}
