@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.log
+test_*.html
+test_*.zip
+generate_model.py
+test_clinical_scenarios.py
+models/*.pkl
+!model/antigravity_model.pkl

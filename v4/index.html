@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="hi-IN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#040608">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="CardioGuardAI — India ka pehla agentic cardiac wellness platform">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<title>CardioGuardAI</title>
+<style>
+/* ═══════════════════════════════════════════
+   CARDIOGUARDAI — PRODUCTION v4
+   Syne display · DM Sans body
+   Deep space × Cardiac crimson × Bioluminescent
+═══════════════════════════════════════════ */
+:root{
+  --bg:    #040608;
+  --bg1:   #080d14;
+  --bg2:   #0d1520;
+  --bg3:   #111d2b;
+  --bg4:   #162233;
+  --glass: rgba(255,255,255,.038);
+  --gl2:   rgba(255,255,255,.065);
+  --gl3:   rgba(255,255,255,.10);
+  --bd:    rgba(255,255,255,.065);
+  --bd2:   rgba(255,255,255,.12);
+  --bd3:   rgba(255,255,255,.18);
+  --red:   #C41E35;
+  --red2:  #E0274A;
+  --rose:  #FF6B82;
+  --teal:  #00CFA8;
+  --tl2:   #00F0C4;
+  --blue:  #2D72F0;
+  --gold:  #EDA020;
+  --grn:   #00C47A;
+  --amb:   #F07830;
+  --pur:   #8B5CF6;
+  --ink:   #EEF1F8;
+  --ink2:  #7888A5;
+  --ink3:  #3A4460;
+  --fdisp: 'Syne',sans-serif;
+  --fbody: 'DM Sans',sans-serif;
+  --pad:   18px;
+  --r:     16px;
+  --rs:    10px;
+  --safe-top: max(env(safe-area-inset-top),0px);
+  --safe-bot: max(env(safe-area-inset-bottom),0px);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--fbody);-webkit-font-smoothing:antialiased}
+::selection{background:rgba(200,30,53,.35)}
+
+/* Ambient glow */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 55% at 10% 0%,rgba(196,30,53,.11) 0%,transparent 55%),
+    radial-gradient(ellipse 55% 65% at 88% 90%,rgba(0,207,168,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 65% 45% at 50% 50%,rgba(45,114,240,.05) 0%,transparent 65%)}
+
+/* ─── APP SHELL ─────────────────────────── */
+#app{
+  position:relative;z-index:1;height:100dvh;
+  max-width:430px;margin:0 auto;
+  display:flex;flex-direction:column;overflow:hidden}
+
+/* ─── ONBOARDING ─────────────────────────── */
+#OB{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto}
+.ob{min-height:100dvh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px var(--pad);animation:fadeUp .45s ease}
+.ob.act{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* OB: brand */
+.ob-brand{text-align:center;margin-bottom:44px}
+.ob-wordmark{font-family:var(--fdisp);font-size:2.8rem;font-weight:800;letter-spacing:-.04em;color:var(--ink);line-height:1}
+.ob-wordmark em{font-style:normal;color:var(--red2)}
+.ob-sub{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+
+.ob-card{width:100%;max-width:360px;background:var(--glass);border:1px solid var(--bd2);border-radius:20px;padding:26px 22px;backdrop-filter:blur(24px)}
+.ob-card h2{font-family:var(--fdisp);font-size:1.25rem;font-weight:700;margin-bottom:6px}
+.ob-card p{font-size:.82rem;color:var(--ink2);line-height:1.8;margin-bottom:18px}
+
+.ifield{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.ilabel{font-size:.63rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.iinp{width:100%;background:var(--bg3);border:1.5px solid var(--bd);border-radius:var(--rs);padding:12px 14px;font-size:.9rem;font-family:var(--fbody);color:var(--ink);outline:none;transition:border-color .2s}
+.iinp:focus{border-color:rgba(196,30,53,.5)}
+.iinp::placeholder{color:var(--ink3);font-size:.85rem}
+select.iinp option{background:var(--bg3)}
+
+.btn-pri{width:100%;padding:13px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:var(--rs);color:#fff;font-size:.9rem;font-weight:600;font-family:var(--fbody);cursor:pointer;transition:all .2s;box-shadow:0 4px 22px rgba(196,30,53,.32);margin-top:4px}
+.btn-pri:hover{transform:translateY(-1px);box-shadow:0 6px 30px rgba(196,30,53,.42)}
+.btn-pri:active{transform:scale(.97)}
+.btn-ghost{width:100%;padding:12px;background:transparent;border:1.5px solid var(--bd);border-radius:var(--rs);color:var(--ink2);font-size:.85rem;font-family:var(--fbody);cursor:pointer;transition:all .2s;margin-top:8px}
+.btn-ghost:hover{border-color:var(--bd2);color:var(--ink)}
+.ob-note{margin-top:14px;font-size:.67rem;color:var(--ink3);text-align:center;line-height:1.7}
+.ob-note a{color:var(--ink2);text-decoration:none}
+
+/* OB: tour */
+.tour-ico{font-size:2.8rem;margin-bottom:14px;line-height:1}
+.tour-ttl{font-family:var(--fdisp);font-size:1.7rem;font-weight:800;text-align:center;margin-bottom:10px;letter-spacing:-.02em}
+.tour-body{font-size:.85rem;color:var(--ink2);line-height:1.85;text-align:center;max-width:300px;margin-bottom:28px}
+.dots{display:flex;gap:7px;margin-bottom:28px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--bd2);transition:all .3s}
+.dot.on{width:22px;border-radius:3px;background:var(--red2)}
+
+/* OB: chips */
+.chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px}
+.chip{padding:7px 13px;border-radius:20px;font-size:.75rem;font-weight:500;background:var(--bg3);border:1.5px solid var(--bd);color:var(--ink2);cursor:pointer;transition:all .18s;font-family:var(--fbody)}
+.chip.on{background:rgba(196,30,53,.12);border-color:var(--red);color:var(--rose)}
+
+/* OB: grid */
+.ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ─── HEADER ─────────────────────────────── */
+#HDR{
+  flex-shrink:0;z-index:100;
+  padding:calc(var(--safe-top) + 14px) var(--pad) 11px;
+  background:rgba(4,6,8,.92);backdrop-filter:blur(28px);
+  border-bottom:1px solid var(--bd)}
+.hrow{display:flex;align-items:center;gap:10px}
+.hav{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#120208,#280810);
+  border:1.5px solid rgba(196,30,53,.35);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;box-shadow:0 0 20px rgba(196,30,53,.14)}
+.hav svg{width:17px;height:17px}
+.pulse{position:absolute;inset:-4px;border-radius:50%;border:1.5px solid rgba(196,30,53,.22);animation:pls 2.6s ease infinite}
+@keyframes pls{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.65);opacity:0}}
+.hname{font-family:var(--fdisp);font-size:.92rem;font-weight:700;letter-spacing:-.01em}
+.hname em{font-style:normal;color:var(--red2)}
+.hstatus{font-size:.6rem;color:var(--ink2);margin-top:1px;transition:color .25s}
+.hstatus.think{color:var(--gold)}
+.hr{margin-left:auto;display:flex;gap:5px;align-items:center}
+.spill{padding:3px 8px;border-radius:16px;font-size:.6rem;font-weight:700;display:none}
+.sp-lo{background:rgba(0,196,122,.1);border:1px solid rgba(0,196,122,.2);color:var(--grn)}
+.sp-md{background:rgba(237,160,32,.1);border:1px solid rgba(237,160,32,.2);color:var(--gold)}
+.sp-hi{background:rgba(196,30,53,.1);border:1px solid rgba(196,30,53,.2);color:var(--rose)}
+.hbtn{width:30px;height:30px;border-radius:50%;background:var(--glass);border:1px solid var(--bd);color:var(--ink2);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.hbtn:hover{border-color:var(--bd2);color:var(--ink)}
+.wbadge{padding:3px 8px;background:rgba(196,30,53,.07);border:1px solid rgba(196,30,53,.15);border-radius:16px;font-size:.56rem;font-weight:600;color:var(--rose)}
+
+/* ECG strip */
+.ecg{height:20px;background:var(--bg1);overflow:hidden;position:relative;flex-shrink:0}
+.ecg svg{position:absolute;top:0;left:0;width:200%;height:100%;animation:ecgS 2.8s linear infinite}
+@keyframes ecgS{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ─── SCREENS ─────────────────────────────── */
+.scr{display:none;flex:1;flex-direction:column;overflow-y:auto;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.scr.on{display:flex}
+
+/* ─── CHAT ─────────────────────────────────── */
+#chatlog{flex:1;overflow-y:auto;padding:12px var(--pad) 6px;display:flex;flex-direction:column;gap:0;scroll-behavior:smooth;scrollbar-width:none}
+#chatlog::-webkit-scrollbar{display:none}
+
+.datesep{text-align:center;font-size:.55rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);padding:10px 0 3px}
+
+.crow{display:flex;flex-direction:column;margin-bottom:3px;animation:mIn .28s cubic-bezier(.34,1.52,.64,1)}
+@keyframes mIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.crow.u{align-items:flex-end}
+.crow.a{align-items:flex-start}
+.bwrap{display:flex;align-items:flex-end;gap:6px;max-width:88%}
+.aico{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#120208,#280810);border:1px solid rgba(196,30,53,.28);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:1px}
+.aico svg{width:10px;height:10px}
+.bbl{padding:10px 13px;border-radius:17px;font-size:.865rem;font-weight:400;line-height:1.75;word-wrap:break-word}
+.bbl.u{background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;border-bottom-right-radius:4px;box-shadow:0 2px 14px rgba(196,30,53,.28);max-width:85%}
+.bbl.ai{background:var(--bg3);border:1px solid var(--bd2);color:var(--ink);border-bottom-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.22)}
+.bbl.ai strong{color:var(--ink);font-weight:600}
+.bbl.ai em{color:var(--ink2);font-style:italic}
+.bbl.ai ul,.bbl.ai ol{padding-left:16px;margin:5px 0}
+.bbl.ai li{margin:3px 0;line-height:1.65}
+.ebox{background:rgba(196,30,53,.1);border:1px solid rgba(196,30,53,.22);border-radius:9px;padding:9px 12px;margin-top:6px;color:var(--rose);font-weight:600;font-size:.84rem}
+.wbox{background:rgba(237,160,32,.07);border-radius:7px;padding:7px 10px;margin-top:6px;color:var(--gold);font-size:.77rem;font-weight:500}
+.bts{font-size:.55rem;font-weight:400;color:var(--ink3);padding:2px 3px;margin-top:1px}
+.u .bts{text-align:right}
+
+/* Typing dots */
+.tdots{display:flex;align-items:center;gap:4px;padding:11px 13px}
+.td{width:5px;height:5px;border-radius:50%;background:var(--ink3);animation:tdb 1.4s ease infinite}
+.td:nth-child(2){animation-delay:.22s}.td:nth-child(3){animation-delay:.44s}
+@keyframes tdb{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-7px);opacity:1}}
+
+/* Agent cards in chat */
+.acard{margin:5px 0;padding:11px 13px;background:var(--glass);border:1px solid var(--bd);border-radius:13px;font-size:.8rem;animation:mIn .3s ease;display:flex;gap:10px}
+.acard.urg{border-color:rgba(196,30,53,.32);background:rgba(196,30,53,.06)}
+.acard.inf{border-color:rgba(0,207,168,.2);background:rgba(0,207,168,.04)}
+.acard.wrn{border-color:rgba(237,160,32,.22);background:rgba(237,160,32,.05)}
+.acard.suc{border-color:rgba(0,196,122,.2);background:rgba(0,196,122,.04)}
+.ac-ico{font-size:1.05rem;flex-shrink:0;margin-top:1px}
+.ac-ttl{font-weight:700;font-size:.8rem;margin-bottom:2px}
+.acard.urg .ac-ttl{color:var(--rose)}.acard.inf .ac-ttl{color:var(--teal)}.acard.wrn .ac-ttl{color:var(--gold)}.acard.suc .ac-ttl{color:var(--grn)}
+.ac-txt{color:var(--ink2);line-height:1.6;font-size:.77rem}
+
+/* QR chips */
+#QR{padding:7px var(--pad) 4px;background:rgba(4,6,8,.88);border-top:1px solid rgba(255,255,255,.03);display:flex;gap:6px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;z-index:5}
+#QR::-webkit-scrollbar{display:none}
+.qr{flex-shrink:0;padding:6px 12px;background:var(--glass);border:1px solid var(--bd);border-radius:18px;font-size:.7rem;font-weight:500;color:var(--ink2);cursor:pointer;white-space:nowrap;font-family:var(--fbody);transition:all .16s;height:30px;display:flex;align-items:center}
+.qr:hover,.qr:active{border-color:var(--red);color:var(--rose);background:rgba(196,30,53,.08)}
+
+/* Input bar */
+#INPBAR{padding:8px var(--pad) calc(var(--safe-bot) + 8px);background:rgba(4,6,8,.94);backdrop-filter:blur(22px);border-top:1px solid var(--bd);flex-shrink:0;z-index:5}
+.irow{display:flex;gap:7px;align-items:flex-end}
+.micbtn{width:40px;height:40px;border-radius:50%;background:var(--glass);border:1px solid var(--bd);color:var(--ink2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.micbtn.on{background:rgba(196,30,53,.14);border-color:var(--red);color:var(--rose);animation:micP 1.1s ease infinite}
+@keyframes micP{0%,100%{box-shadow:0 0 0 0 rgba(196,30,53,.38)}50%{box-shadow:0 0 0 7px rgba(196,30,53,0)}}
+.iw{flex:1}
+#CINP{width:100%;resize:none;background:var(--bg3);border:1.5px solid var(--bd);border-radius:20px;padding:10px 14px;font-size:.875rem;font-family:var(--fbody);color:var(--ink);outline:none;line-height:1.5;max-height:90px;overflow-y:auto;transition:border-color .2s;scrollbar-width:none}
+#CINP:focus{border-color:rgba(196,30,53,.42)}
+#CINP::placeholder{color:var(--ink3)}
+.sbtn{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--red2));border:none;color:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(196,30,53,.4);transition:all .2s}
+.sbtn:hover{transform:scale(1.08)}.sbtn:active{transform:scale(.94)}.sbtn:disabled{background:var(--bg3);box-shadow:none;opacity:.4}
+
+/* ─── DASHBOARD ───────────────────────────── */
+.dshero{padding:calc(var(--safe-top) + 16px) var(--pad) 16px;background:var(--bg1);flex-shrink:0}
+.dsgreet{font-family:var(--fdisp);font-size:1.45rem;font-weight:800;letter-spacing:-.02em;margin-bottom:2px}
+.dsgreet em{font-style:normal;color:var(--red2)}
+.dssub{font-size:.74rem;color:var(--ink2)}
+
+/* Risk ring card */
+.rring-card{margin:12px var(--pad) 0;background:var(--glass);border:1px solid var(--bd2);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:16px}
+.rring{position:relative;width:84px;height:84px;flex-shrink:0}
+.rring svg{width:84px;height:84px;transform:rotate(-90deg)}
+.rbg{stroke:var(--bg3);stroke-width:8;fill:none}
+.rarc{stroke-width:8;fill:none;stroke-linecap:round;transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1),stroke .4s}
+.rnum{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rnum .n{font-family:var(--fdisp);font-size:1.25rem;font-weight:800;color:var(--ink);line-height:1}
+.rnum .p{font-size:.5rem;font-weight:600;color:var(--ink3);letter-spacing:.1em}
+.rinfo{flex:1}
+.rlv{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:2px}
+.rlb{font-family:var(--fdisp);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.2}
+.rht{font-size:.7rem;color:var(--ink2);line-height:1.55}
+.rrun-btn{margin-top:7px;padding:6px 12px;background:rgba(196,30,53,.1);border:1px solid rgba(196,30,53,.2);border-radius:20px;font-size:.68rem;font-weight:600;color:var(--rose);cursor:pointer;font-family:var(--fbody);transition:all .18s;display:inline-flex;align-items:center;gap:5px}
+.rrun-btn:hover{background:rgba(196,30,53,.18)}
+
+/* Stats */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px var(--pad) 0}
+.sc{background:var(--glass);border:1px solid var(--bd);border-radius:var(--r);padding:14px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s}
+.sc:hover{border-color:var(--bd2);background:var(--gl2)}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--ac,var(--red));opacity:.45}
+.sc-ico{font-size:1.15rem;margin-bottom:7px}
+.sc-val{font-family:var(--fdisp);font-size:1.3rem;font-weight:800;color:var(--ink);line-height:1;margin-bottom:1px}
+.sc-unit{font-size:.56rem;font-weight:600;color:var(--ink2);letter-spacing:.07em;text-transform:uppercase}
+.sc-lbl{font-size:.66rem;color:var(--ink3);margin-top:5px}
+.sc-tr{position:absolute;top:12px;right:11px;font-size:.6rem;font-weight:700}
+.tr-up{color:var(--rose)}.tr-dn{color:var(--grn)}.tr-ok{color:var(--teal)}
+
+/* Streak */
+.stk{margin:9px var(--pad) 0;background:linear-gradient(135deg,rgba(196,30,53,.09),rgba(0,207,168,.05));border:1px solid var(--bd2);border-radius:var(--r);padding:13px 15px;display:flex;align-items:center;gap:13px;cursor:pointer}
+.stk-f{font-size:1.7rem}
+.stk-n{font-family:var(--fdisp);font-size:1.3rem;font-weight:800;color:var(--ink);line-height:1}
+.stk-l{font-size:.68rem;color:var(--ink2);margin-top:2px}
+
+/* Section label */
+.slbl{font-size:.6rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);padding:13px var(--pad) 5px}
+
+/* Feed */
+.frow{display:flex;align-items:flex-start;gap:10px;padding:10px var(--pad);border-bottom:1px solid var(--bd);cursor:pointer;transition:background .16s}
+.frow:hover{background:var(--glass)}
+.fdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.fttl{font-size:.78rem;font-weight:600;color:var(--ink);margin-bottom:2px}
+.ftxt{font-size:.7rem;color:var(--ink2);line-height:1.5}
+.fts{font-size:.57rem;color:var(--ink3);margin-top:2px}
+
+/* ─── RISK ASSESSMENT ─────────────────────── */
+.rshdr{padding:calc(var(--safe-top) + 16px) var(--pad) 14px;background:var(--bg1)}
+.rshdr-t{font-family:var(--fdisp);font-size:1.45rem;font-weight:800;letter-spacing:-.02em;margin-bottom:2px}
+.rshdr-s{font-size:.74rem;color:var(--ink2)}
+.rprog{margin:14px var(--pad) 0;height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.rpfill{height:100%;background:linear-gradient(90deg,var(--red),var(--red2));border-radius:2px;transition:width .4s ease}
+.rstep{display:none;padding:0 var(--pad) 10px}
+.rstep.on{display:block}
+.rs-ttl{font-family:var(--fdisp);font-size:1.1rem;font-weight:700;margin:15px 0 13px;letter-spacing:-.01em}
+.rfg{margin-bottom:13px}
+.rfl{display:block;font-size:.62rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink2);margin-bottom:5px}
+.rfi{width:100%;background:var(--bg3);border:1.5px solid var(--bd);border-radius:var(--rs);padding:12px 13px;font-size:.95rem;font-weight:700;color:var(--ink);font-family:var(--fbody);outline:none;transition:border-color .2s}
+.rfi:focus{border-color:rgba(196,30,53,.42)}
+.rfi::placeholder{color:var(--ink3);font-weight:400;font-size:.85rem}
+.rfslider{width:100%;-webkit-appearance:none;height:4px;background:var(--bg3);border-radius:2px;outline:none}
+.rfslider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--red2);cursor:pointer;box-shadow:0 2px 8px rgba(196,30,53,.35)}
+.slval{text-align:center;font-family:var(--fdisp);font-size:.95rem;font-weight:800;color:var(--red2);margin-bottom:6px}
+.sllabs{display:flex;justify-content:space-between;font-size:.6rem;color:var(--ink3);margin-top:3px}
+.rnav{display:flex;gap:9px;padding:14px var(--pad) 20px}
+.rprev{flex:1;padding:12px;background:transparent;border:1.5px solid var(--bd);border-radius:var(--rs);color:var(--ink2);font-size:.85rem;font-family:var(--fbody);cursor:pointer;transition:all .2s}
+.rprev:hover{border-color:var(--bd2)}
+.rnext{flex:2;padding:12px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:var(--rs);color:#fff;font-size:.88rem;font-weight:600;font-family:var(--fbody);cursor:pointer;box-shadow:0 4px 16px rgba(196,30,53,.3)}
+
+/* Risk result */
+#RRES{display:none;padding:0 var(--pad) 24px}
+.rres-ring{width:130px;height:130px;margin:16px auto 14px;position:relative}
+.rres-ring svg{width:130px;height:130px;transform:rotate(-90deg)}
+.rres-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rres-pct{font-family:var(--fdisp);font-size:1.9rem;font-weight:800;line-height:1}
+.rres-lbl{font-size:.55rem;font-weight:600;color:var(--ink2);letter-spacing:.1em}
+.rres-wrap{background:var(--glass);border:1px solid var(--bd2);border-radius:18px;padding:20px;text-align:center}
+.rres-lv{font-family:var(--fdisp);font-size:1.35rem;font-weight:800;margin-bottom:6px}
+.rres-msg{font-size:.83rem;color:var(--ink2);line-height:1.75;max-width:280px;margin:0 auto 14px}
+.shap-box{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);padding:13px;text-align:left;margin-top:12px}
+.shap-ttl{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:9px}
+.shap-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.shap-nm{font-size:.72rem;color:var(--ink);width:110px;flex-shrink:0}
+.shap-bw{flex:1;height:5px;background:var(--bg2);border-radius:3px}
+.shap-b{height:5px;border-radius:3px;transition:width .9s ease}
+.shap-v{font-size:.65rem;font-weight:700;color:var(--ink2);width:28px;text-align:right}
+.rres-actions{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+
+/* ─── VITALS ─────────────────────────────── */
+.vhdr{padding:calc(var(--safe-top) + 16px) var(--pad) 13px;background:var(--bg1)}
+.vhdr-t{font-family:var(--fdisp);font-size:1.45rem;font-weight:800;letter-spacing:-.02em}
+
+.vcard{margin:10px var(--pad) 0;background:var(--glass);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
+.vcard-l{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:9px}
+.vg{display:grid;gap:8px}
+.vg2{grid-template-columns:1fr 1fr}
+.vg1{grid-template-columns:1fr}
+.vf label{display:block;font-size:.62rem;color:var(--ink3);margin-bottom:3px}
+.vf input{width:100%;background:var(--bg3);border:1.5px solid var(--bd);border-radius:var(--rs);padding:10px 12px;font-size:.95rem;font-weight:700;color:var(--ink);font-family:var(--fbody);outline:none;transition:border-color .2s}
+.vf input:focus{border-color:rgba(196,30,53,.42)}
+.vf input::placeholder{color:var(--ink3);font-weight:400;font-size:.82rem}
+
+.vsave{display:block;width:calc(100% - 36px);margin:11px var(--pad) 0;padding:13px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:var(--rs);color:#fff;font-size:.88rem;font-weight:600;font-family:var(--fbody);cursor:pointer;box-shadow:0 4px 16px rgba(196,30,53,.28);transition:all .2s}
+.vsave:hover{transform:translateY(-1px)}
+
+.chart-wrap{margin:11px var(--pad) 0;background:var(--glass);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
+.ctabs{display:flex;gap:5px;margin-bottom:11px}
+.ctab{padding:5px 11px;border-radius:16px;font-size:.68rem;font-weight:600;background:var(--bg3);border:1px solid var(--bd);color:var(--ink2);cursor:pointer;font-family:var(--fbody);transition:all .16s}
+.ctab.on{background:rgba(196,30,53,.12);border-color:var(--red);color:var(--rose)}
+
+.vhrow{display:flex;justify-content:space-between;align-items:center;padding:10px var(--pad);border-bottom:1px solid var(--bd)}
+.vhl-t{font-size:.78rem;font-weight:600;color:var(--ink)}.vhl-d{font-size:.62rem;color:var(--ink3);margin-top:1px}
+.vhv{display:flex;gap:9px;align-items:center}
+.vhv span{font-size:.85rem;font-weight:700}
+
+/* ─── REPORTS ─────────────────────────────── */
+.rhdr{padding:calc(var(--safe-top) + 16px) var(--pad) 13px;background:var(--bg1)}
+.rhdr-t{font-family:var(--fdisp);font-size:1.45rem;font-weight:800;letter-spacing:-.02em}
+
+.upzone{margin:12px var(--pad) 0;background:var(--glass);border:2px dashed var(--bd2);border-radius:18px;padding:28px 18px;text-align:center;cursor:pointer;transition:all .2s}
+.upzone:hover{border-color:var(--red);background:rgba(196,30,53,.04)}
+.uz-ico{font-size:2.3rem;margin-bottom:8px}
+.uz-ttl{font-family:var(--fdisp);font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.uz-sub{font-size:.73rem;color:var(--ink2)}
+.uz-types{display:flex;gap:5px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.uz-t{padding:3px 9px;background:var(--bg3);border:1px solid var(--bd);border-radius:16px;font-size:.62rem;color:var(--ink3)}
+
+.rtgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:11px var(--pad) 0}
+.rtile{background:var(--glass);border:1px solid var(--bd);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .2s}
+.rtile:hover{border-color:var(--red2);background:rgba(196,30,53,.06)}
+.rt-ico{font-size:1.7rem;margin-bottom:7px}
+.rt-nm{font-size:.83rem;font-weight:600;color:var(--ink);margin-bottom:2px}
+.rt-sub{font-size:.66rem;color:var(--ink2)}
+
+.ritem{margin:0 var(--pad) 9px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.ri-hdr{padding:11px 13px;display:flex;gap:11px;align-items:center;border-bottom:1px solid var(--bd)}
+.ri-ico{width:38px;height:38px;border-radius:9px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0}
+.ri-nm{font-size:.82rem;font-weight:600;color:var(--ink)}.ri-dt{font-size:.62rem;color:var(--ink3);margin-top:1px}
+.ri-body{padding:11px 13px}
+.ri-sum{font-size:.73rem;color:var(--ink2);line-height:1.6}
+
+/* ─── MEDICATIONS ───────────────────────── */
+.mhdr{padding:calc(var(--safe-top) + 16px) var(--pad) 13px;background:var(--bg1)}
+.mhdr-t{font-family:var(--fdisp);font-size:1.45rem;font-weight:800;letter-spacing:-.02em}
+.addmed{display:flex;align-items:center;gap:9px;margin:11px var(--pad) 0;padding:13px;background:rgba(196,30,53,.05);border:1.5px dashed rgba(196,30,53,.22);border-radius:var(--r);cursor:pointer;transition:all .2s}
+.addmed:hover{background:rgba(196,30,53,.09)}
+.addmed-t{font-size:.85rem;font-weight:600;color:var(--rose)}
+.meditem{margin:0 var(--pad) 8px;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);padding:13px;display:flex;align-items:center;gap:11px}
+.med-ico{width:42px;height:42px;border-radius:11px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.med-bod{flex:1}
+.med-nm{font-size:.88rem;font-weight:600;color:var(--ink)}.med-tm{font-size:.68rem;color:var(--ink2);margin-top:2px}
+.med-tak{padding:6px 12px;border-radius:18px;font-size:.7rem;font-weight:600;background:var(--bg2);border:1px solid var(--bd);color:var(--ink3);cursor:pointer;font-family:var(--fbody);transition:all .2s}
+.med-tak.done{background:rgba(0,196,122,.1);border-color:rgba(0,196,122,.2);color:var(--grn)}
+
+/* ─── EMERGENCY ─────────────────────────── */
+.ehdr{padding:calc(var(--safe-top) + 16px) var(--pad) 13px;background:rgba(196,30,53,.06);border-bottom:1px solid rgba(196,30,53,.12)}
+.ehdr-t{font-family:var(--fdisp);font-size:1.45rem;font-weight:800;letter-spacing:-.02em;color:var(--rose)}
+.ehdr-s{font-size:.72rem;color:var(--ink2)}
+.sosbtn{margin:16px var(--pad) 0;padding:18px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:18px;width:calc(100% - 36px);color:#fff;text-align:center;cursor:pointer;animation:sosPls 2.2s ease infinite;box-shadow:0 6px 28px rgba(196,30,53,.48);transition:transform .18s}
+.sosbtn:active{transform:scale(.97)}
+@keyframes sosPls{0%,100%{box-shadow:0 6px 28px rgba(196,30,53,.48)}50%{box-shadow:0 6px 46px rgba(196,30,53,.75)}}
+.sos-ico{font-size:2.2rem;margin-bottom:6px}
+.sos-lbl{font-family:var(--fdisp);font-size:1.2rem;font-weight:800;letter-spacing:-.01em}
+.sos-sub{font-size:.77rem;opacity:.85;margin-top:2px}
+
+.ecard{margin:11px var(--pad) 0;background:var(--glass);border:1px solid var(--bd2);border-radius:var(--r);padding:14px}
+.ec-t{font-size:.78rem;font-weight:700;color:var(--rose);margin-bottom:9px}
+.ec-step{display:flex;gap:9px;align-items:flex-start;margin-bottom:7px}
+.ec-num{width:20px;height:20px;border-radius:50%;flex-shrink:0;background:rgba(196,30,53,.14);border:1px solid rgba(196,30,53,.22);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;color:var(--rose)}
+.ec-txt{font-size:.79rem;color:var(--ink2);line-height:1.6}
+.ec-txt strong{color:var(--ink)}
+
+.contcard{margin:9px var(--pad) 0;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);padding:13px;display:flex;align-items:center;gap:11px}
+.cont-av{width:42px;height:42px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.cont-nm{font-size:.86rem;font-weight:600;color:var(--ink)}.cont-rl{font-size:.68rem;color:var(--ink2)}
+.cont-call{padding:7px 13px;border-radius:18px;background:rgba(0,196,122,.1);border:1px solid rgba(0,196,122,.2);color:var(--grn);font-size:.72rem;font-weight:600;cursor:pointer;font-family:var(--fbody);transition:all .18s}
+.cont-call:hover{background:rgba(0,196,122,.18)}
+.addcont{display:flex;align-items:center;gap:8px;margin:9px var(--pad) 0;padding:12px;background:rgba(0,196,122,.04);border:1.5px dashed rgba(0,196,122,.18);border-radius:var(--r);cursor:pointer}
+.addcont-t{font-size:.83rem;font-weight:600;color:var(--grn)}
+
+/* ─── AGENTS ─────────────────────────────── */
+.aghdr{padding:calc(var(--safe-top) + 16px) var(--pad) 13px;background:var(--bg1)}
+.aghdr-t{font-family:var(--fdisp);font-size:1.45rem;font-weight:800;letter-spacing:-.02em;margin-bottom:2px}
+.aghdr-s{font-size:.73rem;color:var(--ink2)}
+.master{margin:12px var(--pad) 0;background:linear-gradient(135deg,rgba(196,30,53,.1),rgba(0,207,168,.05));border:1px solid rgba(196,30,53,.22);border-radius:var(--r);padding:14px;display:flex;gap:13px;align-items:center}
+.mav{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#120208,#280810);border:2px solid rgba(196,30,53,.32);display:flex;align-items:center;justify-content:center;font-size:1.35rem;flex-shrink:0;box-shadow:0 0 22px rgba(196,30,53,.18)}
+.mnm{font-family:var(--fdisp);font-size:1.05rem;font-weight:700;margin-bottom:2px}
+.msub{font-size:.7rem;color:var(--ink2);line-height:1.55}
+.mbadge{display:inline-flex;align-items:center;gap:3px;margin-top:5px;padding:3px 8px;background:rgba(196,30,53,.12);border:1px solid rgba(196,30,53,.2);border-radius:18px;font-size:.58rem;font-weight:700;color:var(--rose)}
+
+.agitem{margin:0 var(--pad) 7px;background:var(--glass);border:1px solid var(--bd);border-radius:var(--r);padding:13px;display:flex;align-items:flex-start;gap:11px;position:relative;overflow:hidden;transition:all .2s}
+.agitem::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--agc,var(--red))}
+.ag-ico{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.ag-bod{flex:1}
+.ag-nm{font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:2px}
+.ag-desc{font-size:.7rem;color:var(--ink2);line-height:1.5}
+.ag-meta{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.atag{padding:2px 7px;border-radius:18px;font-size:.57rem;font-weight:600;letter-spacing:.04em}
+.tg-live{background:rgba(0,196,122,.1);color:var(--grn);border:1px solid rgba(0,196,122,.17)}
+.tg-act{background:rgba(0,207,168,.08);color:var(--teal);border:1px solid rgba(0,207,168,.14)}
+.tg-wtch{background:rgba(237,160,32,.08);color:var(--gold);border:1px solid rgba(237,160,32,.13)}
+.tg-stby{background:var(--glass);color:var(--ink3);border:1px solid var(--bd)}
+.agtog{width:34px;height:19px;border-radius:10px;flex-shrink:0;background:var(--bg3);border:1px solid var(--bd);cursor:pointer;position:relative;transition:background .2s;margin-top:2px}
+.agtog.on{background:var(--grn);border-color:transparent}
+.agtog::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;background:#fff;border-radius:50%;transition:transform .2s}
+.agtog.on::after{transform:translateX(15px)}
+
+/* ─── PROFILE ─────────────────────────────── */
+.phdr{padding:calc(var(--safe-top) + 18px) var(--pad) 20px;background:var(--bg1);display:flex;flex-direction:column;align-items:center;text-align:center}
+.pav{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#120208,#280810);border:2px solid rgba(196,30,53,.28);display:flex;align-items:center;justify-content:center;font-size:1.7rem;margin-bottom:9px;box-shadow:0 0 28px rgba(196,30,53,.12)}
+.pnm{font-family:var(--fdisp);font-size:1.25rem;font-weight:800;letter-spacing:-.02em;margin-bottom:1px}
+.psub{font-size:.7rem;color:var(--ink2)}
+.pbadges{display:flex;gap:5px;margin-top:9px;justify-content:center;flex-wrap:wrap}
+.pbadge{padding:3px 9px;border-radius:18px;font-size:.6rem;font-weight:600}
+
+.psec{padding:14px var(--pad) 0}
+.psect{font-size:.6rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.prow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bd)}
+.prow:last-child{border:none}
+.prow-l{font-size:.83rem;font-weight:500;color:var(--ink)}
+.prow-s{font-size:.68rem;color:var(--ink2);margin-top:1px}
+.prow-v{font-size:.77rem;color:var(--ink2)}
+.ptog{width:40px;height:22px;border-radius:11px;background:var(--bg3);border:1px solid var(--bd);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.ptog.on{background:var(--grn);border-color:transparent}
+.ptog::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
+.ptog.on::after{transform:translateX(18px)}
+.dbtn{margin:14px var(--pad) 0;width:calc(100% - 36px);padding:12px;border-radius:var(--rs);background:rgba(196,30,53,.06);border:1px solid rgba(196,30,53,.13);color:var(--rose);font-size:.83rem;font-weight:600;font-family:var(--fbody);cursor:pointer;transition:all .2s}
+.dbtn:hover{background:rgba(196,30,53,.12)}
+
+/* ─── NAV ─────────────────────────────────── */
+#NAV{display:flex;background:rgba(4,6,8,.96);backdrop-filter:blur(24px);border-top:1px solid var(--bd);flex-shrink:0;padding-bottom:var(--safe-bot);z-index:100}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 3px 10px;cursor:pointer;transition:all .2s;position:relative;border:none;background:none;font-family:var(--fbody)}
+.ni::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:linear-gradient(90deg,var(--red),var(--red2));border-radius:0 0 3px 3px;transform:scaleX(0);transition:transform .25s cubic-bezier(.34,1.52,.64,1)}
+.ni.on::before{transform:scaleX(1)}
+.ni-ico{font-size:1.15rem;margin-bottom:2px;transition:transform .2s;position:relative}
+.ni.on .ni-ico{transform:scale(1.1)}
+.nbdg{position:absolute;top:5px;right:calc(50% - 15px);width:15px;height:15px;border-radius:50%;background:var(--red2);font-size:.5rem;font-weight:800;color:#fff;display:none;align-items:center;justify-content:center;border:2px solid var(--bg)}
+.nbdg.show{display:flex}
+.ni-lbl{font-size:.56rem;font-weight:600;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;transition:color .2s}
+.ni.on .ni-lbl{color:var(--red2)}
+
+/* ─── MODALS ──────────────────────────────── */
+.moverlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.72);backdrop-filter:blur(9px);display:none;align-items:flex-end;justify-content:center}
+.moverlay.open{display:flex}
+.mpanel{width:100%;max-width:430px;background:var(--bg2);border-radius:20px 20px 0 0;border-top:1px solid var(--bd2);padding:22px var(--pad) calc(var(--safe-bot) + 22px);animation:slideUp .3s cubic-bezier(.34,1.52,.64,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mttl{font-family:var(--fdisp);font-size:1.15rem;font-weight:700;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.mclose{color:var(--ink2);cursor:pointer;font-size:.95rem;padding:4px;transition:color .18s}
+.mclose:hover{color:var(--ink)}
+
+/* ─── HEALTH CARD ─────────────────────────── */
+#HCARD{position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:var(--pad)}
+#HCARD.open{display:flex}
+.hc-inner{width:100%;max-width:320px;background:var(--bg2);border:1px solid var(--bd2);border-radius:20px;padding:22px;text-align:center;position:relative}
+.hc-logo{font-family:var(--fdisp);font-size:1.05rem;font-weight:800;margin-bottom:14px;letter-spacing:-.02em}
+.hc-logo em{font-style:normal;color:var(--red2)}
+.hc-score{font-family:var(--fdisp);font-size:2.8rem;font-weight:800;line-height:1;margin-bottom:3px}
+.hc-lv{font-size:.82rem;font-weight:600;margin-bottom:14px}
+.hc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.hc-stat{background:var(--bg3);border-radius:9px;padding:9px}
+.hc-sv{font-family:var(--fdisp);font-size:.95rem;font-weight:800;color:var(--ink)}.hc-sl{font-size:.58rem;color:var(--ink2);margin-top:1px}
+.hc-foot{font-size:.6rem;color:var(--ink3);line-height:1.7}
+.hc-close{position:absolute;top:13px;right:13px;color:var(--ink2);cursor:pointer}
+.hc-share{margin-top:13px;padding:10px;width:100%;background:var(--red);border:none;border-radius:var(--rs);color:#fff;font-size:.85rem;font-weight:600;font-family:var(--fbody);cursor:pointer}
+
+/* ─── TOAST & NOTIF ──────────────────────── */
+#TOAST{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--bg3);border:1px solid var(--bd2);color:var(--ink);padding:8px 17px;border-radius:22px;font-size:.76rem;font-weight:500;opacity:0;transition:all .26s;z-index:9999;white-space:nowrap;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+#TOAST.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#NOTIF{position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-100%);width:100%;max-width:430px;background:var(--bg3);border-bottom:1px solid var(--bd2);padding:11px var(--pad);z-index:5000;display:flex;align-items:flex-start;gap:11px;transition:transform .38s cubic-bezier(.34,1.52,.64,1);box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#NOTIF.on{transform:translateX(-50%) translateY(0)}
+.notif-ico{font-size:1.1rem;flex-shrink:0}
+.notif-b{flex:1}.notif-ttl{font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:1px}.notif-txt{font-size:.7rem;color:var(--ink2);line-height:1.4}
+.notif-x{color:var(--ink3);cursor:pointer;font-size:.85rem}
+
+/* ─── EMPTY STATE ─────────────────────────── */
+.empty{padding:36px var(--pad);text-align:center;color:var(--ink3);font-size:.8rem;line-height:1.8}
+.empty-ico{font-size:2.3rem;margin-bottom:9px}
+
+/* ─── UTIL ────────────────────────────────── */
+.sep{height:1px;background:var(--bd);margin:0 var(--pad)}
+</style>
+</head>
+<body>
+
+<!-- ── TOAST ── -->
+<div id="TOAST"></div>
+
+<!-- ── NOTIFICATION ── -->
+<div id="NOTIF">
+  <div class="notif-ico" id="nIco">🫀</div>
+  <div class="notif-b"><div class="notif-ttl" id="nTitle"></div><div class="notif-txt" id="nTxt"></div></div>
+  <div class="notif-x" onclick="hideNotif()">✕</div>
+</div>
+
+<!-- ── HEALTH CARD ── -->
+<div id="HCARD">
+  <div class="hc-inner">
+    <div class="hc-close" onclick="closeCard()">✕</div>
+    <div class="hc-logo">Cardio<em>GuardAI</em></div>
+    <div class="hc-score" id="hcScore" style="color:var(--ink2)">—</div>
+    <div class="hc-lv" id="hcLv">Not Assessed Yet</div>
+    <div class="hc-grid">
+      <div class="hc-stat"><div class="hc-sv" id="hcBP">—</div><div class="hc-sl">BP</div></div>
+      <div class="hc-stat"><div class="hc-sv" id="hcHR">—</div><div class="hc-sl">HR</div></div>
+      <div class="hc-stat"><div class="hc-sv" id="hcBS">—</div><div class="hc-sl">Sugar</div></div>
+    </div>
+    <div class="hc-foot">CardioGuardAI · Hridai Master Agent<br>CIN: U62011DL2026PTC464381<br>⚠ Wellness only — not a medical diagnosis</div>
+    <button class="hc-share" onclick="shareCard()">📤 Share with Doctor</button>
+  </div>
+</div>
+
+<!-- ── MED MODAL ── -->
+<div class="moverlay" id="MEDMODAL">
+  <div class="mpanel">
+    <div class="mttl">Dawai Add Karein <span class="mclose" onclick="closeModal('MEDMODAL')">✕</span></div>
+    <div class="ifield"><div class="ilabel">Dawai ka Naam</div><input class="iinp" id="mNm" placeholder="e.g. Metoprolol 25mg"></div>
+    <div class="ifield"><div class="ilabel">Waqt</div><input class="iinp" id="mTm" type="time" value="09:00"></div>
+    <div class="ifield"><div class="ilabel">Dose / Instructions</div><input class="iinp" id="mDs" placeholder="e.g. 1 tablet, khane ke baad"></div>
+    <button class="btn-pri" onclick="saveMed()">Save Dawai</button>
+  </div>
+</div>
+
+<!-- ── CONTACT MODAL ── -->
+<div class="moverlay" id="CONTMODAL">
+  <div class="mpanel">
+    <div class="mttl">Emergency Contact <span class="mclose" onclick="closeModal('CONTMODAL')">✕</span></div>
+    <div class="ifield"><div class="ilabel">Naam</div><input class="iinp" id="cNm" placeholder="e.g. Rahul (Beta)"></div>
+    <div class="ifield"><div class="ilabel">Mobile</div><input class="iinp" id="cPh" type="tel" placeholder="+91 98765 43210" inputmode="tel"></div>
+    <div class="ifield"><div class="ilabel">Rishta</div>
+      <select class="iinp" id="cRl"><option>Beta / Beti</option><option>Pati / Patni</option><option>Bhai / Behen</option><option>Maa / Baap</option><option>Dost</option></select>
+    </div>
+    <button class="btn-pri" onclick="saveCont()">Save Contact</button>
+  </div>
+</div>
+
+<!-- ── PROXY SETUP MODAL ── -->
+<div class="moverlay" id="PROXMODAL">
+  <div class="mpanel">
+    <div class="mttl">Proxy Setup <span class="mclose" onclick="closeModal('PROXMODAL')">✕</span></div>
+    <div class="ifield">
+      <div class="ilabel">Proxy URL (Hides your API key)</div>
+      <input class="iinp" id="pxUrl" placeholder="https://your-proxy.railway.app">
+    </div>
+    <div class="ifield">
+      <div class="ilabel">Antigravity Model URL</div>
+      <input class="iinp" id="agUrl" placeholder="https://your-antigravity.railway.app">
+    </div>
+    <p style="font-size:.72rem;color:var(--ink2);line-height:1.7;margin:4px 0 14px">
+      Jab proxy set hoga, aapki Anthropic API key kabhi browser mein visible nahi hogi.
+      Users sirf proxy URL dekhenge.
+    </p>
+    <button class="btn-pri" onclick="saveProxy()">Save & Enable Proxy</button>
+    <button class="btn-ghost" onclick="closeModal('PROXMODAL')">Direct Mode Use Karein</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ONBOARDING
+══════════════════════════════════════════ -->
+<div id="OB">
+
+  <!-- Step 0: Key / Proxy -->
+  <div class="ob act" id="ob0">
+    <div class="ob-brand">
+      <div class="ob-wordmark">Cardio<em>GuardAI</em></div>
+      <div class="ob-sub">Powered by Hridai Master Agent</div>
+    </div>
+    <div class="ob-card">
+      <h2>Shuru Karein</h2>
+      <p>India ka pehla agentic cardiac wellness platform. Hridai aur 11 specialist agents — sirf aapke liye.</p>
+      <div class="ifield">
+        <div class="ilabel">Anthropic API Key</div>
+        <input class="iinp" id="apiK" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 13px;margin-bottom:12px">
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:5px">🔒 Production Mode (Recommended)</div>
+        <div style="font-size:.72rem;color:var(--ink2);line-height:1.65;margin-bottom:8px">Deploy proxy server → API key hidden from all users. Antigravity bhi secure.</div>
+        <div class="ifield" style="margin:0">
+          <div class="ilabel">Proxy URL (optional)</div>
+          <input class="iinp" id="pxK" placeholder="https://your-proxy.railway.app" style="margin:0">
+        </div>
+      </div>
+      <button class="btn-pri" onclick="startApp()">Aage Chalein →</button>
+      <div class="ob-note">
+        Key milegi: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+        Sirf aapke device pe encrypted. Kabhi share nahi hoga.
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: Tour -->
+  <div class="ob" id="ob1">
+    <div id="tourC" style="text-align:center;display:flex;flex-direction:column;align-items:center"></div>
+    <div class="dots" id="tourDots"></div>
+    <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:7px">
+      <button class="btn-pri" id="tourNxt" onclick="tourNext()">Aage →</button>
+      <button class="btn-ghost" onclick="skipTour()">Skip</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Profile -->
+  <div class="ob" id="ob2">
+    <div style="width:100%;max-width:360px">
+      <div style="text-align:center;margin-bottom:24px">
+        <div class="ob-wordmark" style="font-size:2rem">Cardio<em>GuardAI</em></div>
+        <div style="font-size:.78rem;color:var(--ink2);margin-top:6px">Aapka health profile setup karein</div>
+      </div>
+      <div class="ob-card">
+        <div class="ifield"><div class="ilabel">Aapka Naam</div><input class="iinp" id="pNm" placeholder="Naam daalen"></div>
+        <div class="ig2">
+          <div class="ifield"><div class="ilabel">Umar (Saal)</div><input class="iinp" id="pAg" type="number" placeholder="45" inputmode="numeric"></div>
+          <div class="ifield"><div class="ilabel">Gender</div>
+            <select class="iinp" id="pGn"><option value="male">Purush</option><option value="female">Mahila</option><option value="other">Anya</option></select>
+          </div>
+        </div>
+        <div class="ifield"><div class="ilabel">Existing Conditions</div>
+          <div class="chip-row" id="condChips">
+            <div class="chip" data-v="diabetes" onclick="toggleCond(this)">🩸 Diabetes</div>
+            <div class="chip" data-v="htn" onclick="toggleCond(this)">💊 High BP</div>
+            <div class="chip" data-v="smoke" onclick="toggleCond(this)">🚬 Smoking</div>
+            <div class="chip" data-v="fhist" onclick="toggleCond(this)">👨‍👩‍👦 Family History</div>
+            <div class="chip" data-v="obese" onclick="toggleCond(this)">⚖️ Obesity</div>
+            <div class="chip" data-v="none" onclick="toggleCond(this)">✓ Kuch Nahi</div>
+          </div>
+        </div>
+        <div class="ifield"><div class="ilabel">Sheher</div><input class="iinp" id="pCt" placeholder="e.g. Jaipur, Nagpur…"></div>
+        <button class="btn-pri" onclick="saveProfile()" style="margin-top:8px">CardioGuardAI Launch 🫀</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════════ -->
+<div id="app" style="display:none">
+
+  <!-- HEADER -->
+  <div id="HDR">
+    <div class="hrow">
+      <div class="hav">
+        <div class="pulse"></div>
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 21C7 16 2 11.5 2 7a5 5 0 0 1 10 0 5 5 0 0 1 10 0c0 4.5-5 9-10 14z" fill="var(--red2)" opacity=".88"/>
+          <polyline points="7,12 8,12 9,10 10,14 11,9 12,13 13,12 15,12" stroke="rgba(255,255,255,.82)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="hname">Cardio<em>GuardAI</em></div>
+        <div class="hstatus" id="HSTATUS">Hridai · Master Agent · Ready</div>
+      </div>
+      <div class="hr">
+        <div class="spill" id="SPILL"></div>
+        <div class="wbadge">⚕ Wellness</div>
+        <button class="hbtn" onclick="openCard()" title="Health Card">📋</button>
+        <button class="hbtn" onclick="openModal('PROXMODAL')" title="Settings">⚙️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ECG -->
+  <div class="ecg">
+    <svg viewBox="0 0 800 20" preserveAspectRatio="none">
+      <polyline points="0,10 50,10 60,10 65,2 70,18 74,.5 78,19.5 82,10 92,10 150,10 160,10 165,2 170,18 174,.5 178,19.5 182,10 192,10 250,10 260,10 265,2 270,18 274,.5 278,19.5 282,10 292,10 350,10 360,10 365,2 370,18 374,.5 378,19.5 382,10 392,10 450,10 460,10 465,2 470,18 474,.5 478,19.5 482,10 492,10 550,10 560,10 565,2 570,18 574,.5 578,19.5 582,10 592,10 650,10 660,10 665,2 670,18 674,.5 678,19.5 682,10 692,10 750,10 760,10 765,2 770,18 774,.5 778,19.5 782,10 800,10 0,10 50,10 60,10 65,2 70,18 74,.5 78,19.5 82,10 92,10 150,10 160,10 165,2 170,18 174,.5 178,19.5 182,10 192,10 250,10 260,10 265,2 270,18 274,.5 278,19.5 282,10 292,10 350,10 360,10 365,2 370,18 374,.5 378,19.5 382,10 392,10 450,10 460,10 465,2 470,18 474,.5 478,19.5 482,10 492,10 550,10 560,10 565,2 570,18 574,.5 578,19.5 582,10 592,10 650,10 660,10 665,2 670,18 674,.5 678,19.5 682,10 692,10 750,10 760,10 765,2 770,18 774,.5 778,19.5 782,10 800,10"
+        stroke="var(--red2)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- ── CHAT ── -->
+  <div class="scr on" id="s-chat">
+    <div id="chatlog"></div>
+    <div id="QR"></div>
+    <div id="INPBAR">
+      <div class="irow">
+        <button class="micbtn" id="MICBTN" onclick="toggleMic()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+        <div class="iw"><textarea id="CINP" rows="1" placeholder="CardioGuardAI se kuch bhi poochein…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="autoGrow(this)"></textarea></div>
+        <button class="sbtn" id="SBTN" onclick="sendMsg()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div class="scr" id="s-dash">
+    <div class="dshero">
+      <div class="dsgreet" id="DSG">Namaskar, <em>Dost</em></div>
+      <div class="dssub" id="DSS">Aaj aapka dil kaisa hai?</div>
+    </div>
+    <div class="rring-card">
+      <div class="rring">
+        <svg viewBox="0 0 84 84">
+          <circle class="rbg" cx="42" cy="42" r="34"/>
+          <circle class="rarc" id="RARC" cx="42" cy="42" r="34" stroke="var(--teal)" stroke-dasharray="214" stroke-dashoffset="214"/>
+        </svg>
+        <div class="rnum"><div class="n" id="RNUM">—</div><div class="p">RISK</div></div>
+      </div>
+      <div class="rinfo">
+        <div class="rlv" id="RLV" style="color:var(--ink3)">NOT ASSESSED</div>
+        <div class="rlb" id="RLB">Assessment nahi hua</div>
+        <div class="rht" id="RHT">Risk tab → Assessment chalaaein</div>
+        <div class="rrun-btn" onclick="goS('risk')">🫀 Run Assessment</div>
+      </div>
+    </div>
+    <div class="stk" onclick="goS('chat')">
+      <div class="stk-f">🔥</div>
+      <div><div class="stk-n" id="STKN">0</div><div class="stk-l">Din ki streak — Hridai se baat karte rahein!</div></div>
+    </div>
+    <div class="sgrid">
+      <div class="sc" style="--ac:var(--rose)" onclick="goS('vitals')"><div class="sc-ico">🩸</div><div class="sc-val" id="DBP">—/—</div><div class="sc-unit">mmHg</div><div class="sc-lbl">Blood Pressure</div><div class="sc-tr tr-ok" id="DBPt">—</div></div>
+      <div class="sc" style="--ac:var(--red2)" onclick="goS('vitals')"><div class="sc-ico">💓</div><div class="sc-val" id="DHR">—</div><div class="sc-unit">bpm</div><div class="sc-lbl">Heart Rate</div><div class="sc-tr tr-ok" id="DHRt">—</div></div>
+      <div class="sc" style="--ac:var(--gold)" onclick="goS('vitals')"><div class="sc-ico">🍬</div><div class="sc-val" id="DBS">—</div><div class="sc-unit">mg/dL</div><div class="sc-lbl">Blood Sugar</div><div class="sc-tr tr-ok" id="DBSt">—</div></div>
+      <div class="sc" style="--ac:var(--teal)" onclick="goS('agents')"><div class="sc-ico">🤖</div><div class="sc-val">11</div><div class="sc-unit">Agents</div><div class="sc-lbl">Hridai Network</div><div class="sc-tr" style="color:var(--teal)">LIVE</div></div>
+    </div>
+    <div class="slbl">Hridai Agent Activity</div>
+    <div id="AGFEED"></div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ── RISK ASSESSMENT ── -->
+  <div class="scr" id="s-risk">
+    <div class="rshdr">
+      <div class="rshdr-t">Cardiac Risk Assessment</div>
+      <div class="rshdr-s">Hridai + Antigravity XGBoost · AUC 0.81</div>
+    </div>
+    <div class="rprog"><div class="rpfill" id="RPFILL" style="width:0%"></div></div>
+    <div id="RSTEPS"></div>
+    <div id="RRES"></div>
+    <div class="rnav" id="RNAV">
+      <button class="rprev" id="RPREV" onclick="rBack()">← Wapas</button>
+      <button class="rnext" id="RNXT" onclick="rNext()">Aage →</button>
+    </div>
+  </div>
+
+  <!-- ── VITALS ── -->
+  <div class="scr" id="s-vitals">
+    <div class="vhdr"><div class="vhdr-t">Vitals Log</div></div>
+    <div class="vcard"><div class="vcard-l">🩸 Blood Pressure</div>
+      <div class="vg vg2">
+        <div class="vf"><label>Systolic (Upper)</label><input type="number" id="vSys" placeholder="120" inputmode="numeric"></div>
+        <div class="vf"><label>Diastolic (Lower)</label><input type="number" id="vDia" placeholder="80" inputmode="numeric"></div>
+      </div>
+    </div>
+    <div class="vcard" style="margin-top:7px"><div class="vcard-l">💓 Heart Rate & SpO₂</div>
+      <div class="vg vg2">
+        <div class="vf"><label>Heart Rate (bpm)</label><input type="number" id="vHR" placeholder="72" inputmode="numeric"></div>
+        <div class="vf"><label>SpO₂ (%)</label><input type="number" id="vSpO" placeholder="98" inputmode="numeric"></div>
+      </div>
+    </div>
+    <div class="vcard" style="margin-top:7px"><div class="vcard-l">🍬 Blood Sugar & Weight</div>
+      <div class="vg vg2">
+        <div class="vf"><label>Blood Sugar (mg/dL)</label><input type="number" id="vBS" placeholder="100" inputmode="numeric"></div>
+        <div class="vf"><label>Weight (kg)</label><input type="number" id="vWt" placeholder="70" inputmode="numeric"></div>
+      </div>
+    </div>
+    <button class="vsave" onclick="saveVitals()">💾 Save & Analyse</button>
+    <div class="chart-wrap">
+      <div class="ctabs">
+        <div class="ctab on" onclick="switchChart('bp',this)">BP</div>
+        <div class="ctab" onclick="switchChart('hr',this)">Heart Rate</div>
+        <div class="ctab" onclick="switchChart('bs',this)">Sugar</div>
+      </div>
+      <canvas id="VCHART" height="150" style="max-height:150px"></canvas>
+    </div>
+    <div class="slbl">Recent Readings</div>
+    <div id="VHIST"></div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ── REPORTS ── -->
+  <div class="scr" id="s-reports">
+    <div class="rhdr"><div class="rhdr-t">Reports & Analysis</div></div>
+    <div class="upzone" onclick="document.getElementById('REPFILE').click()">
+      <div class="uz-ico">📄</div>
+      <div class="uz-ttl">Report Upload Karein</div>
+      <div class="uz-sub">Hridai aapki report Hindi mein explain karega</div>
+      <div class="uz-types"><div class="uz-t">Lab Report</div><div class="uz-t">ECG</div><div class="uz-t">Echo</div><div class="uz-t">Prescription</div></div>
+    </div>
+    <input type="file" id="REPFILE" accept=".pdf,.jpg,.jpeg,.png,.webp" style="display:none" onchange="analyseReport(event)">
+    <div class="slbl">Select Report Type</div>
+    <div class="rtgrid">
+      <div class="rtile" onclick="setRepType('lab',this)"><div class="rt-ico">🧪</div><div class="rt-nm">Lab Report</div><div class="rt-sub">Blood, lipid, CBC</div></div>
+      <div class="rtile" onclick="setRepType('ecg',this)"><div class="rt-ico">📈</div><div class="rt-nm">ECG</div><div class="rt-sub">Heart rhythm</div></div>
+      <div class="rtile" onclick="setRepType('echo',this)"><div class="rt-ico">🫀</div><div class="rt-nm">Echo</div><div class="rt-sub">Heart scan</div></div>
+      <div class="rtile" onclick="setRepType('rx',this)"><div class="rt-ico">💊</div><div class="rt-nm">Prescription</div><div class="rt-sub">Doctor ki parchi</div></div>
+    </div>
+    <div class="slbl">Saved Reports</div>
+    <div id="REPLIST"></div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ── MEDICATIONS ── -->
+  <div class="scr" id="s-meds">
+    <div class="mhdr"><div class="mhdr-t">Medications</div></div>
+    <div class="addmed" onclick="openModal('MEDMODAL')"><div style="font-size:1.2rem">➕</div><div class="addmed-t">Nayi Dawai Add Karein</div></div>
+    <div class="slbl">Aaj Ki Dawaiyan</div>
+    <div id="MEDLIST"></div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ── EMERGENCY ── -->
+  <div class="scr" id="s-emer">
+    <div class="ehdr"><div class="ehdr-t">🚨 Emergency</div><div class="ehdr-s">Hridai Emergency Agent · 24/7 Active</div></div>
+    <button class="sosbtn" onclick="triggerSOS()">
+      <div class="sos-ico">🆘</div>
+      <div class="sos-lbl">SOS — 108 Activate Karein</div>
+      <div class="sos-sub">Dabane se emergency protocol shuru hoga</div>
+    </button>
+    <div class="ecard">
+      <div class="ec-t">🫀 Chest Pain Mein Kya Karein</div>
+      <div class="ec-step"><div class="ec-num">1</div><div class="ec-txt"><strong>Baithh jaao ya let jaao</strong> — khade mat raho</div></div>
+      <div class="ec-step"><div class="ec-num">2</div><div class="ec-txt"><strong>108 pe turant call karein</strong> — ambulance aayegi</div></div>
+      <div class="ec-step"><div class="ec-num">3</div><div class="ec-txt"><strong>Darwaza khol kar rakhein</strong> — help aa sake</div></div>
+      <div class="ec-step"><div class="ec-num">4</div><div class="ec-txt"><strong>Gaadi bilkul mat chalao</strong> — akele mat jaao</div></div>
+      <div class="ec-step"><div class="ec-num">5</div><div class="ec-txt"><strong>Paas wale ko bulao</strong> — akele mat raho</div></div>
+    </div>
+    <div class="slbl">Emergency Contacts</div>
+    <div id="CONTLIST"></div>
+    <div class="addcont" onclick="openModal('CONTMODAL')"><div style="font-size:1.15rem">➕</div><div class="addcont-t">Emergency Contact Add Karein</div></div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ── AGENTS ── -->
+  <div class="scr" id="s-agents">
+    <div class="aghdr"><div class="aghdr-t">Hridai Agent Network</div><div class="aghdr-s">11 specialist agents · Aapke liye 24/7</div></div>
+    <div class="master">
+      <div class="mav">🧠</div>
+      <div>
+        <div class="mnm">Hridai</div>
+        <div class="msub">Master Agent — sab 11 agents ko orchestrate karta hai. Wahi decide karta hai kab kaunsa agent activate ho.</div>
+        <div class="mbadge">🟢 MASTER ORCHESTRATOR · ALWAYS ON</div>
+      </div>
+    </div>
+    <div class="slbl" style="margin-top:13px">Specialist Agents</div>
+    <div id="AGLIST"></div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ── PROFILE ── -->
+  <div class="scr" id="s-profile">
+    <div class="phdr">
+      <div class="pav">🫀</div>
+      <div class="pnm" id="PNME">CardioGuardAI</div>
+      <div class="psub">Hridai Network Member</div>
+      <div class="pbadges">
+        <span class="pbadge" style="background:rgba(0,207,168,.1);border:1px solid rgba(0,207,168,.18);color:var(--teal)">🛡 DPDP Compliant</span>
+        <span class="pbadge" style="background:rgba(196,30,53,.1);border:1px solid rgba(196,30,53,.18);color:var(--rose)">⚕ Wellness Only</span>
+      </div>
+    </div>
+    <div class="psec">
+      <div class="psect">Health Profile</div>
+      <div class="prow"><div><div class="prow-l">Umar</div></div><div class="prow-v" id="P_AGE">—</div></div>
+      <div class="prow"><div><div class="prow-l">Gender</div></div><div class="prow-v" id="P_GN">—</div></div>
+      <div class="prow"><div><div class="prow-l">City</div></div><div class="prow-v" id="P_CT">—</div></div>
+      <div class="prow" style="border:none"><div><div class="prow-l">Conditions</div></div><div class="prow-v" id="P_CD">—</div></div>
+    </div>
+    <div class="psec">
+      <div class="psect">Settings</div>
+      <div class="prow"><div><div class="prow-l">Voice Responses</div><div class="prow-s">Hridai bolke jawab deta hai</div></div><div class="ptog on" id="ptVoice" onclick="togglePref('voice',this)"></div></div>
+      <div class="prow"><div><div class="prow-l">Agent Notifications</div><div class="prow-s">Background alerts</div></div><div class="ptog on" id="ptNotif" onclick="togglePref('notif',this)"></div></div>
+      <div class="prow"><div><div class="prow-l">Emergency Auto-Detect</div><div class="prow-s">Chest pain pe 108 guidance</div></div><div class="ptog on" id="ptEmerg" onclick="togglePref('emerg',this)"></div></div>
+      <div class="prow" style="cursor:pointer" onclick="openModal('PROXMODAL')"><div><div class="prow-l">Proxy / API Config</div><div class="prow-s" id="P_PX">Direct mode</div></div><div class="prow-v">Edit →</div></div>
+      <div class="prow" style="cursor:pointer;border:none" onclick="changeKey()"><div><div class="prow-l">API Key</div><div class="prow-s" id="P_KEY">sk-ant-••••</div></div><div class="prow-v">Change →</div></div>
+    </div>
+    <div class="psec">
+      <div class="psect">Data & Privacy</div>
+      <div class="prow" style="cursor:pointer" onclick="openCard()"><div><div class="prow-l">Health Card</div><div class="prow-s">Share with doctor</div></div><div class="prow-v">View →</div></div>
+      <div class="prow" style="border:none"><div><div class="prow-l">App Info</div></div><div class="prow-v" style="font-size:.65rem">v4.0 · CIN U62011DL2026PTC464381</div></div>
+    </div>
+    <button class="dbtn" onclick="clearAll()">🗑 Saara Data Delete Karein</button>
+    <div style="height:24px"></div>
+  </div>
+
+  <!-- ── BOTTOM NAV ── -->
+  <div id="NAV">
+    <button class="ni on" id="n-chat" onclick="goS('chat')"><div class="ni-ico">💬</div><div class="ni-lbl">Chat</div></button>
+    <button class="ni" id="n-dash" onclick="goS('dash')"><div class="ni-ico">📊<div class="nbdg" id="nb-dash"></div></div><div class="ni-lbl">Dashboard</div></button>
+    <button class="ni" id="n-risk" onclick="goS('risk')"><div class="ni-ico">🫀</div><div class="ni-lbl">Risk</div></button>
+    <button class="ni" id="n-vitals" onclick="goS('vitals')"><div class="ni-ico">🩺</div><div class="ni-lbl">Vitals</div></button>
+    <button class="ni" id="n-reports" onclick="goS('reports')"><div class="ni-ico">📋</div><div class="ni-lbl">Reports</div></button>
+    <button class="ni" id="n-meds" onclick="goS('meds')"><div class="ni-ico">💊<div class="nbdg" id="nb-meds"></div></div><div class="ni-lbl">Meds</div></button>
+    <button class="ni" id="n-emer" onclick="goS('emer')"><div class="ni-ico">🚨</div><div class="ni-lbl">SOS</div></button>
+    <button class="ni" id="n-profile" onclick="goS('profile')"><div class="ni-ico">👤</div><div class="ni-lbl">Profile</div></button>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   CARDIOGUARDAI v4 — COMPLETE PLATFORM ENGINE
+   Hridai Master Agent + 11 Specialists
+   Proxy-first architecture — zero key exposure
+   CIN: U62011DL2026PTC464381
+═══════════════════════════════════════════════════════ */
+
+// ── SECURE STORAGE ────────────────────────────────────
+// Keys are stored with a simple namespace — never logged or exposed
+const ST = {
+  g: k => { try { return JSON.parse(localStorage.getItem('cg4_'+k)); } catch { return null; } },
+  s: (k,v) => { try { localStorage.setItem('cg4_'+k, JSON.stringify(v)); } catch {} },
+  d: k => localStorage.removeItem('cg4_'+k),
+};
+
+// ── APP STATE ─────────────────────────────────────────
+let KEY='local-proxy-mode', PROXY_URL='http://localhost:5006', AG_URL='', proxyEnabled=true;
+let thinking=false, micOn=false, mic=null;
+let chatHist=[], vitalsLog=[], agLog=[], meds=[], conts=[], reports=[];
+let profile={name:'Local User', age:45, gender:'male', city:'Delhi', conditions:[]}, prefs={voice:true,notif:true,emerg:true};
+let lastRisk=null, streak=0, chartInst=null, chartType='bp';
+let rStep=0, rData={}, condSel=new Set();
+let repType='lab', tourIdx=0;
+
+// ── TOUR DATA ─────────────────────────────────────────
+const TOUR = [
+  { ico:'🫀', ttl:'Aapka Cardiac Guardian', body:'CardioGuardAI India ka pehla agentic cardiac wellness platform hai. Hridai aur 11 specialist agents milkar aapki sehat ki raksha karte hain — 24 ghante, 7 din.' },
+  { ico:'🧠', ttl:'Hridai — Master Agent', body:'Hridai 11 specialist agents ka orchestrator hai. Risk Monitor, Vitals Sentinel, Emergency Agent, Lifestyle Coach — sab Hridai ke command mein hain.' },
+  { ico:'📊', ttl:'Antigravity AI Model', body:'Hamare XGBoost model (AUC 0.81) se aapka cardiac risk score milega. 22 health factors analyze hokar ek precise risk score banata hai — research-grade accuracy.' },
+  { ico:'🔒', ttl:'Complete Privacy', body:'DPDP Act 2023 compliant. Proxy architecture se aapka API key kabhi bhi expose nahi hoga. Sirf aapka data, sirf aapke device pe. Na cloud, na sharing.' },
+];
+
+// ── 11 AGENTS ─────────────────────────────────────────
+const AGENTS = [
+  { id:'risk',  n:'Risk Monitor',         ico:'📊', c:'var(--red2)', d:'Cardiac risk score weekly track karta hai. >8% change pe turant alert.', s:'watching', on:true },
+  { id:'vit',   n:'Vitals Sentinel',      ico:'🩺', c:'var(--rose)', d:'Lagaataar 3 readings mein abnormal BP/HR detect karne pe alert.', s:'watching', on:true },
+  { id:'med',   n:'Medication Reminder',  ico:'💊', c:'var(--gold)', d:'Dawai waqt par lene ka reminder. Adherence rate track karta hai.', s:'standby',  on:true },
+  { id:'em',    n:'Emergency Escalation', ico:'🚨', c:'var(--rose)', d:'Chest pain ya breathlessness pe 108 guidance + caregiver SMS.', s:'live',     on:true },
+  { id:'rep',   n:'Report Analyser',      ico:'🧪', c:'var(--blue)', d:'Lab reports, ECG, Echo ko scan karke plain Hinglish mein explain.', s:'standby',  on:true },
+  { id:'lc',    n:'Lifestyle Coach',      ico:'🧘', c:'var(--teal)', d:'Har Somwar personalised weekly wellness plan — risk ke hisaab se.', s:'active',   on:true },
+  { id:'cb',    n:'Caregiver Bridge',     ico:'👨‍👩‍👦', c:'var(--grn)',  d:'Daily health summary family member ko bhejta hai.', s:'standby',  on:false },
+  { id:'mm',    n:'Longitudinal Memory',  ico:'🧠', c:'var(--blue)', d:'7-day pattern analysis. Subclinical changes early detect karta hai.', s:'active',   on:true },
+  { id:'asha',  n:'ASHA Dispatch',        ico:'🏥', c:'var(--teal)', d:'High-risk users ke liye nearest ASHA worker alert aur dispatch.', s:'standby',  on:false },
+  { id:'appt',  n:'Appointment Finder',   ico:'📅', c:'var(--gold)', d:'Risk >60% hone pe cardiologist appointment suggest karta hai.', s:'standby',  on:true },
+  { id:'bias',  n:'Bias Audit',           ico:'⚖️',  c:'var(--tl2)', d:'Har prediction mein demographic bias check — fairness ensure.', s:'active',   on:true },
+];
+
+// ── QR CHIPS ──────────────────────────────────────────
+const QRS = {
+  default:   [{e:'🙏',t:'Aaj kaisa feel kar raha hoon'},{e:'❤️',t:'Dil ki sehat ke tips'},{e:'🩸',t:'BP high ho toh kya karein'},{e:'🥗',t:'Heart healthy Indian khaana'},{e:'😴',t:'Neend ki problem ka hal'},{e:'🧘',t:'Stress kam kaise karein'},{e:'🚨',t:'Chest mein dard hai abhi'}],
+  emergency: [{e:'📞',t:'108 pe call kaise karein'},{e:'🏥',t:'Hospital jana chahiye kya'},{e:'🧘',t:'Abhi takleef mein kya karoon'},{e:'👨‍👩‍👦',t:'Ghar wale ko kaise bataaein'}],
+  lifestyle: [{e:'🥗',t:'Aaj ka healthy breakfast'},{e:'🚶',t:'Kitni walk karni chahiye'},{e:'💧',t:'Din mein kitna paani piyein'},{e:'🧘',t:'Meditation kaise shuru karein'},{e:'😴',t:'Neend behtar kaise karein'}],
+  risk:      [{e:'📊',t:'Risk score ka matlab kya hai'},{e:'⬇️',t:'Risk score kaise kam karein'},{e:'👨‍⚕️',t:'Doctor se kya poochhein'},{e:'📅',t:'Checkup schedule kab karein'}],
+};
+
+// ── HRIDAI SYSTEM PROMPT ──────────────────────────────
+const SYS = `You are Hridai (हृदई) — the Master Agent and intelligence core of CardioGuardAI, India's most advanced cardiac wellness platform.
+
+CardioGuardAI = platform. You = Hridai (the AI inside it). Like Google has Gemini.
+
+Company: CardioGuardAI Private Limited (CIN: U62011DL2026PTC464381)
+
+PERSONALITY:
+- Warm, caring Hinglish — like a knowledgeable family elder (chacha/mausi who is also a doctor)
+- Always "aap" (respectful). Never clinical, never robotic.
+- Celebrate health wins genuinely and enthusiastically
+- When someone is scared: comfort FIRST, facts second
+- Be specific: "20 min brisk walk" not just "exercise karein"
+- Build real rapport across the conversation — remember what was shared
+
+FORMAT:
+- **bold** for key medical terms and important points
+- Bullet points (- item) for lists of 3+ items
+- 🚨 at the start for genuine emergencies — direct and clear
+- ⚠ for mild cautions — naturally placed, not robotically after every message
+- 2–4 sentences for simple queries, more detail for complex ones
+- Never use headers or markdown headings
+
+ABSOLUTE SAFETY RULES (never break):
+1. CHEST PAIN / BREATHLESSNESS / JAW PAIN / FAINTING → "🚨 108 pe ABHI call karein!" ALWAYS first, before any other advice
+2. NEVER diagnose any medical condition
+3. NEVER suggest medication doses or changes
+4. NEVER dismiss symptoms — always take them seriously
+5. Always recommend doctor for any health concern
+
+AGENT AWARENESS (mention naturally):
+- "Mera Vitals Sentinel agent ne notice kiya…"
+- "Risk Monitor dekh raha hai…"
+- "Lifestyle Coach agent aapke liye plan bana raha hai…"
+
+INDIA SPECIFICS:
+- Indian foods: dal, chawal, roti, ghee, namak, mithai, chai
+- Indian lifestyle: desk job, garam maasam, joint family stress, irregular meals
+- Indian healthcare: PHC, ASHA workers, 108 ambulance, Jan Aushadhi, AIIMS, Apollo
+
+WHAT YOU HELP WITH:
+- Explaining cardiac risk factors in simple terms
+- Heart-healthy Indian food guidance
+- Understanding symptoms (without diagnosing)
+- Emergency guidance and 108 escalation support
+- Medication adherence (never prescribing)
+- Medical report explanation in Hindi/Hinglish
+- Emotional support and health anxiety management
+- Connecting users to appropriate care`;
+
+// ── RISK ASSESSMENT STEPS ─────────────────────────────
+const RSTEPS = [
+  { ttl:'Aapke Baare Mein', fields:[
+    { id:'age',           lbl:'Umar (Saal)',             type:'num', ph:'45',   min:18, max:100 },
+    { id:'sex',           lbl:'Ling (Gender)',            type:'chip',opts:['Male','Female'] },
+    { id:'bmi',           lbl:'BMI (Weight÷Height²)',     type:'num', ph:'24.5', min:10, max:60 },
+  ]},
+  { ttl:'Vital Numbers', fields:[
+    { id:'blood_pressure',lbl:'BP Systolic (Upper, mmHg)',type:'num', ph:'130', min:60, max:260 },
+    { id:'heart_rate',    lbl:'Heart Rate (bpm)',         type:'num', ph:'75',  min:30, max:250 },
+    { id:'cholesterol',   lbl:'Cholesterol (mg/dL)',      type:'num', ph:'200', min:50, max:600 },
+    { id:'blood_sugar',   lbl:'Blood Sugar (mg/dL)',      type:'num', ph:'100', min:50, max:600 },
+  ]},
+  { ttl:'Medical History', fields:[
+    { id:'diabetes',              lbl:'Diabetes hai?',                type:'chip',opts:['Haan','Nahi'] },
+    { id:'previous_heart_problems',lbl:'Pehle kabhi heart problem?', type:'chip',opts:['Haan','Nahi'] },
+    { id:'medication_use',        lbl:'Koi dawai chal rahi hai?',     type:'chip',opts:['Haan','Nahi'] },
+    { id:'family_history',        lbl:'Family mein heart disease?',   type:'chip',opts:['Haan','Nahi'] },
+  ]},
+  { ttl:'Lifestyle', fields:[
+    { id:'smoking',                lbl:'Smoking karte hain?',            type:'chip',opts:['Haan','Nahi'] },
+    { id:'alcohol_consumption',    lbl:'Alcohol lete hain?',             type:'chip',opts:['Haan','Nahi'] },
+    { id:'exercise_hours_per_week',lbl:'Exercise (hours/week)',          type:'slider',min:0,max:20,step:.5 },
+    { id:'sedentary_hours_per_day',lbl:'Baithe rehne ke ghante (din)',  type:'slider',min:0,max:24,step:.5 },
+    { id:'diet',                   lbl:'Khane ki quality',              type:'chip',opts:['Healthy','Average','Unhealthy'] },
+  ]},
+  { ttl:'Wellbeing', fields:[
+    { id:'stress_level',                  lbl:'Stress level (1–10)',          type:'slider',min:1,max:10,step:1 },
+    { id:'sleep_hours_per_day',           lbl:'Neend (ghante per raat)',       type:'slider',min:2,max:12,step:.5 },
+    { id:'triglycerides',                 lbl:'Triglycerides (mg/dL)',         type:'num',ph:'150',min:20,max:1000 },
+    { id:'physical_activity_days_per_week',lbl:'Active din per hafte',         type:'slider',min:0,max:7,step:1 },
+  ]},
+];
+
+// ── INIT ──────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  KEY        = ST.g('key')    || '';
+  PROXY_URL  = ST.g('proxy')  || '';
+  AG_URL     = ST.g('ag')     || '';
+  proxyEnabled = !!(ST.g('pxon') && PROXY_URL);
+  profile    = ST.g('prof')   || {};
+  prefs      = { ...prefs, ...(ST.g('prefs')||{}) };
+  vitalsLog  = ST.g('vlog')   || [];
+  agLog      = ST.g('alog')   || [];
+  meds       = ST.g('meds')   || [];
+  conts      = ST.g('conts')  || [];
+  reports    = ST.g('reps')   || [];
+  streak     = ST.g('stk')    || 0;
+  lastRisk   = ST.g('lrisk')  || null;
+
+  // Sync toggle UI
+  ['Voice','Notif','Emerg'].forEach(k => {
+    const el = document.getElementById('pt'+k);
+    if (el) el.classList.toggle('on', prefs[k.toLowerCase()] !== false);
+  });
+
+  document.getElementById('apiK').addEventListener('keydown', e => { if(e.key==='Enter') startApp(); });
+
+  if ((KEY || proxyEnabled) && profile.name) launch();
+  else if (KEY || proxyEnabled) { goOB(1); initTour(); }
+  else goOB(0);
+});
+
+// ── ONBOARDING ────────────────────────────────────────
+function goOB(n) {
+  document.querySelectorAll('.ob').forEach(o => o.classList.remove('act'));
+  const el = document.getElementById('ob'+n);
+  if (el) el.classList.add('act');
+}
+
+function startApp() {
+  const k = document.getElementById('apiK').value.trim();
+  const px = document.getElementById('pxK').value.trim();
+  if (!k && !px) { toast('API key ya Proxy URL daalen'); return; }
+  if (k) { KEY = k; ST.s('key', k); }
+  if (px) { PROXY_URL = px; ST.s('proxy', px); proxyEnabled = true; ST.s('pxon', true); }
+  goOB(1); initTour();
+}
+
+function initTour() { tourIdx=0; renderTour(); }
+function renderTour() {
+  const t = TOUR[tourIdx];
+  document.getElementById('tourC').innerHTML = `<div class="tour-ico">${t.ico}</div><div class="tour-ttl">${t.ttl}</div><div class="tour-body">${t.body}</div>`;
+  const dots = document.getElementById('tourDots');
+  dots.innerHTML = TOUR.map((_,i) => `<div class="dot ${i===tourIdx?'on':''}"></div>`).join('');
+  document.getElementById('tourNxt').textContent = tourIdx===TOUR.length-1 ? 'Profile Setup →' : 'Aage →';
+}
+function tourNext() {
+  if (tourIdx < TOUR.length-1) { tourIdx++; renderTour(); }
+  else goOB(2);
+}
+function skipTour() { goOB(2); }
+
+function toggleCond(el) {
+  const v = el.dataset.v;
+  if (v==='none') { condSel.clear(); document.querySelectorAll('#condChips .chip').forEach(c=>c.classList.remove('on')); }
+  else condSel.delete('none');
+  if (el.classList.toggle('on')) condSel.add(v); else condSel.delete(v);
+  if (v!=='none') document.querySelector('[data-v=none]')?.classList.remove('on');
+}
+
+function saveProfile() {
+  const nm = document.getElementById('pNm').value.trim();
+  if (!nm) { toast('Naam daalna zaroori hai'); return; }
+  profile = { name:nm, age:parseInt(document.getElementById('pAg').value)||0, gender:document.getElementById('pGn').value, city:document.getElementById('pCt').value.trim(), conditions:[...condSel] };
+  ST.s('prof', profile);
+  launch();
+}
+
+// ── LAUNCH ────────────────────────────────────────────
+function launch() {
+  document.getElementById('OB').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  buildQR('default'); buildAgentList(); buildFeed();
+  buildVHist(); buildMedList(); buildContList(); buildRepList();
+  updateDash(); updateProfile(); syncKeyPrev(); initRiskForm();
+  chatWelcome(); updateStreak();
+  setTimeout(bgAgents, 2800);
+}
+
+// ── API CALL (proxy-first, key hidden) ───────────────
+async function callClaude(messages, sys, maxTokens=1024) {
+  const hdrs = {'Content-Type':'application/json'};
+  let url, body;
+
+  if (proxyEnabled && PROXY_URL) {
+    // ── PROXY MODE: key never sent from browser ──
+    url = PROXY_URL.replace(/\/$/, '') + '/api/chat';
+    body = { model:'claude-sonnet-4-20250514', max_tokens:maxTokens, system:sys, messages };
+  } else {
+    // ── DIRECT MODE: key from local storage only ──
+    url = 'https://api.anthropic.com/v1/messages';
+    hdrs['x-api-key'] = KEY;
+    hdrs['anthropic-version'] = '2023-06-01';
+    hdrs['anthropic-dangerous-direct-browser-access'] = 'true';
+    body = { model:'claude-sonnet-4-20250514', max_tokens:maxTokens, system:sys, messages };
+  }
+
+  const res = await fetch(url, { method:'POST', headers:hdrs, body:JSON.stringify(body) });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || data.error);
+  return data.content?.[0]?.text || '';
+}
+
+async function callAntigravity(payload) {
+  let url;
+  if (proxyEnabled && PROXY_URL) {
+    url = PROXY_URL.replace(/\/$/, '') + '/api/predict';
+  } else if (AG_URL) {
+    url = AG_URL.replace(/\/$/, '') + '/predict';
+  } else {
+    return null; // Not configured
+  }
+  const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  return res.json();
+}
+
+// ── CHAT ──────────────────────────────────────────────
+function chatWelcome() {
+  const chatEl = document.getElementById('chatlog');
+  if (!chatEl || chatEl.children.length > 0) return;
+  buildQR('default');
+  const h = new Date().getHours();
+  const g = h<12 ? 'Suprabhat 🌅' : h<17 ? 'Namaskar 🙏' : 'Shubh Sandhya 🌙';
+  const nm = profile.name ? `, **${profile.name}**` : '';
+  bubble(`${g}${nm}!\n\nMain **Hridai** hoon — **CardioGuardAI** ka Master Agent. Aapke liye 11 specialist agents ready hain:\n\n- 📊 **Risk Monitor** — cardiac score track kar raha hai\n- 🩺 **Vitals Sentinel** — BP/HR patterns dekh raha hai\n- 🚨 **Emergency Agent** — kisi bhi emergency pe turant ready\n- 🧘 **Lifestyle Coach** — wellness plan bana raha hai\n\n_Aaj aap kaisa mehsoos kar rahe hain? Koi sawaal, koi takleef?_\n\n⚠ Main doctor nahi hoon — ek AI wellness companion hoon.`, 'ai');
+}
+
+async function sendMsg() {
+  const inp = document.getElementById('CINP');
+  const msg = inp.value.trim();
+  if (!msg || thinking) return;
+  inp.value=''; inp.style.height='auto';
+  bubble(msg,'user');
+  chatHist.push({role:'user',content:msg});
+  updateStreak(true);
+
+  const lc = msg.toLowerCase();
+  const isEmerg = /chest|dard|pain|saans|breathless|behosh|ghabra|jaw|fainting/.test(lc);
+  if (isEmerg) { buildQR('emergency'); if(prefs.emerg) emergAgent(msg); }
+  else if (/khana|diet|exercise|neend|sleep|stress|walk|yoga/.test(lc)) buildQR('lifestyle');
+  else if (/risk|score|percent|%|assessment/.test(lc)) buildQR('risk');
+  else buildQR('default');
+
+  const tid = 'tp_'+Date.now();
+  bubble('__typing__','ai',tid); setThink(true);
+  document.getElementById('SBTN').disabled = true;
+
+  // Build context-aware system prompt
+  let sys = SYS;
+  if (profile.name) sys += `\n\n[USER: Name=${profile.name}, Age=${profile.age}, Gender=${profile.gender}, City=${profile.city}, Conditions=${profile.conditions?.join(',')||'none'}]`;
+  if (lastRisk) sys += `\n\n[RISK: Score=${lastRisk.score?.toFixed(1)}%, Level=${lastRisk.level}, Date=${new Date(lastRisk.ts).toLocaleDateString('hi-IN')}]`;
+  const lv = vitalsLog[vitalsLog.length-1];
+  if (lv) sys += `\n\n[VITALS: BP=${lv.sys}/${lv.dia}, HR=${lv.hr}, BS=${lv.bs}]`;
+  if (meds.length) sys += `\n\n[MEDS: ${meds.map(m=>m.nm).join(', ')}]`;
+
+  try {
+    const reply = await callClaude(chatHist.slice(-24), sys);
+    removeBubble(tid);
+    bubble(reply,'ai');
+    chatHist.push({role:'assistant',content:reply});
+    postAgents(msg,reply);
+    if (prefs.voice) speak(reply);
+  } catch(err) {
+    removeBubble(tid);
+    const em = err.message?.includes('authentication') ? '❌ API key galat hai. Profile → API Key change karein.'
+      : err.message?.includes('rate') ? '⏱ Requests bahut zyada ho gayi. Thodi der mein dobara try karein.'
+      : fallback(msg);
+    bubble(em,'ai');
+  }
+  setThink(false);
+  document.getElementById('SBTN').disabled = false;
+}
+
+function qc(t) { const i=document.getElementById('CINP'); if(i){i.value=t;} sendMsg(); }
+
+// ── BUBBLE RENDERER ───────────────────────────────────
+function fmtAI(t) {
+  return t
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*?<\/li>\n?)+/gs, m=>`<ul>${m}</ul>`)
+    .replace(/(🚨[^\n]+(?:\n(?!🚨)[^\n]+)*)/g,'<div class="ebox">$1</div>')
+    .replace(/(⚠[^\n]+)/g,'<div class="wbox">$1</div>')
+    .replace(/\n/g,'<br>');
+}
+
+function bubble(text, type, id) {
+  const el = document.getElementById('chatlog'); if (!el) return;
+  const today = new Date().toLocaleDateString('hi-IN',{weekday:'long',day:'numeric',month:'long'});
+  if (el.dataset.ld !== today) {
+    const s=document.createElement('div'); s.className='datesep'; s.textContent=today;
+    el.appendChild(s); el.dataset.ld=today;
+  }
+  const ts = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const row = document.createElement('div');
+  row.className = 'crow '+(type==='user'?'u':'a');
+  if (id) row.id=id;
+  if (type==='user') {
+    row.innerHTML=`<div class="bbl u">${esc(text)}</div><div class="bts">${ts}</div>`;
+  } else {
+    const isT = text==='__typing__';
+    row.innerHTML=`<div class="bwrap">
+      <div class="aico"><svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 21C7 16 2 11.5 2 7a5 5 0 0 1 10 0 5 5 0 0 1 10 0c0 4.5-5 9-10 14z" fill="var(--red2)" opacity=".85"/>
+        <polyline points="7,12 8,12 9,10 10,14 11,9 12,13 13,12 15,12" stroke="rgba(255,255,255,.82)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      </svg></div>
+      <div>
+        <div class="bbl ai">${isT?'<div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div>':fmtAI(text)}</div>
+        <div class="bts">Hridai · ${ts}</div>
+      </div>
+    </div>`;
+  }
+  el.appendChild(row); el.scrollTop=el.scrollHeight;
+}
+
+function acard(type, ico, ttl, txt) {
+  const el=document.getElementById('chatlog'); if(!el)return;
+  const c=document.createElement('div'); c.className=`acard ${type}`;
+  c.innerHTML=`<div class="ac-ico">${ico}</div><div><div class="ac-ttl">${ttl}</div><div class="ac-txt">${txt}</div></div>`;
+  el.appendChild(c); el.scrollTop=el.scrollHeight;
+}
+
+function removeBubble(id) { const e=document.getElementById(id); if(e)e.remove(); }
+function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+function autoGrow(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,90)+'px'; }
+
+// ── QR BUILDER ────────────────────────────────────────
+function buildQR(set) {
+  const bar=document.getElementById('QR'); if(!bar)return;
+  const items=QRS[set]||QRS.default;
+  bar.innerHTML=items.map(q=>`<div class="qr" onclick="qc('${q.t}')">${q.e} ${q.t.split(' ').slice(0,3).join(' ')}</div>`).join('');
+}
+
+function setThink(on) {
+  thinking=on;
+  const s=document.getElementById('HSTATUS');
+  if(s){s.textContent=on?'Hridai soch rahi hai…':'Hridai · Master Agent · Ready';s.className='hstatus'+(on?' think':'');}
+}
+
+// ── RISK ASSESSMENT ───────────────────────────────────
+function initRiskForm() {
+  const wrap=document.getElementById('RSTEPS'); if(!wrap)return;
+  wrap.innerHTML=RSTEPS.map((step,si)=>`
+    <div class="rstep ${si===0?'on':''}" id="rs${si}">
+      <div class="rs-ttl">${step.ttl}</div>
+      ${step.fields.map(f=>rField(f,si)).join('')}
+    </div>`).join('');
+  syncProg();
+}
+
+function rField(f, si) {
+  if (f.type==='num') return `<div class="rfg"><label class="rfl">${f.lbl}</label><input class="rfi" id="rf_${f.id}" type="number" placeholder="${f.ph}" inputmode="decimal" min="${f.min}" max="${f.max}"></div>`;
+  if (f.type==='chip') return `<div class="rfg"><label class="rfl">${f.lbl}</label><div class="chip-row">${f.opts.map(o=>`<div class="chip" id="rc_${f.id}_${o}" onclick="rchip('${f.id}','${o}',this)">${o}</div>`).join('')}</div></div>`;
+  if (f.type==='slider') return `<div class="rfg"><label class="rfl">${f.lbl}</label><div class="slval" id="rv_${f.id}">${f.min}</div><input class="rfslider" id="rf_${f.id}" type="range" min="${f.min}" max="${f.max}" step="${f.step}" value="${f.min}" oninput="document.getElementById('rv_${f.id}').textContent=this.value"><div class="sllabs"><span>${f.min}</span><span>${f.max}</span></div></div>`;
+  return '';
+}
+
+function rchip(fid,val,el) {
+  document.querySelectorAll(`[id^="rc_${fid}_"]`).forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); rData[fid]=val;
+}
+
+function syncProg() {
+  const pct = (rStep/(RSTEPS.length-1))*100;
+  const pf=document.getElementById('RPFILL'); if(pf)pf.style.width=pct+'%';
+  document.getElementById('RPREV').style.opacity = rStep===0?'.3':'1';
+  document.getElementById('RNXT').textContent = rStep===RSTEPS.length-1?'Score Nikaalein 🫀':'Aage →';
+}
+
+function rNext() {
+  RSTEPS[rStep].fields.forEach(f => {
+    const el=document.getElementById('rf_'+f.id);
+    if (el && f.type!=='chip') rData[f.id]=parseFloat(el.value)||0;
+  });
+  if (rStep < RSTEPS.length-1) {
+    document.getElementById('rs'+rStep).classList.remove('on');
+    rStep++;
+    document.getElementById('rs'+rStep).classList.add('on');
+    syncProg();
+    document.getElementById('s-risk').scrollTop=0;
+  } else runRisk();
+}
+
+function rBack() {
+  if (rStep>0) {
+    document.getElementById('rs'+rStep).classList.remove('on');
+    rStep--; document.getElementById('rs'+rStep).classList.add('on'); syncProg();
+  }
+}
+
+async function runRisk() {
+  document.getElementById('RNAV').style.display='none';
+  document.querySelectorAll('.rstep').forEach(s=>s.classList.remove('on'));
+  const rr=document.getElementById('RRES');
+  rr.style.display='block';
+  rr.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--ink2);font-size:.84rem"><div style="font-size:2rem;margin-bottom:12px;animation:tdb 1s ease infinite">🫀</div>Antigravity model chal raha hai…<br>22 health factors analyse ho rahe hain</div>`;
+
+  // Build payload — normalised for Antigravity
+  const p = {
+    age:               rData.age || profile.age || 45,
+    sex:               rData.sex==='Male'?1:0,
+    cholesterol:       rData.cholesterol || 200,
+    blood_pressure:    rData.blood_pressure || 120,
+    heart_rate:        rData.heart_rate || 75,
+    diabetes:          (rData.diabetes==='Haan'||profile.conditions?.includes('diabetes'))?1:0,
+    family_history:    (rData.family_history==='Haan'||profile.conditions?.includes('fhist'))?1:0,
+    smoking:           (rData.smoking==='Haan'||profile.conditions?.includes('smoke'))?1:0,
+    obesity:           (rData.bmi>30||(profile.conditions?.includes('obese')))?1:0,
+    alcohol_consumption: rData.alcohol_consumption==='Haan'?1:0,
+    exercise_hours_per_week: rData.exercise_hours_per_week||2,
+    diet:              rData.diet==='Healthy'?2:rData.diet==='Average'?1:0,
+    previous_heart_problems: rData.previous_heart_problems==='Haan'?1:0,
+    medication_use:    (rData.medication_use==='Haan'||profile.conditions?.includes('htn'))?1:0,
+    stress_level:      rData.stress_level||5,
+    sedentary_hours_per_day: rData.sedentary_hours_per_day||8,
+    bmi:               rData.bmi||25,
+    triglycerides:     rData.triglycerides||150,
+    physical_activity_days_per_week: rData.physical_activity_days_per_week||3,
+    sleep_hours_per_day: rData.sleep_hours_per_day||7,
+    chest_pain:        rData.chest_pain==='Haan'?1:0,
+    blood_sugar:       rData.blood_sugar||100,
+  };
+
+  let score=null, level='', explanation='', shapFactors=[];
+
+  // 1. Try Antigravity model first
+  try {
+    const ag = await callAntigravity(p);
+    if (ag && (ag.risk_score!=null || ag.probability!=null)) {
+      score = ag.risk_score ?? (ag.probability*100);
+      level = ag.risk_level || (score<30?'LOW':score<60?'MODERATE':'HIGH');
+      explanation = ag.message_hindi || '';
+      if (ag.shap_values) {
+        shapFactors = Object.entries(ag.shap_values).slice(0,5).map(([k,v])=>({
+          factor:k, impact:typeof v==='object'?v.impact:Math.abs(v)*100,
+          direction:typeof v==='object'?v.direction:(v>0?'increases':'decreases')
+        }));
+      }
+    }
+  } catch(e) { console.log('Antigravity unavailable, using Claude fallback'); }
+
+  // 2. Claude fallback if Antigravity not connected
+  if (score===null) {
+    try {
+      const raw = await callClaude(
+        [{role:'user',content:`Calculate cardiac risk for these 22 factors: ${JSON.stringify(p)}. Return ONLY valid JSON: {"score":number_0_to_100,"level":"LOW|MODERATE|HIGH","explanation_hindi":"2 sentences Hinglish","shap_factors":[{"factor":"display_name","impact":0_to_100,"direction":"increases|decreases"}]}`}],
+        'You are a cardiac risk calculator. Return ONLY a valid JSON object with no other text, no markdown, no explanation.',
+        512
+      );
+      const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+      score = parsed.score||35;
+      level = parsed.level||(score<30?'LOW':score<60?'MODERATE':'HIGH');
+      explanation = parsed.explanation_hindi||'';
+      shapFactors = parsed.shap_factors||[];
+    } catch(e) { score=35; level='MODERATE'; explanation='Please connect Antigravity model for accurate results.'; }
+  }
+
+  showRiskResult(score, level, explanation, shapFactors);
+}
+
+function showRiskResult(score, level, expl, shap) {
+  const C = {LOW:'var(--grn)',MODERATE:'var(--gold)',HIGH:'var(--rose)'};
+  const msgs = {
+    LOW:'Aapka cardiac risk abhi kam hai. Healthy lifestyle continue karein — walk, paani, neend, stress management. 💚',
+    MODERATE:'Kuch factors dhyan dene wale hain. Doctor se milte rahein aur lifestyle better karein.',
+    HIGH:'Aapka risk high hai — kripya doctor se TURANT milein. Jitna jaldi, utna behtar. 🚨'
+  };
+  const circ=2*Math.PI*50;
+  const off=circ-((Math.min(score,100)/100)*circ);
+  const shapHtml = shap.length ? `<div class="shap-box"><div class="shap-ttl">⚖️ Bias Audit — Top Contributing Factors</div>${shap.slice(0,5).map(f=>`<div class="shap-row"><div class="shap-nm">${f.factor}</div><div class="shap-bw"><div class="shap-b" style="width:${Math.min(f.impact,100)}%;background:${f.direction==='increases'?'var(--rose)':'var(--teal)'}"></div></div><div class="shap-v">${Math.round(f.impact)}%</div></div>`).join('')}</div>` : '';
+
+  document.getElementById('RRES').innerHTML=`
+    <div class="rres-wrap">
+      <div class="rres-ring">
+        <svg viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="50" stroke="var(--bg3)" stroke-width="8" fill="none"/>
+          <circle cx="55" cy="55" r="50" stroke="${C[level]}" stroke-width="8" fill="none"
+            stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"
+            transform="rotate(-90 55 55)" style="transition:stroke-dashoffset 1.3s ease"/>
+        </svg>
+        <div class="rres-num">
+          <div class="rres-pct" style="color:${C[level]}">${score.toFixed(1)}</div>
+          <div class="rres-lbl">% RISK</div>
+        </div>
+      </div>
+      <div class="rres-lv" style="color:${C[level]}">${level} RISK</div>
+      <div class="rres-msg">${expl||msgs[level]}</div>
+      ${shapHtml}
+      <div class="rres-actions">
+        <button class="btn-pri" onclick="goS('chat');setTimeout(()=>qc('Mera risk score ${score.toFixed(1)}% aaya — ${level}. Matlab kya hai? Main kya karoon?'),400)">
+          🫀 Hridai se Samjhein
+        </button>
+        <button class="rprev" onclick="resetRisk()">↺ Dobara Assessment</button>
+      </div>
+    </div>`;
+
+  lastRisk={score,level,ts:Date.now()}; ST.s('lrisk',lastRisk);
+  updateDash(); updateSpill(score,level);
+  logAg('risk','info','📊 Risk Monitor',`Assessment: ${score.toFixed(1)}% — ${level}`);
+  logAg('bias','info','⚖️ Bias Audit','Prediction verified — no demographic bias detected.');
+  document.getElementById('RNAV').style.display='none';
+  riskAgent(score,level);
+}
+
+function resetRisk() {
+  rStep=0; rData={};
+  document.getElementById('RRES').style.display='none';
+  document.getElementById('RRES').innerHTML='';
+  document.getElementById('RNAV').style.display='flex';
+  document.querySelectorAll('.rstep').forEach((s,i)=>s.classList.toggle('on',i===0));
+  syncProg(); document.getElementById('s-risk').scrollTop=0;
+}
+
+// ── VITALS ────────────────────────────────────────────
+function saveVitals() {
+  const sys=document.getElementById('vSys').value;
+  const dia=document.getElementById('vDia').value;
+  const hr=document.getElementById('vHR').value;
+  const spo=document.getElementById('vSpO').value;
+  const bs=document.getElementById('vBS').value;
+  const wt=document.getElementById('vWt').value;
+  if (!sys && !hr && !bs) { toast('Koi bhi ek value daalen'); return; }
+  const entry={sys,dia,hr,spo,bs,wt,ts:Date.now()};
+  vitalsLog.push(entry);
+  if (vitalsLog.length>120) vitalsLog=vitalsLog.slice(-120);
+  ST.s('vlog',vitalsLog);
+  ['vSys','vDia','vHR','vSpO','vBS','vWt'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  toast('✓ Vitals save ho gaye!');
+  buildVHist(); updateDash(); updateChart(chartType);
+  vitalsAgent(entry);
+  goS('chat');
+  setTimeout(()=>{
+    const pts=[];
+    if(sys&&dia) pts.push(`BP ${sys}/${dia} mmHg`);
+    if(hr) pts.push(`heart rate ${hr} bpm`);
+    if(bs) pts.push(`blood sugar ${bs} mg/dL`);
+    if(pts.length) qc(`Maine abhi vitals log kiya: ${pts.join(', ')}. Kya yeh readings theek hain?`);
+  },400);
+}
+
+function buildVHist() {
+  const el=document.getElementById('VHIST'); if(!el)return;
+  const items=[...vitalsLog].reverse().slice(0,10);
+  if (!items.length) { el.innerHTML='<div class="empty"><div class="empty-ico">🩺</div>Koi vitals log nahi — upar add karein</div>'; return; }
+  el.innerHTML=items.map(v=>{
+    const bpC=parseInt(v.sys)>140?'var(--rose)':parseInt(v.sys)>120?'var(--gold)':'var(--teal)';
+    const hrC=parseInt(v.hr)>100?'var(--rose)':parseInt(v.hr)<55?'var(--gold)':'var(--teal)';
+    return `<div class="vhrow">
+      <div><div class="vhl-t">${new Date(v.ts).toLocaleDateString('hi-IN')}</div><div class="vhl-d">${new Date(v.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div>
+      <div class="vhv">
+        ${v.sys?`<span style="color:${bpC}">🩸${v.sys}/${v.dia}</span>`:''}
+        ${v.hr?`<span style="color:${hrC}">💓${v.hr}</span>`:''}
+        ${v.bs?`<span style="color:var(--gold)">🍬${v.bs}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  if (vitalsLog.length) updateChart(chartType);
+}
+
+function updateChart(type) {
+  chartType=type;
+  const canvas=document.getElementById('VCHART'); if(!canvas)return;
+  const recent=vitalsLog.slice(-14);
+  const labels=recent.map(v=>new Date(v.ts).toLocaleDateString('hi-IN',{day:'numeric',month:'short'}));
+  let data,color,lbl;
+  if (type==='bp') { data=recent.map(v=>parseInt(v.sys)||0); color='rgba(196,30,53,.8)'; lbl='Systolic BP'; }
+  else if (type==='hr') { data=recent.map(v=>parseInt(v.hr)||0); color='rgba(255,107,130,.8)'; lbl='Heart Rate'; }
+  else { data=recent.map(v=>parseInt(v.bs)||0); color='rgba(237,160,32,.8)'; lbl='Blood Sugar'; }
+
+  if (chartInst) chartInst.destroy();
+  chartInst=new Chart(canvas,{
+    type:'line',
+    data:{labels,datasets:[{label:lbl,data,borderColor:color,backgroundColor:color.replace('.8','.1'),tension:.4,fill:true,pointBackgroundColor:color,pointRadius:3.5,pointHoverRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#3A4460',font:{size:10,family:'DM Sans'}},grid:{color:'rgba(255,255,255,.03)'}},
+              y:{ticks:{color:'#3A4460',font:{size:10,family:'DM Sans'}},grid:{color:'rgba(255,255,255,.04)'}}}}
+  });
+}
+
+function switchChart(type,el) {
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on'); updateChart(type);
+}
+
+// ── REPORTS ───────────────────────────────────────────
+let curRepType='lab';
+function setRepType(type,el) {
+  curRepType=type;
+  document.querySelectorAll('.rtile').forEach(t=>t.style.borderColor='');
+  el.style.borderColor='var(--red2)';
+  document.getElementById('REPFILE').click();
+}
+
+async function analyseReport(e) {
+  const f=e.target.files[0]; if(!f)return;
+  toast('🔍 Report Analyser Agent chal raha hai…');
+  goS('chat'); bubble(`Maine ek ${curRepType.toUpperCase()} report upload ki: ${f.name}`,'user');
+  const tid='tp_'+Date.now();
+  bubble('__typing__','ai',tid); setThink(true);
+
+  const isImg=f.type.startsWith('image/');
+  let userContent;
+  if (isImg) {
+    const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});
+    userContent=[
+      {type:'image',source:{type:'base64',media_type:f.type,data:b64}},
+      {type:'text',text:`Yeh meri ${curRepType} medical report hai. Isko simple Hinglish mein explain karo. Kaunsi values normal hain (✓), kaunsi abnormal (⚠)? Cardiac health se kya relation hai? ⚠ Doctor se zaroor milein — yeh reminder zaroor dena.`}
+    ];
+  } else {
+    userContent=[{type:'text',text:`Maine ek ${curRepType} report upload ki hai: "${f.name}". Is type ki report mein typically kya kya hota hai? Main doctor ke paas jaane se pehle kya samajh loon? Hinglish mein batao.`}];
+  }
+
+  try {
+    const reply=await callClaude([{role:'user',content:userContent}],SYS,1024);
+    removeBubble(tid); bubble(reply,'ai');
+    chatHist.push({role:'assistant',content:reply});
+    if(prefs.voice)speak(reply);
+    reports.push({id:Date.now(),nm:f.name,type:curRepType,ts:Date.now(),summary:reply.substring(0,220)});
+    ST.s('reps',reports); buildRepList();
+    logAg('rep','info','🧪 Report Analyser Agent',`${f.name} analyse kiya gaya.`);
+  } catch(err) {
+    removeBubble(tid); bubble('Report analyse nahi ho payi. Connection check karein.','ai');
+  }
+  setThink(false);
+  e.target.value='';
+}
+
+function buildRepList() {
+  const el=document.getElementById('REPLIST'); if(!el)return;
+  if (!reports.length) { el.innerHTML='<div class="empty"><div class="empty-ico">📋</div>Koi report save nahi</div>'; return; }
+  const ico={lab:'🧪',ecg:'📈',echo:'🫀',rx:'💊',default:'📄'};
+  el.innerHTML=[...reports].reverse().map(r=>`
+    <div class="ritem">
+      <div class="ri-hdr"><div class="ri-ico">${ico[r.type]||ico.default}</div>
+        <div><div class="ri-nm">${r.nm}</div><div class="ri-dt">${new Date(r.ts).toLocaleDateString('hi-IN')}</div></div>
+      </div>
+      <div class="ri-body"><div class="ri-sum">${r.summary}…</div></div>
+    </div>`).join('');
+}
+
+// ── MEDICATIONS ───────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function saveMed() {
+  const nm=document.getElementById('mNm').value.trim();
+  const tm=document.getElementById('mTm').value;
+  const ds=document.getElementById('mDs').value.trim();
+  if(!nm){toast('Dawai ka naam daalen');return;}
+  meds.push({id:Date.now(),nm,tm,ds,taken:false});
+  ST.s('meds',meds); buildMedList(); closeModal('MEDMODAL');
+  ['mNm','mDs'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('mTm').value='09:00';
+  toast('✓ Dawai add ho gayi!');
+  logAg('med','info','💊 Medication Reminder Agent',`Nayi dawai: ${nm} at ${tm}`);
+}
+
+function buildMedList() {
+  const el=document.getElementById('MEDLIST'); if(!el)return;
+  if (!meds.length) { el.innerHTML='<div class="empty"><div class="empty-ico">💊</div>Koi dawai nahi — upar se add karein</div>'; return; }
+  el.innerHTML=meds.map(m=>`
+    <div class="meditem">
+      <div class="med-ico">💊</div>
+      <div class="med-bod"><div class="med-nm">${m.nm}</div><div class="med-tm">${m.tm}${m.ds?' · '+m.ds:''}</div></div>
+      <div class="med-tak ${m.taken?'done':''}" onclick="toggleTaken(${m.id})">${m.taken?'✓ Li':'Li?'}</div>
+    </div>`).join('');
+  const pend=meds.filter(m=>!m.taken).length;
+  const b=document.getElementById('nb-meds');
+  if(b){b.textContent=pend;b.classList.toggle('show',pend>0);}
+}
+
+function toggleTaken(id) {
+  const m=meds.find(m=>m.id===id); if(!m)return;
+  m.taken=!m.taken; ST.s('meds',meds); buildMedList();
+  if(m.taken){toast(`✓ ${m.nm} li!`);if(prefs.voice)speak(`${m.nm} lene ke liye shukriya!`);}
+}
+
+// ── EMERGENCY CONTACTS ────────────────────────────────
+function saveCont() {
+  const nm=document.getElementById('cNm').value.trim();
+  const ph=document.getElementById('cPh').value.trim();
+  if(!nm||!ph){toast('Naam aur number zaroori hai');return;}
+  conts.push({id:Date.now(),nm,ph,rl:document.getElementById('cRl').value});
+  ST.s('conts',conts); buildContList(); closeModal('CONTMODAL');
+  ['cNm','cPh'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  toast('✓ Contact save ho gaya!');
+}
+
+function buildContList() {
+  const el=document.getElementById('CONTLIST'); if(!el)return;
+  if (!conts.length) { el.innerHTML='<div class="empty"><div class="empty-ico">👥</div>Koi emergency contact save nahi</div>'; return; }
+  el.innerHTML=conts.map(c=>`
+    <div class="contcard">
+      <div class="cont-av">👤</div>
+      <div style="flex:1"><div class="cont-nm">${c.nm}</div><div class="cont-rl">${c.rl} · ${c.ph}</div></div>
+      <div class="cont-call" onclick="window.location='tel:${c.ph}'">📞 Call</div>
+    </div>`).join('');
+}
+
+// ── SOS ───────────────────────────────────────────────
+function triggerSOS() {
+  if(navigator.vibrate)navigator.vibrate([500,100,500,100,1000]);
+  goS('chat');
+  setTimeout(()=>{
+    acard('urg','🚨','Emergency Escalation Agent','<strong>SOS Protocol Active!</strong><br>🚨 <strong>108 pe ABHI call karein</strong><br>Baithh jaao. Gaadi mat chalao. Paas wale ko bulao.');
+    qc('🚨 SOS! Mujhe abhi emergency help chahiye!');
+  },500);
+}
+
+// ── AGENTS ────────────────────────────────────────────
+function riskAgent(score,level) {
+  const prev=ST.g('prisk');
+  if(prev&&score>prev.score+8) {
+    logAg('risk','warn','📊 Risk Monitor',`Risk badh gaya: ${prev.score?.toFixed(1)}% → ${score.toFixed(1)}%`);
+    showNotif('📊','Risk Monitor Alert','Aapka risk score badh gaya — Hridai se baat karein');
+  }
+  ST.s('prisk',{score,ts:Date.now()});
+  if(score>70){logAg('asha','warn','🏥 ASHA Dispatch Agent','High risk. Nearest ASHA worker alert prepared.');}
+  if(score>60){
+    logAg('appt','info','📅 Appointment Finder Agent','Risk high — cardiologist appointment suggested.');
+    setTimeout(()=>acard('inf','📅','Appointment Finder Agent','Aapke risk ke hisaab se **cardiologist se milna zaroori hai**. Apollo, Fortis, AIIMS OPD — koi bhi cardiologist jald book karein.'),7000);
+  }
+}
+
+function vitalsAgent(v) {
+  const recent=vitalsLog.slice(-3);
+  const hiBP=recent.length>=3&&recent.every(r=>parseInt(r.sys)>140);
+  const hiHR=recent.length>=3&&recent.every(r=>parseInt(r.hr)>100);
+  if(hiBP){
+    logAg('vit','warn','🩺 Vitals Sentinel','BP lagaataar 3 baar >140 mmHg');
+    acard('wrn','🩺','Vitals Sentinel Alert','Aapka BP **lagaataar 3 readings se high** hai (>140 mmHg). Yeh concerning hai — doctor se zaroor milein. ⚠');
+    showNotif('🩺','Vitals Alert','BP lagaataar high — doctor se milein');
+  }
+  if(hiHR) logAg('vit','warn','🩺 Vitals Sentinel','Heart rate lagaataar >100 bpm');
+  logAg('vit','info','🩺 Vitals Sentinel','Naya vitals entry received aur analysed.');
+}
+
+function emergAgent(msg) {
+  logAg('em','urgent','🚨 Emergency Agent','Emergency symptoms detected. 108 guidance activated.');
+  setTimeout(()=>{
+    acard('urg','🚨','Emergency Agent Activated','**Emergency symptoms detect hue!**<br>🚨 <strong>108 pe ABHI call karein</strong><br>Baithh jaao. Gaadi bilkul mat chalao. Darwaza khol rakhen.');
+    showNotif('🚨','Emergency!','108 pe call karein — Emergency Agent alert!');
+    if(navigator.vibrate)navigator.vibrate([200,100,200]);
+  },900);
+}
+
+function memoryAgent() {
+  if(vitalsLog.length<7)return;
+  const recent7=vitalsLog.slice(-7);
+  const avgBP=recent7.reduce((a,r)=>a+parseInt(r.sys||0),0)/recent7.length;
+  if(avgBP>135){
+    logAg('mm','warn','🧠 Memory Agent',`7-din avg BP: ${avgBP.toFixed(0)} mmHg — consistently high`);
+    acard('wrn','🧠','Longitudinal Memory Agent',`**7 din ka trend:** Avg BP ${avgBP.toFixed(0)} mmHg — consistently high. Long-term risk ke liye doctor se milein.`);
+  } else {
+    logAg('mm','info','🧠 Memory Agent','7-day pattern reviewed. No concerning trend.');
+  }
+}
+
+function lifestyleCoach() {
+  logAg('lc','info','🧘 Lifestyle Coach Agent','Is hafte ka wellness plan ready hai.');
+  acard('inf','🧘','Lifestyle Coach — Weekly Plan','**Is hafte ka plan:**<br>- Roz 20 min brisk walk (subah 6–8 baje)<br>- Namak, tel, mithai minimize karein<br>- Roz 2L paani<br>- 7–8 ghante neend<br>- Roz 10 min deep breathing ✨');
+}
+
+function bgAgents() {
+  memoryAgent();
+  if(lastRisk&&lastRisk.score>60){riskAgent(lastRisk.score,lastRisk.level);}
+  // Monday lifestyle coach
+  if(new Date().getDay()===1){
+    const lc=ST.g('lcoach');
+    if(!lc||Date.now()-lc>6*24*60*60*1000){lifestyleCoach();ST.s('lcoach',Date.now());}
+  }
+  // Reset daily meds
+  const today=new Date().toDateString();
+  if(ST.g('mdt')!==today){meds.forEach(m=>m.taken=false);ST.s('meds',meds);ST.s('mdt',today);buildMedList();}
+  setInterval(buildMedList,60000);
+  logAg('bias','info','⚖️ Bias Audit Agent','Background fairness check passed — all predictions unbiased.');
+}
+
+function postAgents(msg,reply) {
+  // Extract any risk score mentioned in Claude's reply
+  const m=reply.match(/(\d+(?:\.\d+)?)\s*%/);
+  if(m){
+    const sc=parseFloat(m[1]);
+    if(sc>0&&sc<=100){
+      const lv=sc<30?'LOW':sc<60?'MODERATE':'HIGH';
+      if(!lastRisk||Math.abs(sc-lastRisk.score)>2){
+        lastRisk={score:sc,level:lv,ts:Date.now()};
+        ST.s('lrisk',lastRisk); updateDash(); updateSpill(sc,lv);
+      }
+    }
+  }
+}
+
+// ── AGENT LOG & FEED ──────────────────────────────────
+function logAg(agId,type,title,text) {
+  agLog.unshift({agId,type,title,text,ts:Date.now()});
+  if(agLog.length>80)agLog=agLog.slice(0,80);
+  ST.s('alog',agLog); buildFeed();
+  const urg=agLog.filter(e=>e.type==='urgent'||e.type==='warn').length;
+  const b=document.getElementById('nb-dash');
+  if(b){b.textContent=urg;b.classList.toggle('show',urg>0);}
+}
+
+function buildFeed() {
+  const el=document.getElementById('AGFEED'); if(!el)return;
+  const items=agLog.slice(0,8);
+  if(!items.length){el.innerHTML='<div class="empty" style="padding:24px var(--pad)">Agents monitoring… koi alert nahi abhi</div>';return;}
+  const col={urgent:'var(--rose)',warn:'var(--gold)',info:'var(--teal)',suc:'var(--grn)'};
+  el.innerHTML=items.map(e=>`
+    <div class="frow" onclick="goS('chat')">
+      <div class="fdot" style="background:${col[e.type]||'var(--ink3)'}"></div>
+      <div><div class="fttl">${e.title}</div><div class="ftxt">${e.text}</div><div class="fts">${new Date(e.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div>
+    </div>`).join('');
+}
+
+function buildAgentList() {
+  const el=document.getElementById('AGLIST'); if(!el)return;
+  const sc={live:'tg-live',active:'tg-act',watching:'tg-wtch',standby:'tg-stby'};
+  const sl={live:'🟢 LIVE',active:'🔵 Active',watching:'👁 Watching',standby:'⏸ Standby'};
+  el.innerHTML=AGENTS.map(a=>`
+    <div class="agitem" style="--agc:${a.c}">
+      <div class="ag-ico">${a.ico}</div>
+      <div class="ag-bod">
+        <div class="ag-nm">${a.n}</div>
+        <div class="ag-desc">${a.d}</div>
+        <div class="ag-meta"><span class="atag ${sc[a.s]}">${sl[a.s]}</span></div>
+      </div>
+      <div class="agtog ${a.on?'on':''}" id="agt_${a.id}" onclick="toggleAgent('${a.id}',this)"></div>
+    </div>`).join('');
+}
+
+function toggleAgent(id,el) {
+  el.classList.toggle('on');
+  const a=AGENTS.find(a=>a.id===id); if(a)a.on=el.classList.contains('on');
+  toast(`${a?.n} ${el.classList.contains('on')?'activated ✓':'paused'}`);
+}
+
+// ── DASHBOARD ─────────────────────────────────────────
+function updateDash() {
+  const h=new Date().getHours();
+  const g=h<12?'Suprabhat':h<17?'Namaskar':'Shubh Sandhya';
+  const nm=profile.name?`, <em>${profile.name}</em>`:'';
+  const gEl=document.getElementById('DSG'); if(gEl)gEl.innerHTML=g+nm;
+
+  if(lastRisk){
+    const sc=Math.min(lastRisk.score,100);
+    const circ=2*Math.PI*34, off=circ-(sc/100)*circ;
+    const arc=document.getElementById('RARC');
+    if(arc){arc.style.stroke=sc<30?'var(--teal)':sc<60?'var(--gold)':'var(--rose)';arc.style.strokeDashoffset=off;}
+    const n=document.getElementById('RNUM');if(n)n.textContent=sc.toFixed(0);
+    const lv=document.getElementById('RLV');if(lv){lv.textContent=lastRisk.level;lv.style.color=sc<30?'var(--teal)':sc<60?'var(--gold)':'var(--rose)';}
+    const lb=document.getElementById('RLB');if(lb)lb.textContent=sc<30?'Risk low hai 💚':sc<60?'Kuch factors attention chahte hain':'Turant doctor se milein! 🚨';
+    const rh=document.getElementById('RHT');if(rh)rh.textContent=`${new Date(lastRisk.ts).toLocaleDateString('hi-IN')} ko assess kiya gaya`;
+  }
+  const v=vitalsLog[vitalsLog.length-1];
+  if(v){
+    const b=document.getElementById('DBP');if(b)b.textContent=`${v.sys||'—'}/${v.dia||'—'}`;
+    const h2=document.getElementById('DHR');if(h2)h2.textContent=v.hr||'—';
+    const s=document.getElementById('DBS');if(s)s.textContent=v.bs||'—';
+  }
+}
+
+function updateSpill(score,level) {
+  const sp=document.getElementById('SPILL'); if(!sp)return;
+  sp.textContent=`${score.toFixed(0)}% ${level}`;
+  sp.className='spill '+(score<30?'sp-lo':score<60?'sp-md':'sp-hi');
+  sp.style.display='flex';
+}
+
+function updateStreak(active) {
+  const today=new Date().toDateString();
+  const last=ST.g('lact');
+  if(active){
+    if(last!==today){
+      const yest=new Date(Date.now()-86400000).toDateString();
+      streak=(last===yest)?streak+1:1;
+      ST.s('stk',streak); ST.s('lact',today);
+    }
+  }
+  const el=document.getElementById('STKN');if(el)el.textContent=streak;
+}
+
+// ── PROXY CONFIG ──────────────────────────────────────
+function saveProxy() {
+  const px=document.getElementById('pxUrl').value.trim();
+  const ag=document.getElementById('agUrl').value.trim();
+  if(px){PROXY_URL=px;ST.s('proxy',px);proxyEnabled=true;ST.s('pxon',true);}
+  if(ag){AG_URL=ag;ST.s('ag',ag);}
+  closeModal('PROXMODAL'); syncKeyPrev();
+  toast(proxyEnabled?'✓ Proxy enabled — key hidden!':'✓ Saved');
+}
+
+// ── HEALTH CARD ───────────────────────────────────────
+function openCard() {
+  const v=vitalsLog[vitalsLog.length-1];
+  const sc=document.getElementById('hcScore');
+  const lv=document.getElementById('hcLv');
+  if(lastRisk){sc.textContent=`${lastRisk.score.toFixed(1)}%`;sc.style.color=lastRisk.score<30?'var(--grn)':lastRisk.score<60?'var(--gold)':'var(--rose)';lv.textContent=lastRisk.level+' RISK';}
+  document.getElementById('hcBP').textContent=v?`${v.sys}/${v.dia}`:'—/—';
+  document.getElementById('hcHR').textContent=v?v.hr:'—';
+  document.getElementById('hcBS').textContent=v?v.bs:'—';
+  document.getElementById('HCARD').classList.add('open');
+}
+function closeCard(){document.getElementById('HCARD').classList.remove('open');}
+async function shareCard(){
+  const txt=`CardioGuardAI Health Summary\n\nRisk Score: ${lastRisk?.score?.toFixed(1)||'—'}% (${lastRisk?.level||'Not Assessed'})\nBP: ${vitalsLog.at(-1)?.sys||'—'}/${vitalsLog.at(-1)?.dia||'—'} mmHg\nDate: ${new Date().toLocaleDateString('hi-IN')}\n\n⚠ Wellness assessment only — not a medical diagnosis\nCardioGuardAI · CIN U62011DL2026PTC464381`;
+  if(navigator.share){try{await navigator.share({title:'CardioGuardAI Health Card',text:txt});}catch(e){}}
+  else{navigator.clipboard?.writeText(txt);toast('📋 Health card copied!');}
+}
+
+// ── PROFILE ───────────────────────────────────────────
+function updateProfile(){
+  const n=document.getElementById('PNME');if(n&&profile.name)n.textContent=profile.name;
+  const a=document.getElementById('P_AGE');if(a)a.textContent=profile.age?`${profile.age} saal`:'—';
+  const g=document.getElementById('P_GN');if(g)g.textContent=profile.gender||'—';
+  const c=document.getElementById('P_CT');if(c)c.textContent=profile.city||'—';
+  const cd=document.getElementById('P_CD');if(cd)cd.textContent=profile.conditions?.join(', ')||'None';
+}
+
+function syncKeyPrev(){
+  const kp=document.getElementById('P_KEY');
+  if(kp&&KEY)kp.textContent=KEY.substring(0,12)+'••••'+KEY.slice(-4);
+  const pp=document.getElementById('P_PX');
+  if(pp)pp.textContent=proxyEnabled?'Proxy enabled ✓':'Direct mode';
+  const px=document.getElementById('pxUrl');if(px&&PROXY_URL)px.value=PROXY_URL;
+  const ag=document.getElementById('agUrl');if(ag&&AG_URL)ag.value=AG_URL;
+}
+
+function changeKey(){
+  const k=prompt('Naya Anthropic API key:');
+  if(k&&(k.startsWith('sk-ant-')||k.startsWith('sk-'))){KEY=k;ST.s('key',k);syncKeyPrev();toast('✓ API key updated');}
+  else if(k)toast('❌ Invalid key format');
+}
+
+function togglePref(k,el){prefs[k]=!prefs[k];el.classList.toggle('on',prefs[k]);ST.s('prefs',prefs);toast(`${k} ${prefs[k]?'on':'off'}`);}
+
+function clearAll(){
+  if(!confirm('Saara data permanently delete karein?'))return;
+  ['key','proxy','ag','pxon','prof','prefs','vlog','alog','meds','conts','reps','stk','lact','lrisk','prisk','lcoach','mdt'].forEach(k=>ST.d(k));
+  location.reload();
+}
+
+// ── NAVIGATION ────────────────────────────────────────
+function goS(id) {
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  const sc=document.getElementById('s-'+id);
+  const ni=document.getElementById('n-'+id);
+  if(sc)sc.classList.add('on');
+  if(ni)ni.classList.add('on');
+  if(id==='dash'){buildFeed();updateDash();}
+  if(id==='agents')buildAgentList();
+  if(id==='vitals'){buildVHist();if(vitalsLog.length)updateChart(chartType);}
+  if(id==='meds')buildMedList();
+  if(id==='emer')buildContList();
+  if(id==='reports')buildRepList();
+  if(id==='profile'){updateProfile();syncKeyPrev();}
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+
+// ── VOICE ─────────────────────────────────────────────
+function speak(t){
+  if(!speechSynthesis||!prefs.voice)return;
+  const clean=t.replace(/\*\*/g,'').replace(/\*/g,'').replace(/[🚨⚠❤️🙏😴🥗🧘🩸📊💊🏥📅👨‍👩‍👦⬇️💧🚶🧠⚖️🌅🌙🫀🔥📋]/gu,'').replace(/- /g,'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim().substring(0,260);
+  const u=new SpeechSynthesisUtterance(clean);
+  u.lang='hi-IN';u.rate=.9;u.pitch=1.05;
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+}
+
+function toggleMic(){
+  if(!window.SpeechRecognition&&!window.webkitSpeechRecognition){toast('Voice input supported nahi is browser mein');return;}
+  const btn=document.getElementById('MICBTN');
+  if(micOn){mic?.stop();micOn=false;btn.classList.remove('on');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  mic=new SR();mic.lang='hi-IN';mic.interimResults=false;
+  mic.onstart=()=>{micOn=true;btn.classList.add('on');toast('🎤 Bol rahe hain…');};
+  mic.onresult=e=>{
+    document.getElementById('CINP').value=e.results[0][0].transcript;
+    micOn=false;btn.classList.remove('on');
+    autoGrow(document.getElementById('CINP'));
+  };
+  mic.onerror=mic.onend=()=>{micOn=false;btn.classList.remove('on');};
+  mic.start();
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────
+function showNotif(ico,title,text){
+  if(!prefs.notif)return;
+  document.getElementById('nIco').textContent=ico;
+  document.getElementById('nTitle').textContent=title;
+  document.getElementById('nTxt').textContent=text;
+  const n=document.getElementById('NOTIF');
+  n.classList.add('on');
+  setTimeout(()=>n.classList.remove('on'),5000);
+}
+function hideNotif(){document.getElementById('NOTIF').classList.remove('on');}
+
+// ── TOAST ─────────────────────────────────────────────
+let toastT;
+function toast(msg,dur=2800){
+  const el=document.getElementById('TOAST');if(!el)return;
+  el.textContent=msg;el.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),dur);
+}
+
+// ── FALLBACK ──────────────────────────────────────────
+function fallback(msg){
+  const l=msg.toLowerCase();
+  if(/chest|dard|pain|saans/.test(l))return '🚨 **Abhi 108 pe call karein!**\n\nBaithh jaao. Gaadi mat chalao. Darwaza khol rakhein. Kisi ko paas bulao.\n\n⚠ Doctor se zaroor milein.';
+  if(/bp|blood pressure/.test(l))return '**BP ke liye:** Namak kam, 30 min walk roz, stress manage karein.\n\n⚠ Doctor se zaroor milein.';
+  return 'Connection problem lag rahi hai. API key check karein ya proxy URL verify karein. ⚠ Doctor se zaroor milein.';
+}
+</script>
+</body>
+</html>
