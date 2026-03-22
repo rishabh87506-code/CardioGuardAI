@@ -1,13 +1,42 @@
+# Virtual environments
 .venv/
-.DS_Store
+venv/
+env/
+ENV/
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-env/
-venv/
-ENV/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Logs & temp
 *.log
+*.out
+*.tmp
+
+# Node
 node_modules/
+dist/
+
+# Editor
 .vscode/
+.idea/
+
+# Secrets — never commit real credentials
+.env
+.env.local
+*.env
+**/.env
+**/.env.local
+
+# Archives
+*.zip
+
+# Model artifacts (large binaries — do NOT commit unless versioned)
+# model/*.pkl

@@ -12,7 +12,7 @@ import pickle
 import joblib
 import numpy as np
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -26,8 +26,14 @@ limiter = Limiter(
     storage_uri="memory://"
 )
 
-# In production, specify your frontend domain in ALLOWED_ORIGINS
-ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', 'https://cardioguardai.in,https://www.cardioguardai.in').split(',')
+# Dual-domain setup:
+#   cardioguardai.in     → patient assessment application
+#   cardioguardai.co.in  → investor / marketing landing page
+_DEFAULT_ORIGINS = (
+    'https://cardioguardai.in,https://www.cardioguardai.in,'
+    'https://cardioguardai.co.in,https://www.cardioguardai.co.in'
+)
+ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', _DEFAULT_ORIGINS).split(',')
 CORS(app, origins=ALLOWED_ORIGINS)
 
 # ── CONFIGURATION ──────────────────────────────────────
@@ -94,20 +100,34 @@ DISPLAY_NAMES = {
     "bmi": "BMI", "blood_sugar": "Blood Sugar", "chest_pain": "Chest Pain"
 }
 
-# ── ROUTE: HEALTH ──────────────────────────────────────
-# ── ROUTE: SERVE FRONTEND ──────────────────────────────
+# ── ROUTE: DUAL-DOMAIN ROUTING ─────────────────────────
+# cardioguardai.co.in  → landing.html (investor / marketing)
+# cardioguardai.in     → index.html  (patient assessment app)
+# /pitch               → landing.html (always, for demos)
+
+@app.route('/pitch')
+def serve_pitch():
+    return send_file('landing.html')
+
 @app.route('/')
 @app.route('/index.html')
 def serve_index():
-    return open('index.html').read()
+    host = request.host.lower()
+    if 'co.in' in host:
+        return send_file('landing.html')
+    return send_file('index.html')
 
 @app.route('/health', methods=['GET'])
 @app.route('/api/health', methods=['GET'])
 def health():
     return jsonify({
         "status": "live",
-        "service": "CardioGuardAI Merged Engine",
-        "version": "4.5",
+        "service": "CardioGuard AI — Hridai Agent OS",
+        "version": "4.8",
+        "domains": {
+            "app": "cardioguardai.in",
+            "marketing": "cardioguardai.co.in"
+        },
         "model_loaded": model is not None,
         "claude_configured": len(ANTHROPIC_API_KEY) > 20,
         "whatsapp_agent": "Active" if WHATSAPP_KEY else "Standby (BETA)",
@@ -197,6 +217,9 @@ def batch_predict():
         return jsonify({"count": len(results), "results": results})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# ── ROUTE: CLAUDE PROXY ────────────────────────────────
+@app.route('/api/chat', methods=['POST'])
 @limiter.limit("5 per minute")
 def chat():
     if not ANTHROPIC_API_KEY:
@@ -213,7 +236,7 @@ def chat():
                 "Content-Type": "application/json"
             },
             json={
-                "model": data.get("model", "claude-3-sonnet-20240229"),
+                "model": data.get("model", "claude-sonnet-4-6"),
                 "max_tokens": data.get("max_tokens", 1024),
                 "system": data.get("system", ""),
                 "messages": data.get("messages", [])
@@ -229,10 +252,10 @@ if __name__ == '__main__':
     print("╔══════════════════════════════════════════════════════╗")
     print("║     Hridai Agent OS (v4.8) — Boot Sequence active    ║")
     print("╚══════════════════════════════════════════════════════╝")
-    print("✓ Analysis Agent: Antigravity-22-XGBoost loaded.")
-    print("✓ Wellness Agent: Broadcast pipeline assigned.")
-    print("✓ Proxy Agent: Internal secure tunneling active.")
-    print(f"✓ Master Agent: Linked for Sonnet 3.5 ({'READY' if ANTHROPIC_API_KEY else 'STANDBY'}).")
+    print(f"✓ Analysis Agent: Antigravity-22 GBM {'loaded' if model else 'MISSING'}.")
+    print("✓ Wellness Agent: WhatsApp broadcast pipeline assigned.")
+    print("✓ Proxy Agent: Secure Claude tunnel active.")
+    print(f"✓ Master Agent: Claude Sonnet linked ({'READY' if ANTHROPIC_API_KEY else 'STANDBY'}).")
     
     port = int(os.environ.get('PORT', 5005))
     app.run(host='0.0.0.0', port=port)
