@@ -247,6 +247,20 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ── ROUTE: CLIENT CONFIG ───────────────────────────────
+@app.route('/api/config')
+def get_config():
+    return jsonify({
+        "firebase": {
+            "apiKey":        os.environ.get('FIREBASE_API_KEY', ''),
+            "authDomain":    os.environ.get('FIREBASE_AUTH_DOMAIN', ''),
+            "projectId":     os.environ.get('FIREBASE_PROJECT_ID', ''),
+            "storageBucket": os.environ.get('FIREBASE_STORAGE_BUCKET', ''),
+            "messagingSenderId": os.environ.get('FIREBASE_MESSAGING_SENDER_ID', ''),
+            "appId":         os.environ.get('FIREBASE_APP_ID', '')
+        }
+    })
+
 if __name__ == '__main__':
     # ── AGENT OS STARTUP AUDIT ──────────────────────────
     print("╔══════════════════════════════════════════════════════╗")

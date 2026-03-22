@@ -527,6 +527,11 @@ select.iinp option{background:var(--bg3)}
 
 /* ─── UTIL ────────────────────────────────── */
 .sep{height:1px;background:var(--bd);margin:0 var(--pad)}
+/* ─── AUTH ─────────────────────────────────── */
+.btn-google{width:100%;display:flex;align-items:center;justify-content:center;padding:13px 16px;border-radius:var(--r);border:1.5px solid var(--bd2);background:var(--gl2);color:var(--ink);font-size:.9rem;font-weight:600;cursor:pointer;margin-bottom:14px;transition:background .2s,border-color .2s}
+.btn-google:hover{background:var(--gl3);border-color:var(--bd3)}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:4px 0 14px;color:var(--ink2);font-size:.75rem}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
 </style>
 </head>
 <body>
@@ -609,32 +614,45 @@ select.iinp option{background:var(--bg3)}
 ══════════════════════════════════════════ -->
 <div id="OB">
 
-  <!-- Step 0: Key / Proxy -->
+  <!-- Step 0: Auth -->
   <div class="ob act" id="ob0">
     <div class="ob-brand">
       <div class="ob-wordmark">Cardio<em>GuardAI</em></div>
       <div class="ob-sub">Advanced Wellness Analytics Platform</div>
     </div>
     <div class="ob-card">
-      <h2>Shuru Karein</h2>
-      <p>India ka pehla agentic wellness support platform. Hridai aur 11 specialist agents — sirf aapke liye.</p>
-      <div class="ifield">
-        <div class="ilabel">Anthropic API Key</div>
-        <input class="iinp" id="apiK" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
-      </div>
-      <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);padding:11px 13px;margin-bottom:12px">
-        <div style="font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:5px">🔒 Production Mode (Recommended)</div>
-        <div style="font-size:.72rem;color:var(--ink2);line-height:1.65;margin-bottom:8px">Deploy proxy server → API key hidden from all users. Antigravity bhi secure.</div>
-        <div class="ifield" style="margin:0">
-          <div class="ilabel">Proxy URL (optional)</div>
-          <input class="iinp" id="pxK" placeholder="https://your-proxy.railway.app" style="margin:0">
+      <h2>Welcome — Login Karein</h2>
+      <p>India ka pehla agentic cardiac wellness platform. Free mein shuru karein.</p>
+
+      <!-- Google Sign-In -->
+      <button class="btn-google" id="googleBtn" onclick="signInGoogle()">
+        <svg width="18" height="18" viewBox="0 0 48 48" style="margin-right:10px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.5 2.7 13.5l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.5 28.5A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.1.7-4.5l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.2-8.4 2.2-6.3 0-11.6-4.2-13.5-10l-7.8 6.1C6.6 42.5 14.6 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+        Google se Sign In Karein
+      </button>
+
+      <div class="auth-divider"><span>ya</span></div>
+
+      <!-- Phone OTP -->
+      <div id="phoneStep1">
+        <div class="ifield">
+          <div class="ilabel">Mobile Number</div>
+          <input class="iinp" id="authPhone" type="tel" placeholder="+91 98765 43210" inputmode="tel">
         </div>
+        <button class="btn-pri" onclick="sendPhoneOTP()">OTP Bhejein →</button>
       </div>
-      <button class="btn-pri" onclick="startApp()">Aage Chalein →</button>
-      <div class="ob-note">
-        Key milegi: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
-        Sirf aapke device pe encrypted. Kabhi share nahi hoga.
+      <div id="phoneStep2" style="display:none">
+        <div class="ifield">
+          <div class="ilabel">OTP Enter Karein</div>
+          <input class="iinp" id="authOTP" type="number" placeholder="6-digit code" inputmode="numeric" maxlength="6">
+        </div>
+        <button class="btn-pri" onclick="verifyPhoneOTP()">Verify &amp; Login →</button>
+        <button class="btn-ghost" onclick="document.getElementById('phoneStep1').style.display='';document.getElementById('phoneStep2').style.display='none'">← Back</button>
       </div>
+
+      <div id="recaptcha-container" style="margin-top:8px"></div>
+      <div id="authErr" style="font-size:.72rem;color:var(--rose);margin-top:8px;text-align:center;display:none"></div>
+      <input type="hidden" id="apiK" value="">
+      <input type="hidden" id="pxK" value="">
     </div>
   </div>
 
@@ -916,8 +934,7 @@ select.iinp option{background:var(--bg3)}
       <div class="prow"><div><div class="prow-l">Voice Responses</div><div class="prow-s">Hridai bolke jawab deta hai</div></div><div class="ptog on" id="ptVoice" onclick="togglePref('voice',this)"></div></div>
       <div class="prow"><div><div class="prow-l">Agent Notifications</div><div class="prow-s">Background alerts</div></div><div class="ptog on" id="ptNotif" onclick="togglePref('notif',this)"></div></div>
       <div class="prow"><div><div class="prow-l">Emergency Auto-Detect</div><div class="prow-s">Chest pain pe 108 guidance</div></div><div class="ptog on" id="ptEmerg" onclick="togglePref('emerg',this)"></div></div>
-      <div class="prow" style="cursor:pointer" onclick="openModal('PROXMODAL')"><div><div class="prow-l">Proxy / API Config</div><div class="prow-s" id="P_PX">Direct mode</div></div><div class="prow-v">Edit →</div></div>
-      <div class="prow" style="cursor:pointer;border:none" onclick="changeKey()"><div><div class="prow-l">API Key</div><div class="prow-s" id="P_KEY">sk-ant-••••</div></div><div class="prow-v">Change →</div></div>
+      <div class="prow" style="border:none"><div><div class="prow-l">Backend</div><div class="prow-s" id="P_PX">🔒 Secure Proxy Active</div></div><div class="prow-v" style="color:var(--grn)">✓</div></div>
     </div>
     <div class="psec">
       <div class="psect">Data & Privacy</div>
@@ -1109,11 +1126,18 @@ window.addEventListener('DOMContentLoaded', () => {
     if (el) el.classList.toggle('on', prefs[k.toLowerCase()] !== false);
   });
 
-  document.getElementById('apiK').addEventListener('keydown', e => { if(e.key==='Enter') startApp(); });
+  // Auto-enable proxy to current backend (no user API key needed)
+  PROXY_URL = window.location.origin;
+  proxyEnabled = true;
+  ST.s('proxy', PROXY_URL);
+  ST.s('pxon', true);
 
-  if ((KEY || proxyEnabled) && profile.name) launch();
-  else if (KEY || proxyEnabled) { goOB(1); initTour(); }
+  const authUser = ST.g('authUser');
+  if (authUser && profile.name) launch();
+  else if (authUser) { goOB(1); initTour(); }
   else goOB(0);
+
+  initFirebase();
 });
 
 // ── ONBOARDING ────────────────────────────────────────
@@ -1123,13 +1147,99 @@ function goOB(n) {
   if (el) el.classList.add('act');
 }
 
-function startApp() {
-  const k = document.getElementById('apiK').value.trim();
-    const px = document.getElementById('pxK').value.trim();
-    if (!k && !px) { toast('API key ya Proxy URL daalen'); return; }
-    if (k) { KEY = k; ST.s('key', k); }
-    if (px) { PROXY_URL = px; ST.s('proxy', px); proxyEnabled = true; ST.s('pxon', true); }
+function startApp() { goOB(1); initTour(); }
+
+// ── FIREBASE AUTH ─────────────────────────────────────
+let firebaseApp, firebaseAuth, phoneConfirmation;
+
+async function initFirebase() {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const res = await fetch('/api/config');
+    const cfg = await res.json();
+    if (!cfg.firebase?.apiKey) { showAuthFallback(); return; }
+    firebaseApp = initializeApp(cfg.firebase);
+    firebaseAuth = getAuth(firebaseApp);
+    window._fbAuth = { GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber };
+  } catch(e) { showAuthFallback(); }
+}
+
+function showAuthFallback() {
+  // Firebase not configured — allow direct name login
+  const card = document.querySelector('#ob0 .ob-card');
+  card.innerHTML = `
+    <h2>Shuru Karein</h2>
+    <p>Apna naam daalen aur CardioGuardAI use karein — bilkul free.</p>
+    <div class="ifield"><div class="ilabel">Aapka Naam</div><input class="iinp" id="quickName" placeholder="Naam daalen" autocomplete="given-name"></div>
+    <div class="ifield"><div class="ilabel">Mobile (optional)</div><input class="iinp" id="quickPhone" type="tel" placeholder="+91 98765 43210" inputmode="tel"></div>
+    <button class="btn-pri" onclick="quickLogin()">Shuru Karein →</button>
+  `;
+}
+
+function quickLogin() {
+  const nm = document.getElementById('quickName')?.value.trim();
+  if (!nm) { toast('Naam daalna zaroori hai'); return; }
+  const ph = document.getElementById('quickPhone')?.value.trim() || '';
+  ST.s('authUser', { name: nm, phone: ph, method: 'direct' });
+  profile = { ...profile, name: nm };
+  ST.s('prof', profile);
+  goOB(1); initTour();
+}
+
+async function signInGoogle() {
+  if (!firebaseAuth) { toast('Firebase load ho raha hai...'); return; }
+  try {
+    document.getElementById('googleBtn').textContent = 'Signing in...';
+    const { GoogleAuthProvider, signInWithPopup } = window._fbAuth;
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(firebaseAuth, provider);
+    const user = result.user;
+    ST.s('authUser', { name: user.displayName, email: user.email, uid: user.uid, method: 'google' });
+    if (!profile.name) { profile.name = user.displayName; ST.s('prof', profile); }
     goOB(1); initTour();
+  } catch(e) {
+    document.getElementById('googleBtn').innerHTML = '<svg width="18" height="18" viewBox="0 0 48 48" style="margin-right:10px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.5 2.7 13.5l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.5 28.5A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.1.7-4.5l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.2-8.4 2.2-6.3 0-11.6-4.2-13.5-10l-7.8 6.1C6.6 42.5 14.6 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>Google se Sign In Karein';
+    showAuthError(e.code === 'auth/popup-closed-by-user' ? '' : 'Google login failed. Try karein.');
+  }
+}
+
+async function sendPhoneOTP() {
+  if (!firebaseAuth) { toast('Firebase load ho raha hai...'); return; }
+  const phone = document.getElementById('authPhone').value.trim();
+  if (!phone) { showAuthError('Mobile number daalen'); return; }
+  try {
+    const { RecaptchaVerifier, signInWithPhoneNumber } = window._fbAuth;
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', { size: 'invisible' });
+    }
+    phoneConfirmation = await signInWithPhoneNumber(firebaseAuth, phone, window.recaptchaVerifier);
+    document.getElementById('phoneStep1').style.display = 'none';
+    document.getElementById('phoneStep2').style.display = '';
+    toast('OTP bhej diya!');
+  } catch(e) {
+    showAuthError('OTP nahi gaya. Number check karein ya baad mein try karein.');
+  }
+}
+
+async function verifyPhoneOTP() {
+  const code = document.getElementById('authOTP').value.trim();
+  if (!code) { showAuthError('OTP daalen'); return; }
+  try {
+    const result = await phoneConfirmation.confirm(code);
+    const user = result.user;
+    ST.s('authUser', { phone: user.phoneNumber, uid: user.uid, method: 'phone' });
+    goOB(1); initTour();
+  } catch(e) {
+    showAuthError('OTP galat hai. Dobara try karein.');
+  }
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authErr');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
 }
 
 function initTour() { tourIdx=0; renderTour(); }
@@ -1937,7 +2047,7 @@ function updateProfile(){
 
 function syncKeyPrev(){
   const kp=document.getElementById('P_KEY');
-  if(kp&&KEY)kp.textContent=KEY.substring(0,12)+'••••'+KEY.slice(-4);
+  if(kp)kp.textContent='';
   const pp=document.getElementById('P_PX');
   if(pp)pp.textContent=proxyEnabled?'Proxy enabled ✓':'Direct mode';
   const px=document.getElementById('pxUrl');if(px&&PROXY_URL)px.value=PROXY_URL;
@@ -1945,9 +2055,7 @@ function syncKeyPrev(){
 }
 
 function changeKey(){
-  const k=prompt('Naya Anthropic API key:');
-  if(k&&(k.startsWith('sk-ant-')||k.startsWith('sk-'))){KEY=k;ST.s('key',k);syncKeyPrev();toast('✓ API key updated');}
-  else if(k)toast('❌ Invalid key format');
+  // API key managed server-side — not required from user
 }
 
 function toggleTheme() {

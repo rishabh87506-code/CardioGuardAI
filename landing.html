@@ -665,7 +665,7 @@
     <a href="#technology">Technology</a>
     <a href="#market">Market</a>
     <a href="#traction">Roadmap</a>
-    <a href="https://cardioguardai.in" target="_blank" class="nav-cta">Try the App &rarr;</a>
+    <a href="/" class="nav-cta">Try the App &rarr;</a>
   </div>
 </nav>
 
@@ -1256,14 +1256,29 @@
   // ── Contact form handler
   function handleSubmit(e) {
     e.preventDefault();
-    const btn = e.target.querySelector('button');
+    const btn = e.target.querySelector('button[type="submit"]') || e.target.querySelector('button');
+    const data = new FormData(e.target);
+    const name = data.get('name') || document.querySelector('[name="name"]')?.value || '';
+    const email = data.get('email') || document.querySelector('[name="email"]')?.value || '';
+    const stage = data.get('stage') || document.querySelector('[name="stage"]')?.value || '';
+    const message = data.get('message') || document.querySelector('[name="message"]')?.value || '';
     btn.textContent = 'Sending...';
     btn.disabled = true;
-    setTimeout(() => {
+    // Try Formspree if available, else mailto fallback
+    fetch('https://formspree.io/f/xpwzgnjk', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, stage, message })
+    }).then(r => {
       btn.textContent = '✓ Request Received — We\'ll be in touch within 24h';
       btn.style.background = '#22C55E';
       e.target.reset();
-    }, 1200);
+    }).catch(() => {
+      // Fallback: open mailto
+      window.location.href = `mailto:contact@cardioguardai.in?subject=Investor Inquiry - ${stage}&body=${encodeURIComponent(name + '\n' + message)}`;
+      btn.textContent = '✓ Opening email client...';
+      btn.style.background = '#22C55E';
+    });
   }
 
   // ── Smooth anchor scroll with nav offset
