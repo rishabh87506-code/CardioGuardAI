@@ -19,6 +19,9 @@ __pycache__/
 *.log
 *.out
 *.tmp
+*.ctl
+*.sock
+gunicorn.ctl
 
 # Node
 node_modules/
