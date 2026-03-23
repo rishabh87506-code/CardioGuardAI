@@ -25,6 +25,8 @@ from flask import Flask, request, jsonify, send_file, redirect, abort
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import hmac
+import secrets
 
 # ── LOGGING SETUP ──────────────────────────────────────
 logging.basicConfig(
@@ -35,7 +37,7 @@ logging.basicConfig(
 log = logging.getLogger('cardioguard')
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 64 * 1024  # 64 KB max request body
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB (audio uploads need room)
 
 limiter = Limiter(
     get_remote_address,
@@ -47,6 +49,9 @@ limiter = Limiter(
 # ── CONFIGURATION ──────────────────────────────────────
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 WHATSAPP_KEY      = os.environ.get('WHATSAPP_API_KEY', '')
+WHATSAPP_PHONE_ID = os.environ.get('WHATSAPP_PHONE_ID', '')
+OPENAI_API_KEY    = os.environ.get('OPENAI_API_KEY', '')
+SESSION_SECRET    = os.environ.get('SESSION_SECRET', secrets.token_hex(32))
 PITCH_TOKEN       = os.environ.get('PITCH_ACCESS_TOKEN', '')  # empty = pitch disabled
 MODEL_PATH        = os.path.join(os.path.dirname(__file__), 'model', 'antigravity_model.pkl')
 
@@ -127,7 +132,10 @@ def security_headers(resp):
         "font-src https://fonts.gstatic.com; "
         "img-src 'self' data: https:; "
         "connect-src 'self' https://api.anthropic.com https://www.googleapis.com "
-        "https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; "
+        "https://identitytoolkit.googleapis.com https://securetoken.googleapis.com "
+        "https://overpass-api.de https://graph.facebook.com; "
+        "worker-src 'self'; "
+        "manifest-src 'self'; "
         "frame-ancestors 'none';"
     )
     resp.headers.pop('Server', None)
@@ -143,6 +151,68 @@ DISCLAIMER = (
     "Compliant: FDA Digital Health Policy (wellness exemption) + "
     "CDSCO SaMD Guidelines (lifestyle/wellness category)."
 )
+
+# ── OTP STORE (in-memory, TTL 10 min) ──────────────────
+_otp_store = {}   # sha256(phone) -> {hash, expires, attempts, phone_hint}
+_OTP_TTL    = 600  # 10 minutes
+_OTP_MAX_AT = 5
+
+def _phone_hash(phone: str) -> str:
+    return hashlib.sha256(phone.encode()).hexdigest()[:20]
+
+def _otp_hash(otp: str, phone: str) -> str:
+    return hmac.new(SESSION_SECRET.encode(), f"{otp}:{phone}".encode(), 'sha256').hexdigest()
+
+def _gen_otp() -> str:
+    return str(secrets.randbelow(900000) + 100000)
+
+def _send_whatsapp_otp(phone: str, otp: str) -> bool:
+    if not WHATSAPP_KEY or not WHATSAPP_PHONE_ID:
+        log.info(f"[MOCK WA-OTP] {phone[-4:]} → {otp}")
+        return True   # dev mock — always succeeds
+    try:
+        body = (f"🫀 *CardioGuardAI*\n\n"
+                f"Aapka OTP hai: *{otp}*\n"
+                f"Valid: 10 minutes\n\n"
+                f"_Yeh code kisi ke saath share mat karein._\n"
+                f"cardioguardai.in")
+        res = requests.post(
+            f"https://graph.facebook.com/v18.0/{WHATSAPP_PHONE_ID}/messages",
+            headers={"Authorization": f"Bearer {WHATSAPP_KEY}", "Content-Type": "application/json"},
+            json={"messaging_product": "whatsapp", "to": phone,
+                  "type": "text", "text": {"body": body}},
+            timeout=10
+        )
+        return res.status_code == 200
+    except Exception as e:
+        log.error(f"WhatsApp OTP send failed: {e}")
+        return False
+
+def _send_sms_otp(phone: str, otp: str) -> bool:
+    """SMS via Fast2SMS (India) — set FAST2SMS_KEY env var."""
+    key = os.environ.get('FAST2SMS_KEY', '')
+    if not key:
+        log.info(f"[MOCK SMS-OTP] {phone[-4:]} → {otp}")
+        return True
+    try:
+        res = requests.post(
+            "https://www.fast2sms.com/dev/bulkV2",
+            headers={"authorization": key},
+            json={"route": "otp", "variables_values": otp,
+                  "flash": 0, "numbers": phone},
+            timeout=10
+        )
+        return res.json().get('return', False)
+    except Exception as e:
+        log.error(f"SMS OTP send failed: {e}")
+        return False
+
+def _make_session_token(phone: str) -> str:
+    ts = str(int(time.time()))
+    ph = _phone_hash(phone)
+    payload = f"{ph}:{ts}"
+    sig = hmac.new(SESSION_SECRET.encode(), payload.encode(), 'sha256').hexdigest()[:24]
+    return f"{payload}:{sig}"
 
 # ── FEATURE SPEC ───────────────────────────────────────
 FEATURES = [
@@ -232,6 +302,29 @@ def serve_pitch():
     _audit("PITCH_ACCESSED")
     return send_file('landing.html')
 
+@app.route('/logo.png')
+def serve_logo():
+    return send_file('logo.png', mimetype='image/png')
+
+@app.route('/manifest.json')
+def serve_manifest():
+    resp = send_file('manifest.json', mimetype='application/manifest+json')
+    resp.headers['Cache-Control'] = 'public, max-age=3600'
+    return resp
+
+@app.route('/sw.js')
+def serve_sw():
+    resp = send_file('sw.js', mimetype='application/javascript')
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    resp.headers['Service-Worker-Allowed'] = '/'
+    return resp
+
+@app.route('/.well-known/assetlinks.json')
+def serve_assetlinks():
+    resp = send_file('.well-known/assetlinks.json', mimetype='application/json')
+    resp.headers['Cache-Control'] = 'public, max-age=86400'
+    return resp
+
 @app.route('/')
 @app.route('/index.html')
 def serve_index():
@@ -251,6 +344,9 @@ def health():
         "version":     "4.9",
         "model_ready": model is not None,
         "ai_ready":    len(ANTHROPIC_API_KEY) > 20,
+        "whisper_ready": len(OPENAI_API_KEY) > 20,
+        "tts_ready":   len(OPENAI_API_KEY) > 20,
+        "whatsapp_otp": bool(WHATSAPP_KEY and WHATSAPP_PHONE_ID),
         "environment": os.environ.get('RAILWAY_ENVIRONMENT', 'local'),
         "compliance":  "FDA Wellness Exemption + CDSCO SaMD Lifestyle Category",
         "timestamp":   time.time()
@@ -269,6 +365,136 @@ def get_config():
             "appId":             os.environ.get('FIREBASE_APP_ID', '')
         }
     })
+
+@app.route('/api/otp/send', methods=['POST'])
+@limiter.limit("3 per hour")
+def otp_send():
+    data = request.get_json(force=True, silent=True) or {}
+    phone  = str(data.get('phone', '')).strip()
+    method = str(data.get('method', 'whatsapp'))  # 'whatsapp' or 'sms'
+
+    if not phone or len(phone) < 8 or len(phone) > 20:
+        return jsonify({"error": "Invalid phone number"}), 400
+
+    # Clean old OTPs
+    now = time.time()
+    expired = [k for k, v in _otp_store.items() if v['expires'] < now]
+    for k in expired: del _otp_store[k]
+
+    otp  = _gen_otp()
+    phk  = _phone_hash(phone)
+    _otp_store[phk] = {
+        "hash":       _otp_hash(otp, phone),
+        "expires":    now + _OTP_TTL,
+        "attempts":   0,
+        "phone_hint": phone[-4:]
+    }
+
+    sent = (_send_whatsapp_otp(phone, otp) if method == 'whatsapp'
+            else _send_sms_otp(phone, otp))
+
+    _audit("OTP_SENT", {"method": method, "hint": phone[-4:]})
+    return jsonify({"ok": sent, "method": method, "hint": phone[-4:],
+                    "dev_otp": otp if not (WHATSAPP_KEY and WHATSAPP_PHONE_ID) else None})
+
+
+@app.route('/api/otp/verify', methods=['POST'])
+@limiter.limit("10 per minute")
+def otp_verify():
+    data  = request.get_json(force=True, silent=True) or {}
+    phone = str(data.get('phone', '')).strip()
+    otp   = str(data.get('otp', '')).strip()
+
+    if not phone or not otp:
+        return jsonify({"error": "Phone and OTP required"}), 400
+
+    phk   = _phone_hash(phone)
+    entry = _otp_store.get(phk)
+
+    if not entry:
+        return jsonify({"error": "OTP not found or expired"}), 400
+    if time.time() > entry['expires']:
+        del _otp_store[phk]
+        return jsonify({"error": "OTP expired — please request a new one"}), 400
+    if entry['attempts'] >= _OTP_MAX_AT:
+        del _otp_store[phk]
+        return jsonify({"error": "Too many attempts — please request a new OTP"}), 429
+
+    entry['attempts'] += 1
+    if not hmac.compare_digest(entry['hash'], _otp_hash(otp, phone)):
+        remaining = _OTP_MAX_AT - entry['attempts']
+        return jsonify({"error": f"Wrong OTP. {remaining} attempts left"}), 401
+
+    del _otp_store[phk]
+    token = _make_session_token(phone)
+    _audit("OTP_VERIFIED", {"hint": phone[-4:]})
+    return jsonify({"ok": True, "token": token, "phone_hint": phone[-4:]})
+
+
+@app.route('/api/transcribe', methods=['POST'])
+@limiter.limit("20 per minute")
+def transcribe():
+    """Whisper STT — accepts audio file, returns transcript."""
+    if not OPENAI_API_KEY:
+        return jsonify({"error": "Transcription service not configured"}), 503
+    audio = request.files.get('audio')
+    if not audio:
+        return jsonify({"error": "No audio file"}), 400
+    lang = request.form.get('language', 'hi')
+    try:
+        res = requests.post(
+            "https://api.openai.com/v1/audio/transcriptions",
+            headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
+            files={"file": (audio.filename or "audio.webm",
+                            audio.stream,
+                            audio.content_type or "audio/webm")},
+            data={"model": "whisper-1", "language": lang,
+                  "prompt": "CardioGuardAI wellness platform. Hinglish medical conversation."},
+            timeout=30
+        )
+        _audit("WHISPER_TRANSCRIBE", {"lang": lang})
+        return (res.text, res.status_code, {"Content-Type": "application/json"})
+    except requests.Timeout:
+        return jsonify({"error": "Transcription timed out"}), 504
+    except Exception as e:
+        log.error(f"Whisper error: {e}")
+        return jsonify({"error": "Transcription failed"}), 500
+
+
+@app.route('/api/tts', methods=['POST'])
+@limiter.limit("30 per minute")
+def tts():
+    """OpenAI TTS — returns audio/mpeg."""
+    if not OPENAI_API_KEY:
+        return jsonify({"error": "TTS not configured"}), 503
+    data  = request.get_json(force=True, silent=True) or {}
+    text  = str(data.get('text', ''))[:600]
+    voice = data.get('voice', 'nova')  # nova | shimmer | alloy | echo | fable | onyx
+    if voice not in ('nova','shimmer','alloy','echo','fable','onyx'):
+        voice = 'nova'
+    if not text:
+        return jsonify({"error": "No text"}), 400
+    # Clean markdown for TTS
+    import re as _re
+    clean = _re.sub(r'\*\*|__|\*|_|#{1,6} |`|<[^>]+>', '', text)[:500]
+    try:
+        res = requests.post(
+            "https://api.openai.com/v1/audio/speech",
+            headers={"Authorization": f"Bearer {OPENAI_API_KEY}",
+                     "Content-Type": "application/json"},
+            json={"model": "tts-1", "input": clean, "voice": voice},
+            timeout=20
+        )
+        if res.status_code == 200:
+            return (res.content, 200, {"Content-Type": "audio/mpeg",
+                                       "Cache-Control": "no-store"})
+        return jsonify({"error": "TTS API error"}), res.status_code
+    except requests.Timeout:
+        return jsonify({"error": "TTS timed out"}), 504
+    except Exception as e:
+        log.error(f"TTS error: {e}")
+        return jsonify({"error": "TTS failed"}), 500
+
 
 @app.route('/api/predict', methods=['POST'])
 @limiter.limit("10 per minute")

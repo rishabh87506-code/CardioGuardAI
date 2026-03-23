@@ -6,7 +6,24 @@
 <meta name="theme-color" content="#040608">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CardioGuardAI">
+<meta name="application-name" content="CardioGuardAI">
 <meta name="description" content="CardioGuardAI — India ka pehla agentic cardiac wellness platform">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="msapplication-TileColor" content="#040608">
+<meta name="msapplication-TileImage" content="/logo.png">
+<meta property="og:title" content="CardioGuard AI — Hridai">
+<meta property="og:description" content="India's first agentic cardiac wellness platform">
+<meta property="og:image" content="/logo.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cardioguardai.in">
+<!-- PWA manifest & icons -->
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/logo.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/logo.png">
+<link rel="apple-touch-icon" sizes="167x167" href="/logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
+<link rel="icon" type="image/png" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <title>CardioGuardAI</title>
@@ -54,29 +71,151 @@
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--fbody);-webkit-font-smoothing:antialiased;transition:background .8s cubic-bezier(0.4, 0, 0.2, 1), color .4s ease}
 ::selection{background:rgba(200,10,50,.35)}
 
-/* ─── BLUE THEME (WELLNESS) ─────────────────── */
+/* ─── BLUE THEME (WELLNESS / legacy) ────────── */
 body.blue-theme {
-  --bg:    #020817;
-  --bg1:   #040E26;
-  --bg2:   #06163A;
-  --bg3:   #0A1F52;
-  --bg4:   #0F2D72;
-  --red:   #00D1FF;
-  --red2:  #2D72F0;
-  --rose:  #64FFDA;
-  --teal:  #64FFDA;
-  --tl2:   #00F0C4;
-  --blue:  #2D72F0;
-  --ink:   #F1F7FF;
-  --ink2:  #94A3B8;
-  --ink3:  #475569;
+  --bg:#020817;--bg1:#040E26;--bg2:#06163A;--bg3:#0A1F52;--bg4:#0F2D72;
+  --red:#00D1FF;--red2:#2D72F0;--rose:#64FFDA;--teal:#64FFDA;--tl2:#00F0C4;
+  --blue:#2D72F0;--ink:#F1F7FF;--ink2:#94A3B8;--ink3:#475569;
 }
-body.blue-theme::before {
-  background:
-    radial-gradient(ellipse 80% 55% at 10% 0%,rgba(0,209,255,.11) 0%,transparent 55%),
-    radial-gradient(ellipse 55% 65% at 88% 90%,rgba(100,255,218,.07) 0%,transparent 55%),
-    radial-gradient(ellipse 65% 45% at 50% 50%,rgba(45,114,240,.05) 0%,transparent 65%);
+body.blue-theme::before{background:radial-gradient(ellipse 80% 55% at 10% 0%,rgba(0,209,255,.11) 0%,transparent 55%),radial-gradient(ellipse 55% 65% at 88% 90%,rgba(100,255,218,.07) 0%,transparent 55%),radial-gradient(ellipse 65% 45% at 50% 50%,rgba(45,114,240,.05) 0%,transparent 65%)}
+
+/* ─── CYBER (Youth 18-25 · Futuristic) ──────── */
+body.theme-cyber{
+  --bg:#020508;--bg1:#040C14;--bg2:#071520;--bg3:#091D2A;--bg4:#0D2638;
+  --glass:rgba(0,245,255,.04);--gl2:rgba(0,245,255,.07);--gl3:rgba(0,245,255,.11);
+  --bd:rgba(0,245,255,.1);--bd2:rgba(0,245,255,.18);--bd3:rgba(0,245,255,.28);
+  --red:#00F5FF;--red2:#00D4F0;--rose:#FF0090;--teal:#00FFB3;--tl2:#00FFD4;
+  --blue:#00A8FF;--gold:#FFD700;--grn:#00FF88;--amb:#FF6600;--pur:#BF00FF;
+  --ink:#E8FDFF;--ink2:#6AABB8;--ink3:#254860;
 }
+body.theme-cyber::before{background:
+  radial-gradient(ellipse 80% 55% at 10% 0%,rgba(0,245,255,.14) 0%,transparent 55%),
+  radial-gradient(ellipse 55% 65% at 88% 90%,rgba(255,0,144,.09) 0%,transparent 55%),
+  radial-gradient(ellipse 65% 45% at 50% 50%,rgba(0,168,255,.07) 0%,transparent 65%)}
+body.theme-cyber .ecg polyline{stroke:var(--red2)}
+body.theme-cyber .pulse{background:var(--red2)}
+
+/* ─── GEN-Z (Adolescent · Vibrant) ─────────── */
+body.theme-genz{
+  --bg:#0D0A16;--bg1:#141028;--bg2:#1C163A;--bg3:#251E4C;--bg4:#2E255E;
+  --glass:rgba(162,155,254,.04);--gl2:rgba(162,155,254,.07);--gl3:rgba(162,155,254,.11);
+  --bd:rgba(162,155,254,.12);--bd2:rgba(162,155,254,.22);--bd3:rgba(162,155,254,.35);
+  --red:#FF6CE8;--red2:#FF4EDB;--rose:#FF9DE2;--teal:#4ECDC4;--tl2:#7EFFF5;
+  --blue:#70A1FF;--gold:#FFE66D;--grn:#7BED9F;--amb:#FFA502;--pur:#A29BFE;
+  --ink:#FAF0FF;--ink2:#9E8CC0;--ink3:#5A4880;
+}
+body.theme-genz::before{background:
+  radial-gradient(ellipse 80% 55% at 10% 0%,rgba(255,108,232,.12) 0%,transparent 55%),
+  radial-gradient(ellipse 55% 65% at 88% 90%,rgba(78,205,196,.08) 0%,transparent 55%),
+  radial-gradient(ellipse 65% 45% at 50% 50%,rgba(162,155,254,.07) 0%,transparent 65%)}
+
+/* ─── BLOOM LILAC (Women · Lilac) ───────────── */
+body.theme-bloom{
+  --bg:#0C0818;--bg1:#130E24;--bg2:#1A1430;--bg3:#221A3C;--bg4:#2A2048;
+  --glass:rgba(199,125,255,.04);--gl2:rgba(199,125,255,.07);--gl3:rgba(199,125,255,.11);
+  --bd:rgba(199,125,255,.12);--bd2:rgba(199,125,255,.22);--bd3:rgba(199,125,255,.35);
+  --red:#C77DFF;--red2:#AD5CFF;--rose:#FF85C2;--teal:#80FFDB;--tl2:#B8FFF0;
+  --blue:#74C0FC;--gold:#FFD6A5;--grn:#B8F5C0;--amb:#FFAB76;--pur:#DA8FFF;
+  --ink:#FAF0FF;--ink2:#B090C8;--ink3:#6A5080;
+}
+body.theme-bloom::before{background:
+  radial-gradient(ellipse 80% 55% at 10% 0%,rgba(199,125,255,.13) 0%,transparent 55%),
+  radial-gradient(ellipse 55% 65% at 88% 90%,rgba(255,133,194,.08) 0%,transparent 55%),
+  radial-gradient(ellipse 65% 45% at 50% 50%,rgba(116,192,252,.06) 0%,transparent 65%)}
+
+/* ─── BLOOM ROSE (Women · Rose Gold) ────────── */
+body.theme-rose{
+  --bg:#120810;--bg1:#1E1018;--bg2:#2A1622;--bg3:#361C2C;--bg4:#422236;
+  --glass:rgba(255,133,161,.04);--gl2:rgba(255,133,161,.07);--gl3:rgba(255,133,161,.11);
+  --bd:rgba(255,133,161,.12);--bd2:rgba(255,133,161,.22);--bd3:rgba(255,133,161,.35);
+  --red:#FF85A1;--red2:#FF6B9D;--rose:#FFB3C6;--teal:#98F5E1;--tl2:#C0FAEE;
+  --blue:#89D4CF;--gold:#FFE0A3;--grn:#C0F5D0;--amb:#FFCBA4;--pur:#E8A4FF;
+  --ink:#FFF0F5;--ink2:#C0A0B0;--ink3:#7A5060;
+}
+body.theme-rose::before{background:
+  radial-gradient(ellipse 80% 55% at 10% 0%,rgba(255,107,157,.13) 0%,transparent 55%),
+  radial-gradient(ellipse 55% 65% at 88% 90%,rgba(152,245,225,.07) 0%,transparent 55%),
+  radial-gradient(ellipse 65% 45% at 50% 50%,rgba(232,164,255,.06) 0%,transparent 65%)}
+
+/* ─── PEARL (Women · Light Pastel) ──────────── */
+body.theme-pearl{
+  --bg:#FAF8FF;--bg1:#FFFFFF;--bg2:#F2F0F9;--bg3:#E8E5F5;--bg4:#DDD9EE;
+  --glass:rgba(120,100,180,.05);--gl2:rgba(120,100,180,.08);--gl3:rgba(120,100,180,.12);
+  --bd:rgba(120,100,180,.12);--bd2:rgba(120,100,180,.2);--bd3:rgba(120,100,180,.3);
+  --red:#8B5CF6;--red2:#7C3AED;--rose:#DB2777;--teal:#0D9488;--tl2:#14B8A6;
+  --blue:#3B82F6;--gold:#D97706;--grn:#059669;--amb:#EA580C;--pur:#9333EA;
+  --ink:#1E1B4B;--ink2:#6B7280;--ink3:#C4C4D4;
+}
+body.theme-pearl::before{display:none}
+body.theme-pearl{color:var(--ink)}
+body.theme-pearl .scr,.theme-pearl .mpanel,.theme-pearl .ob-card{background:var(--bg2)}
+body.theme-pearl #HDR,.theme-pearl #NAV{background:rgba(250,248,255,.92);border-color:var(--bd2);backdrop-filter:blur(18px)}
+body.theme-pearl .ni,.theme-pearl .ni.on{color:var(--ink)}
+body.theme-pearl .ni.on .ni-ico,.theme-pearl .ni.on .ni-lbl{color:var(--red2)}
+
+/* ─── CLARITY (Senior 50+ · High Readability) ── */
+body.theme-clarity{
+  --bg:#F5F7FA;--bg1:#FFFFFF;--bg2:#EDF2F7;--bg3:#E2EAF0;--bg4:#D1DDE8;
+  --glass:rgba(0,0,0,.04);--gl2:rgba(0,0,0,.06);--gl3:rgba(0,0,0,.09);
+  --bd:rgba(0,0,0,.1);--bd2:rgba(0,0,0,.16);--bd3:rgba(0,0,0,.25);
+  --red:#C0392B;--red2:#E53E3E;--rose:#E53E3E;--teal:#2C7A7B;--tl2:#319795;
+  --blue:#2B6CB0;--gold:#B7791F;--grn:#276749;--amb:#C05621;--pur:#6B46C1;
+  --ink:#1A202C;--ink2:#4A5568;--ink3:#A0AEC0;--fdisp:'DM Sans',sans-serif;
+}
+body.theme-clarity::before{display:none}
+body.theme-clarity #HDR,body.theme-clarity #NAV{background:rgba(245,247,250,.95);border-color:var(--bd2)}
+body.theme-clarity .scr{font-size:1.04rem;line-height:1.7}
+body.theme-clarity .ni,.theme-clarity .ni.on{color:var(--ink2)}
+body.theme-clarity .ni.on .ni-ico,.theme-clarity .ni.on .ni-lbl{color:var(--red2)}
+
+/* ─── HIGH CONTRAST (Accessibility) ─────────── */
+body.theme-hc{
+  --bg:#000000;--bg1:#0A0A0A;--bg2:#111111;--bg3:#1C1C1C;--bg4:#242424;
+  --glass:rgba(255,255,255,.06);--gl2:rgba(255,255,255,.1);--gl3:rgba(255,255,255,.15);
+  --bd:rgba(255,255,255,.35);--bd2:rgba(255,255,255,.55);--bd3:rgba(255,255,255,.75);
+  --red:#FF4444;--red2:#FF6666;--rose:#FF8888;--teal:#00FF99;--tl2:#00FFCC;
+  --blue:#55AAFF;--gold:#FFDD00;--grn:#00FF88;--amb:#FF8800;--pur:#BB88FF;
+  --ink:#FFFFFF;--ink2:#DDDDDD;--ink3:#999999;
+}
+body.theme-hc *{letter-spacing:.01em}
+body.theme-hc .scr{font-size:1.05rem}
+body.theme-hc button,body.theme-hc a,body.theme-hc [onclick]{outline-offset:2px}
+body.theme-hc button:focus-visible,body.theme-hc a:focus-visible{outline:3px solid var(--gold)}
+
+/* ─── PWA INSTALL BANNER ─────────────────────── */
+#A2HS{
+  position:fixed;bottom:calc(var(--safe-bot) + 68px);left:50%;transform:translateX(-50%);
+  z-index:8000;display:none;
+  background:var(--bg2);border:1.5px solid var(--bd3);border-radius:16px;
+  padding:12px 16px;align-items:center;gap:12px;
+  box-shadow:0 8px 32px rgba(0,0,0,.45);max-width:360px;width:calc(100% - 32px);
+  animation:fadeUp .3s ease}
+#A2HS.show{display:flex}
+#A2HS img{width:40px;height:40px;border-radius:10px;flex-shrink:0}
+#A2HS .a2hs-txt{flex:1;font-size:.75rem;line-height:1.5}
+#A2HS .a2hs-txt strong{display:block;font-family:var(--fdisp);font-size:.82rem;margin-bottom:2px}
+#A2HS .a2hs-btns{display:flex;gap:6px;flex-shrink:0}
+#A2HS .a2hs-install{padding:7px 13px;background:linear-gradient(135deg,var(--red),var(--red2));border:none;border-radius:8px;color:#fff;font-size:.73rem;font-weight:600;cursor:pointer}
+#A2HS .a2hs-dismiss{padding:7px 10px;background:transparent;border:1px solid var(--bd2);border-radius:8px;color:var(--ink2);font-size:.73rem;cursor:pointer}
+
+/* ─── THEME PICKER MODAL ─────────────────────── */
+#THEMEMODAL .mpanel{max-height:85vh;overflow-y:auto}
+.theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.tpick{border-radius:var(--r);padding:14px 12px;cursor:pointer;border:2.5px solid transparent;transition:all .22s;position:relative;overflow:hidden}
+.tpick.sel{border-color:var(--red2)!important}
+.tpick::after{content:'✓';position:absolute;top:8px;right:10px;font-size:.75rem;font-weight:800;opacity:0;transition:opacity .2s}
+.tpick.sel::after{opacity:1}
+.tp-swatch{display:flex;gap:5px;margin-bottom:8px}
+.tp-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0}
+.tp-name{font-size:.78rem;font-weight:800;margin-bottom:2px;font-family:var(--fdisp)}
+.tp-desc{font-size:.62rem;line-height:1.5;opacity:.75}
+.tp-tag{font-size:.55rem;font-weight:700;letter-spacing:.07em;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:3px}
+
+/* ─── OB3: THEME ONBOARDING ──────────────────── */
+#ob3{padding:32px var(--pad) calc(var(--safe-bot) + 24px)}
+.ob3-hdr{text-align:center;margin-bottom:20px}
+.ob3-hdr h2{font-family:var(--fdisp);font-size:1.5rem;font-weight:800;margin-bottom:5px}
+.ob3-suggest{background:var(--glass);border:1px solid var(--bd2);border-radius:var(--rs);padding:9px 12px;font-size:.72rem;color:var(--ink2);margin-bottom:14px;text-align:center}
 
 /* Ambient glow */
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -532,6 +671,68 @@ select.iinp option{background:var(--bg3)}
 .btn-google:hover{background:var(--gl3);border-color:var(--bd3)}
 .auth-divider{display:flex;align-items:center;gap:10px;margin:4px 0 14px;color:var(--ink2);font-size:.75rem}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
+.btn-wa{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;border-radius:var(--r);border:none;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;margin-bottom:8px;transition:filter .2s;font-family:var(--fbody)}
+.btn-wa:active{filter:brightness(.9)}
+.btn-sms{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:var(--r);border:1.5px solid var(--bd2);background:var(--glass);color:var(--ink);font-size:.84rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--fbody)}
+.btn-sms:active{background:var(--gl2)}
+.otp-boxes{display:flex;gap:8px;justify-content:center}
+.otp-box{width:42px;height:52px;border-radius:10px;border:1.5px solid var(--bd2);background:var(--glass);color:var(--ink);font-size:1.4rem;font-weight:800;text-align:center;font-family:var(--fdisp);transition:border-color .2s;caret-color:var(--red2)}
+.otp-box:focus{outline:none;border-color:var(--red2);background:var(--gl2)}
+.mic-recording{animation:micP .8s ease infinite!important;background:var(--rose)!important}
+
+/* ─── EMERGENCY / TRIAGE / SOS ──────────────── */
+.emer-hdr{padding:14px var(--pad) 6px;display:flex;align-items:center;gap:10px}
+.emer-hdr-t{font-family:var(--fdisp);font-size:1.2rem;font-weight:800;color:var(--rose)}
+.emer-calls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:6px var(--pad) 10px}
+.ecall{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:11px 5px;border-radius:var(--r);border:none;font-size:.67rem;font-weight:700;font-family:var(--fbody);text-decoration:none;cursor:pointer;transition:transform .15s;gap:3px;text-align:center;line-height:1.2}
+.ecall:active{transform:scale(.94)}
+.ecall-108{background:rgba(196,30,53,.14);border:1.5px solid rgba(196,30,53,.3);color:var(--rose)}
+.ecall-112{background:rgba(45,114,240,.14);border:1.5px solid rgba(45,114,240,.3);color:var(--blue)}
+.ecall-cr{background:rgba(139,92,246,.14);border:1.5px solid rgba(139,92,246,.3);color:var(--pur)}
+.ecall-n{font-size:1.25rem;font-weight:800;font-family:var(--fdisp);line-height:1}
+.etabs{display:flex;gap:6px;padding:0 var(--pad) 10px;overflow-x:auto;scrollbar-width:none}
+.etabs::-webkit-scrollbar{display:none}
+.etab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bd2);background:var(--glass);color:var(--ink2);font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--fbody);transition:all .2s;flex-shrink:0}
+.etab.on{background:rgba(196,30,53,.14);border-color:var(--red2);color:var(--rose)}
+.epanel{display:none;flex-direction:column;gap:10px;padding:0 var(--pad) 24px}
+.epanel.on{display:flex}
+.tcard{background:var(--glass);border:1.5px solid var(--bd);border-radius:var(--r);padding:13px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:12px}
+.tcard:active,.tcard.sel{border-color:var(--red2);background:rgba(196,30,53,.07)}
+.tc-ico{font-size:1.45rem;flex-shrink:0}
+.tc-t{font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.tc-s{font-size:.69rem;color:var(--ink2);line-height:1.5}
+.tres{border-radius:var(--r);padding:16px}
+.tres-l1{background:rgba(224,39,74,.1);border:1.5px solid rgba(224,39,74,.28)}
+.tres-l2{background:rgba(240,120,48,.1);border:1.5px solid rgba(240,120,48,.28)}
+.tres-l3{background:rgba(237,160,32,.08);border:1.5px solid rgba(237,160,32,.25)}
+.tres-l4{background:rgba(0,196,122,.06);border:1.5px solid rgba(0,196,122,.18)}
+.tres-badge{font-family:var(--fdisp);font-size:.6rem;font-weight:800;letter-spacing:.07em;padding:2px 9px;border-radius:20px;display:inline-block;margin-bottom:7px}
+.tres-title{font-size:1.05rem;font-weight:800;margin-bottom:5px;font-family:var(--fdisp)}
+.tres-desc{font-size:.75rem;color:var(--ink2);line-height:1.7;margin-bottom:11px}
+.tres-step{font-size:.73rem;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);color:var(--ink)}
+.tres-act{border:none;padding:11px;border-radius:var(--rs);font-size:.85rem;font-weight:700;font-family:var(--fbody);cursor:pointer;width:100%;margin-bottom:6px}
+.tres-pri{background:var(--red);color:#fff}
+.tres-sec{background:var(--glass);border:1px solid var(--bd2);color:var(--ink)}
+.wsym-banner{background:rgba(196,30,53,.07);border:1.5px solid rgba(196,30,53,.2);border-radius:var(--r);padding:13px;font-size:.75rem;line-height:1.8;color:var(--ink)}
+.wsym-card{background:var(--glass);border:1px solid var(--bd);border-radius:var(--r);padding:14px}
+.wsym-hdr{font-size:.78rem;font-weight:700;color:var(--rose);margin-bottom:10px}
+.wsym-item{display:flex;gap:9px;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.wsym-item:last-child{border-bottom:none}
+.wsym-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.wsym-t{font-size:.77rem;font-weight:700;color:var(--ink);margin-bottom:1px}
+.wsym-s{font-size:.67rem;color:var(--ink2);line-height:1.5}
+.nearby-btn{width:100%;background:var(--glass);border:1.5px solid var(--bd2);color:var(--ink);padding:12px;border-radius:var(--r);font-size:.86rem;font-weight:600;font-family:var(--fbody);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.nb-item{background:var(--glass);border:1px solid var(--bd);border-radius:var(--r);padding:11px 12px;display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer}
+.nb-ico{font-size:1.25rem;flex-shrink:0}
+.nb-info{flex:1;min-width:0}
+.nb-nm{font-size:.79rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb-meta{font-size:.65rem;color:var(--ink2);margin-top:2px}
+.nb-dist{font-size:.69rem;font-weight:700;color:var(--teal);white-space:nowrap}
+.agm-badge{font-size:.6rem;padding:2px 7px;border-radius:10px;border:1px solid var(--bd2);color:var(--ink3);cursor:pointer;transition:all .18s;font-family:var(--fbody);background:var(--glass)}
+.agm-badge:hover{border-color:var(--red2);color:var(--rose)}
+.agm-mem{background:var(--glass);border:1px solid var(--bd);border-radius:var(--rs);padding:10px;margin-top:6px}
+.agm-row{padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.68rem;color:var(--ink2);line-height:1.5}
+.agm-row:last-child{border:none}
 </style>
 </head>
 <body>
@@ -617,42 +818,56 @@ select.iinp option{background:var(--bg3)}
   <!-- Step 0: Auth -->
   <div class="ob act" id="ob0">
     <div class="ob-brand">
+      <img src="/logo.png" alt="CardioGuard AI" style="width:110px;height:auto;margin-bottom:6px;filter:drop-shadow(0 4px 24px rgba(0,160,255,.35))">
       <div class="ob-wordmark">Cardio<em>GuardAI</em></div>
       <div class="ob-sub">Advanced Wellness Analytics Platform</div>
     </div>
     <div class="ob-card">
-      <h2>Welcome — Login Karein</h2>
-      <p>India ka pehla agentic cardiac wellness platform. Free mein shuru karein.</p>
+      <h2>Login Karein</h2>
+      <p style="font-size:.75rem;color:var(--ink2)">Aapka number — sirf aapka. Koi data share nahi hota.</p>
 
-      <!-- Google Sign-In -->
-      <button class="btn-google" id="googleBtn" onclick="signInGoogle()">
-        <svg width="18" height="18" viewBox="0 0 48 48" style="margin-right:10px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.5 2.7 13.5l7.8 6C12.4 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.5 28.5A14.6 14.6 0 0 1 9.5 24c0-1.6.3-3.1.7-4.5l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.7 10.7l7.8-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.2-8.4 2.2-6.3 0-11.6-4.2-13.5-10l-7.8 6.1C6.6 42.5 14.6 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-        Google se Sign In Karein
-      </button>
-
-      <div class="auth-divider"><span>ya</span></div>
-
-      <!-- Phone OTP -->
-      <div id="phoneStep1">
+      <!-- WhatsApp OTP (primary) -->
+      <div id="waStep1">
         <div class="ifield">
-          <div class="ilabel">Mobile Number</div>
-          <input class="iinp" id="authPhone" type="tel" placeholder="+91 98765 43210" inputmode="tel">
+          <div class="ilabel">📱 Mobile Number</div>
+          <input class="iinp" id="waPhone" type="tel" placeholder="+91 98765 43210" inputmode="tel" autocomplete="tel">
         </div>
-        <button class="btn-pri" onclick="sendPhoneOTP()">OTP Bhejein →</button>
-      </div>
-      <div id="phoneStep2" style="display:none">
-        <div class="ifield">
-          <div class="ilabel">OTP Enter Karein</div>
-          <input class="iinp" id="authOTP" type="number" placeholder="6-digit code" inputmode="numeric" maxlength="6">
-        </div>
-        <button class="btn-pri" onclick="verifyPhoneOTP()">Verify &amp; Login →</button>
-        <button class="btn-ghost" onclick="document.getElementById('phoneStep1').style.display='';document.getElementById('phoneStep2').style.display='none'">← Back</button>
+        <button class="btn-wa" id="waSendBtn" onclick="sendWaOTP()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.848L.057 23.882l6.196-1.625A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.516-5.177-1.416l-.371-.22-3.678.964.982-3.588-.242-.382A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          WhatsApp OTP Bhejein
+        </button>
+        <div class="auth-divider"><span>ya</span></div>
+        <button class="btn-sms" id="smsSendBtn" onclick="sendWaOTP('sms')">
+          📲 SMS OTP Bhejein
+        </button>
       </div>
 
-      <div id="recaptcha-container" style="margin-top:8px"></div>
+      <!-- OTP verification step -->
+      <div id="waStep2" style="display:none">
+        <div style="text-align:center;margin-bottom:12px">
+          <div style="font-size:1.5rem">💬</div>
+          <div style="font-size:.78rem;font-weight:700;color:var(--ink)" id="waOtpHint">OTP bheja gaya</div>
+          <div style="font-size:.68rem;color:var(--ink2);margin-top:3px">6-digit code enter karein</div>
+        </div>
+        <div class="otp-boxes" id="OTP_BOXES"></div>
+        <button class="btn-pri" id="waVerifyBtn" onclick="verifyWaOTP()" style="margin-top:10px">Verify &amp; Login →</button>
+        <button class="btn-ghost" onclick="resetWaAuth()">← Wapas jaayein</button>
+        <div style="text-align:center;margin-top:8px">
+          <span style="font-size:.68rem;color:var(--ink3)" id="waResendTxt">OTP nahi aaya?</span>
+          <span style="font-size:.68rem;color:var(--blue);cursor:pointer;margin-left:4px" id="waResendBtn" onclick="resendWaOTP()" style="display:none">Dobara bhejein</span>
+        </div>
+      </div>
+
       <div id="authErr" style="font-size:.72rem;color:var(--rose);margin-top:8px;text-align:center;display:none"></div>
-      <input type="hidden" id="apiK" value="">
-      <input type="hidden" id="pxK" value="">
+
+      <div class="auth-divider" style="margin-top:14px"><span>ya bina login ke</span></div>
+
+      <!-- Quick name login -->
+      <button class="btn-ghost" onclick="showQuickLogin()" style="width:100%;font-size:.8rem">👤 Naam se Shuru Karein</button>
+      <div id="quickLoginArea" style="display:none;margin-top:10px">
+        <div class="ifield"><div class="ilabel">Aapka Naam</div><input class="iinp" id="quickName" placeholder="Naam daalen" autocomplete="given-name"></div>
+        <button class="btn-pri" onclick="quickLogin()">Shuru Karein →</button>
+      </div>
     </div>
   </div>
 
@@ -692,8 +907,23 @@ select.iinp option{background:var(--bg3)}
           </div>
         </div>
         <div class="ifield"><div class="ilabel">Sheher</div><input class="iinp" id="pCt" placeholder="e.g. Jaipur, Nagpur…"></div>
-        <button class="btn-pri" onclick="saveProfile()" style="margin-top:8px">CardioGuardAI Launch 🫀</button>
+        <button class="btn-pri" onclick="saveProfile()" style="margin-top:8px">Aage → Theme Chunein 🎨</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Theme Picker -->
+  <div class="ob" id="ob3">
+    <div style="width:100%;max-width:400px">
+      <div class="ob3-hdr">
+        <img src="/logo.png" alt="CardioGuard AI" style="width:70px;margin-bottom:10px;filter:drop-shadow(0 2px 12px rgba(0,160,255,.4))">
+        <h2>Apna Look Chunein</h2>
+        <p style="font-size:.78rem;color:var(--ink2);margin-top:4px">CardioGuardAI ko apne liye personalize karein</p>
+      </div>
+      <div class="ob3-suggest" id="OB3SUGGEST"></div>
+      <div class="theme-grid" id="OB3GRID"></div>
+      <button class="btn-pri" onclick="confirmTheme()" id="OB3BTN" style="width:100%">CardioGuardAI Launch 🫀</button>
+      <button class="btn-ghost" onclick="confirmTheme()" style="width:100%;margin-top:6px">Default Theme Use Karein</button>
     </div>
   </div>
 </div>
@@ -706,12 +936,9 @@ select.iinp option{background:var(--bg3)}
   <!-- HEADER -->
   <div id="HDR">
     <div class="hrow">
-      <div class="hav">
+      <div class="hav" style="background:none;border:none;padding:0;width:36px;height:36px;position:relative">
         <div class="pulse"></div>
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 21C7 16 2 11.5 2 7a5 5 0 0 1 10 0 5 5 0 0 1 10 0c0 4.5-5 9-10 14z" fill="var(--red2)" opacity=".88"/>
-          <polyline points="7,12 8,12 9,10 10,14 11,9 12,13 13,12 15,12" stroke="rgba(255,255,255,.82)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-        </svg>
+        <img src="/logo.png" alt="CG" style="width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,160,255,.5))">
       </div>
       <div>
         <div class="hname">Cardio<em>GuardAI</em></div>
@@ -720,7 +947,7 @@ select.iinp option{background:var(--bg3)}
         </div>
       </div>
       <div class="hdr-r">
-        <div class="btn-theme" onclick="toggleTheme()" title="Switch Theme">🌗</div>
+        <div class="btn-theme" onclick="openThemePicker()" title="Appearance & Themes">🎨</div>
         <div class="badge-tag" id="BSTAT" onclick="goS('agents')">
           <div class="spill" id="SPILL"></div>
           <div class="wbadge">⚕ Wellness</div>
@@ -874,25 +1101,86 @@ select.iinp option{background:var(--bg3)}
   </div>
 
   <!-- ── EMERGENCY ── -->
+  <!-- ── SOS / EMERGENCY ── -->
   <div class="scr" id="s-emer">
-    <div class="ehdr"><div class="ehdr-t">🚨 Emergency</div><div class="ehdr-s">Hridai Emergency Agent · 24/7 Active</div></div>
-    <button class="sosbtn" onclick="triggerSOS()">
-      <div class="sos-ico">🆘</div>
-      <div class="sos-lbl">SOS — 108 Activate Karein</div>
-      <div class="sos-sub">Dabane se emergency protocol shuru hoga</div>
-    </button>
-    <div class="ecard">
-      <div class="ec-t">🫀 Chest Pain Mein Kya Karein</div>
-      <div class="ec-step"><div class="ec-num">1</div><div class="ec-txt"><strong>Baithh jaao ya let jaao</strong> — khade mat raho</div></div>
-      <div class="ec-step"><div class="ec-num">2</div><div class="ec-txt"><strong>108 pe turant call karein</strong> — ambulance aayegi</div></div>
-      <div class="ec-step"><div class="ec-num">3</div><div class="ec-txt"><strong>Darwaza khol kar rakhein</strong> — help aa sake</div></div>
-      <div class="ec-step"><div class="ec-num">4</div><div class="ec-txt"><strong>Gaadi bilkul mat chalao</strong> — akele mat jaao</div></div>
-      <div class="ec-step"><div class="ec-num">5</div><div class="ec-txt"><strong>Paas wale ko bulao</strong> — akele mat raho</div></div>
+    <div class="emer-hdr">
+      <span style="font-size:1.35rem">🚨</span>
+      <div>
+        <div class="emer-hdr-t">Emergency & SOS</div>
+        <div style="font-size:.65rem;color:var(--ink2)">Triage · Women's Symptoms · Nearby · Contacts</div>
+      </div>
     </div>
-    <div class="slbl">Emergency Contacts</div>
-    <div id="CONTLIST"></div>
-    <div class="addcont" onclick="openModal('CONTMODAL')"><div style="font-size:1.15rem">➕</div><div class="addcont-t">Emergency Contact Add Karein</div></div>
-    <div style="height:16px"></div>
+
+    <!-- One-tap emergency calls -->
+    <div class="emer-calls">
+      <a class="ecall ecall-108" href="tel:108">
+        <div class="ecall-n">108</div><span>Ambulance</span>
+      </a>
+      <a class="ecall ecall-112" href="tel:112">
+        <div class="ecall-n">112</div><span>Emergency</span>
+      </a>
+      <a class="ecall ecall-cr" href="tel:9152987821">
+        <div class="ecall-n">iCall</div><span>Mental Help</span>
+      </a>
+    </div>
+
+    <!-- Tabs -->
+    <div class="etabs">
+      <button class="etab on" id="etab-triage" onclick="setEtab('triage',this)">🏥 Triage</button>
+      <button class="etab" id="etab-women" onclick="setEtab('women',this)">♀ Women's</button>
+      <button class="etab" id="etab-nearby" onclick="setEtab('nearby',this)">📍 Nearby</button>
+      <button class="etab" id="etab-conts" onclick="setEtab('conts',this)">📞 Contacts</button>
+    </div>
+
+    <!-- Triage Panel -->
+    <div id="ep-triage" class="epanel on">
+      <div id="TRIAGE_BODY"></div>
+    </div>
+
+    <!-- Women's Panel -->
+    <div id="ep-women" class="epanel">
+      <div class="wsym-banner">
+        ⚠️ <strong>Mahilaon mein heart attack alag hota hai.</strong> Sirf chest pain hi nahi —
+        jaw pain, unusual fatigue, nausea bhi cardiac symptoms hain. Inhe kabhi ignore mat karein.
+      </div>
+      <div class="wsym-card">
+        <div class="wsym-hdr">♀ Women-Specific Cardiac Warning Signs</div>
+        <div id="WSYM_LIST"></div>
+      </div>
+      <div class="wsym-card" style="background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.18)">
+        <div class="wsym-hdr" style="color:var(--pur)">🧠 Kyun Alag Hote Hain Symptoms?</div>
+        <div style="font-size:.73rem;color:var(--ink2);line-height:1.8">
+          Mahilaon mein <strong style="color:var(--ink)">microvascular disease</strong> zyada hoti hai —
+          badi arteries ki jagah chhoti vessels affect hoti hain.
+          Estrogen symptoms chhupata hai jab tak menopause nahi.
+          Post-menopause cardiac risk men ke barabar ho jaata hai.<br><br>
+          <strong style="color:var(--rose)">Studies: 50% mahilayein heart attack mein chest pain report nahi karti.</strong>
+        </div>
+      </div>
+      <button class="btn-pri" style="margin:0" onclick="goS('chat');setTimeout(()=>qc('Mahilaon mein cardiac symptoms kyon alag hote hain? Women-specific heart warning signs detail mein batao.'),400)">
+        🤖 Hridai se aur jaanein
+      </button>
+    </div>
+
+    <!-- Nearby Panel -->
+    <div id="ep-nearby" class="epanel">
+      <button class="nearby-btn" id="NEARBY_BTN" onclick="loadNearby()">
+        📍 Aas-paas ke Hospitals dhundein
+      </button>
+      <div id="NEARBY_LIST"></div>
+      <div style="font-size:.65rem;color:var(--ink3);text-align:center;margin-top:4px">
+        OpenStreetMap data · No tracking · Location stays on device
+      </div>
+    </div>
+
+    <!-- Contacts Panel -->
+    <div id="ep-conts" class="epanel">
+      <div id="CONTLIST"></div>
+      <div class="addcont" onclick="openModal('CONTMODAL')">
+        <div style="font-size:1.15rem">➕</div>
+        <div class="addcont-t">Emergency Contact Add Karein</div>
+      </div>
+    </div>
   </div>
 
   <!-- ── AGENTS ── -->
@@ -943,6 +1231,17 @@ select.iinp option{background:var(--bg3)}
     </div>
     <button class="dbtn" onclick="clearAll()">🗑 Saara Data Delete Karein</button>
     <div style="height:24px"></div>
+  </div>
+
+  <!-- ── THEME PICKER MODAL ── -->
+  <div class="moverlay" id="THEMEMODAL">
+    <div class="mpanel">
+      <div class="mttl">🎨 Appearance <span class="mclose" onclick="closeModal('THEMEMODAL')">✕</span></div>
+      <div style="font-size:.72rem;color:var(--ink2);margin-bottom:12px">Aapke liye recommended theme highlighted hai. Kabhi bhi change kar sakte hain.</div>
+      <div class="theme-grid" id="MODAL_GRID"></div>
+      <button class="btn-pri" onclick="confirmThemeModal()" style="width:100%">Apply Theme ✓</button>
+      <button class="btn-ghost" onclick="closeModal('THEMEMODAL')" style="width:100%;margin-top:6px">Cancel</button>
+    </div>
   </div>
 
   <!-- ── BOTTOM NAV ── -->
@@ -1050,6 +1349,13 @@ ABSOLUTE SAFETY RULES (never break):
 4. NEVER dismiss symptoms — always take them seriously
 5. Always recommend doctor for any health concern
 
+WOMEN'S CARDIAC AWARENESS (critical — always apply):
+- 50% mahilayein heart attack mein classic chest pain nahi feel karti
+- Women-specific symptoms: unusual fatigue (days pehle), jaw/neck/back pain, nausea, breathlessness without chest pain, cold sweat, dizziness, sleep disturbances
+- NEVER dismiss these as anxiety or indigestion — take them as seriously as chest pain
+- Post-menopausal women ka cardiac risk men ke barabar hota hai
+- When a woman reports any of these: acknowledge, escalate, recommend immediate medical attention
+
 AGENT AWARENESS (mention naturally):
 - "Mera Vitals Sentinel agent ne notice kiya…"
 - "Risk Monitor dekh raha hai…"
@@ -1101,6 +1407,13 @@ const RSTEPS = [
     { id:'sleep_hours_per_day',           lbl:'Neend (ghante per raat)',       type:'slider',min:2,max:12,step:.5 },
     { id:'triglycerides',                 lbl:'Triglycerides (mg/dL)',         type:'num',ph:'150',min:20,max:1000 },
     { id:'physical_activity_days_per_week',lbl:'Active din per hafte',         type:'slider',min:0,max:7,step:1 },
+  ]},
+  { ttl:'Atypical & Women\'s Symptoms', fields:[
+    { id:'jaw_neck_pain',      lbl:'Jaw / Neck / Back mein unusual dard?',       type:'chip', opts:['Haan','Nahi','Kabhi Kabhi'] },
+    { id:'unusual_fatigue',    lbl:'Extreme fatigue (koi wajah nahi, days se)?', type:'chip', opts:['Haan','Nahi'] },
+    { id:'sob_no_chest',       lbl:'Saans fulna bina chest pain ke?',            type:'chip', opts:['Haan','Nahi'] },
+    { id:'nausea_unexplained', lbl:'Nausea / vomiting (unexplained)?',           type:'chip', opts:['Haan','Nahi'] },
+    { id:'cold_sweat',         lbl:'Cold sweat without exercise / heat?',        type:'chip', opts:['Haan','Nahi'] },
   ]},
 ];
 
@@ -1269,7 +1582,9 @@ function saveProfile() {
   if (!nm) { toast('Naam daalna zaroori hai'); return; }
   profile = { name:nm, age:parseInt(document.getElementById('pAg').value)||0, gender:document.getElementById('pGn').value, city:document.getElementById('pCt').value.trim(), conditions:[...condSel] };
   ST.s('prof', profile);
-  launch();
+  // Go to theme picker
+  goOB(3);
+  initThemePicker('ob');
 }
 
 // ── LAUNCH ────────────────────────────────────────────
@@ -1281,8 +1596,10 @@ function launch() {
   updateDash(); updateProfile(); syncKeyPrev();  loadTheme();
   initRiskForm();
   chatWelcome();
- updateStreak();
+  updateStreak();
   setTimeout(bgAgents, 2800);
+  // Signal PWA deep-link handler and other listeners
+  window.dispatchEvent(new Event('cgai:ready'));
 }
 
 // ── API CALL (proxy-first, key hidden) ───────────────
@@ -1361,6 +1678,21 @@ async function sendMsg() {
   if (lv) sys += `\n\n[VITALS: BP=${lv.sys}/${lv.dia}, HR=${lv.hr}, BS=${lv.bs}]`;
   if (meds.length) sys += `\n\n[MEDS: ${meds.map(m=>m.nm).join(', ')}]`;
 
+  // Include agent memory context for richer, cross-session dialogue
+  const _agCtx = ['em','vit','lc','mm','risk'].map(id=>{
+    const s = getAgMemSummary(id);
+    const f = s.findings.slice(0,2).map(x=>x.text).join(' | ');
+    const ag = AGENTS.find(a=>a.id===id);
+    return f ? `[${ag?.n||id}: ${f}]` : null;
+  }).filter(Boolean);
+  if (_agCtx.length) sys += '\n\n[AGENT_MEMORY]\n' + _agCtx.join('\n');
+
+  // Include recent vitals trend if available (last 3)
+  if (vitalsLog.length > 1) {
+    const recent = vitalsLog.slice(-3).map(v=>`BP ${v.sys}/${v.dia} HR ${v.hr}`).join(' → ');
+    sys += `\n\n[VITALS_TREND: ${recent}]`;
+  }
+
   try {
     const reply = await callClaude(chatHist.slice(-24), sys);
     removeBubble(tid);
@@ -1372,6 +1704,7 @@ async function sendMsg() {
     removeBubble(tid);
     const em = err.message?.includes('authentication') ? '❌ API key galat hai. Profile → API Key change karein.'
       : err.message?.includes('rate') ? '⏱ Requests bahut zyada ho gayi. Thodi der mein dobara try karein.'
+      : (err.message?.includes('not configured') || err.message?.includes('503')) ? '⚙️ AI service abhi server pe configure nahi hai. ANTHROPIC_API_KEY set karein.\n\n' + fallback(msg)
       : fallback(msg);
     bubble(em,'ai');
   }
@@ -1580,6 +1913,16 @@ function showRiskResult(score, level, expl, shap) {
   const off=circ-((Math.min(score,100)/100)*circ);
   const shapHtml = shap.length ? `<div class="shap-box"><div class="shap-ttl">⚖️ Bias Audit — Top Contributing Factors</div>${shap.slice(0,5).map(f=>`<div class="shap-row"><div class="shap-nm">${f.factor}</div><div class="shap-bw"><div class="shap-b" style="width:${Math.min(f.impact,100)}%;background:${f.direction==='increases'?'var(--rose)':'var(--teal)'}"></div></div><div class="shap-v">${Math.round(f.impact)}%</div></div>`).join('')}</div>` : '';
 
+  // Women's atypical symptom warning if flagged in screening
+  const atypFlags = ['jaw_neck_pain','unusual_fatigue','sob_no_chest','nausea_unexplained','cold_sweat'].filter(k=>rData[k]==='Haan');
+  const atypHtml = atypFlags.length ? `
+    <div class="wsym-banner" style="margin-top:10px">
+      ♀ <strong>Atypical Symptoms Detected (${atypFlags.length}):</strong>
+      ${atypFlags.map(k=>({jaw_neck_pain:'Jaw/Neck/Back Pain',unusual_fatigue:'Unusual Fatigue',sob_no_chest:'Breathless (no chest pain)',nausea_unexplained:'Nausea/Vomiting',cold_sweat:'Cold Sweat'}[k])).join(' · ')}<br>
+      <span style="font-size:.68rem">Yeh ML model mein reflect nahi hote — <strong>doctor ko inke baare mein zaroor batayein.</strong>
+      In symptoms ke saath 108 pe jaldi call karein. → <span onclick="goS('emer');setTimeout(()=>setEtab('women',document.getElementById('etab-women')),300)" style="color:var(--blue);cursor:pointer">Women's Guide dekhein →</span></span>
+    </div>` : '';
+
   document.getElementById('RRES').innerHTML=`
     <div class="rres-wrap">
       <div class="rres-ring">
@@ -1596,7 +1939,7 @@ function showRiskResult(score, level, expl, shap) {
     </div>
     <div class="rres-lv" style="color:${C[level]}">${level} INDICATOR</div>
     <div class="rres-msg">${expl||msgs[level]}</div>
-      ${shapHtml}
+      ${shapHtml}${atypHtml}
       <div class="rres-actions">
         <button class="btn-pri" onclick="goS('chat');setTimeout(()=>qc('Mera risk score ${score.toFixed(1)}% aaya — ${level}. Matlab kya hai? Main kya karoon?'),400)">
           🫀 Hridai se Samjhein
@@ -1898,7 +2241,33 @@ function postAgents(msg,reply) {
         lastRisk={score:sc,level:lv,ts:Date.now()};
         ST.s('lrisk',lastRisk); updateDash(); updateSpill(sc,lv);
       }
+      addAgFinding('risk', `Dialogue mein risk ~${sc.toFixed(0)}% (${lv}) mentioned — ${new Date().toLocaleDateString('hi-IN')}`);
     }
+  }
+
+  // Store key dialogue findings in agent memory for cross-session context
+  const lm=msg.toLowerCase(), lr=reply.toLowerCase();
+
+  // Emergency symptom tracking
+  if (/chest|dard|saans|breathless|jaw|fainting|behosh|ghabra/.test(lm)) {
+    addAgFinding('em', `Symptom reported: "${msg.substring(0,80)}"`);
+    logAg('em','warn','🚨 Crisis Agent',`Symptom flagged in dialogue: "${msg.substring(0,60)}"`);
+  }
+
+  // BP / vitals discussion
+  const bpMatch = (msg+reply).match(/(\d{2,3})\/(\d{2,3})/);
+  if (bpMatch) {
+    addAgFinding('vit', `BP discussed: ${bpMatch[0]} — ${new Date().toLocaleDateString('hi-IN')}`);
+  }
+
+  // Lifestyle topics
+  if (/diet|khana|walk|exercise|yoga|neend|sleep|paani|water|stress/.test(lm)) {
+    addAgFinding('lc', `Lifestyle topic: "${msg.substring(0,80)}"`);
+  }
+
+  // Medication discussion
+  if (/dawai|medicine|tablet|dawa|medication|dose/.test(lm)) {
+    addAgFinding('med', `Medication discussed in chat — ${new Date().toLocaleDateString('hi-IN')}`);
   }
 }
 
@@ -2058,6 +2427,14 @@ function changeKey(){
   // API key managed server-side — not required from user
 }
 
+function openThemePicker() {
+  initThemePicker('modal');
+  openModal('THEMEMODAL');
+}
+function confirmThemeModal() {
+  closeModal('THEMEMODAL');
+  toast('✨ Theme applied!');
+}
 function toggleTheme() {
   document.body.classList.toggle('blue-theme');
   const isBlue = document.body.classList.contains('blue-theme');
@@ -2066,8 +2443,11 @@ function toggleTheme() {
 }
 
 function loadTheme() {
-  const t = ST.g('theme');
-  if(t === 'blue') document.body.classList.add('blue-theme');
+  const t = ST.g('theme') || '';
+  const ALL_THEMES = ['blue-theme','theme-cyber','theme-genz','theme-bloom','theme-rose','theme-pearl','theme-clarity','theme-hc'];
+  ALL_THEMES.forEach(c => document.body.classList.remove(c));
+  if (t && t !== 'dark') document.body.classList.add(t === 'blue' ? 'blue-theme' : t);
+  if(t === 'blue') document.body.classList.add('blue-theme');  // legacy
 }
 
 function togglePref(k,el){prefs[k]=!prefs[k];el.classList.toggle('on',prefs[k]);ST.s('prefs',prefs);toast(`${k} ${prefs[k]?'on':'off'}`);}
@@ -2090,35 +2470,99 @@ function goS(id) {
   if(id==='agents')buildAgentList();
   if(id==='vitals'){buildVHist();if(vitalsLog.length)updateChart(chartType);}
   if(id==='meds')buildMedList();
-  if(id==='emer')buildContList();
+  if(id==='emer'){initTriage();buildWomenSymptoms();}
   if(id==='reports')buildRepList();
   if(id==='profile'){updateProfile();syncKeyPrev();}
   if(navigator.vibrate)navigator.vibrate(8);
 }
 
 // ── VOICE ─────────────────────────────────────────────
-function speak(t){
-  if(!speechSynthesis||!prefs.voice)return;
-  const clean=t.replace(/\*\*/g,'').replace(/\*/g,'').replace(/[🚨⚠❤️🙏😴🥗🧘🩸📊💊🏥📅👨‍👩‍👦⬇️💧🚶🧠⚖️🌅🌙🫀🔥📋]/gu,'').replace(/- /g,'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim().substring(0,260);
-  const u=new SpeechSynthesisUtterance(clean);
+let _ttsAudio=null;
+async function speak(t){
+  if(!prefs.voice)return;
+  const clean=t.replace(/\*\*|__|[*_`#]/g,'').replace(/[🚨⚠❤️🙏😴🥗🧘🩸📊💊🏥📅👨‍👩‍👦⬇️💧🚶🧠⚖️🌅🌙🫀🔥📋🏥]/gu,'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim().substring(0,500);
+  if(!clean)return;
+
+  // 1. Try OpenAI TTS (best quality, Hinglish-aware)
+  try{
+    const res=await fetch('/api/tts',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text:clean,voice:'nova'})
+    });
+    if(res.ok){
+      const blob=await res.blob();
+      const url=URL.createObjectURL(blob);
+      if(_ttsAudio){_ttsAudio.pause();URL.revokeObjectURL(_ttsAudio.src);}
+      _ttsAudio=new Audio(url);
+      _ttsAudio.play();
+      return;
+    }
+  }catch(e){}
+
+  // 2. Fallback: browser TTS
+  if(!speechSynthesis)return;
+  const u=new SpeechSynthesisUtterance(clean.substring(0,260));
   u.lang='hi-IN';u.rate=.9;u.pitch=1.05;
   speechSynthesis.cancel();speechSynthesis.speak(u);
 }
 
-function toggleMic(){
-  if(!window.SpeechRecognition&&!window.webkitSpeechRecognition){toast('Voice input supported nahi is browser mein');return;}
+let _mediaRec=null, _audioChunks=[];
+async function toggleMic(){
   const btn=document.getElementById('MICBTN');
-  if(micOn){mic?.stop();micOn=false;btn.classList.remove('on');return;}
+  if(micOn){
+    _mediaRec?.stop();
+    return;
+  }
+  if(!navigator.mediaDevices?.getUserMedia){
+    toast('Mic access supported nahi'); return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    _audioChunks=[];
+    _mediaRec=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/ogg'});
+    _mediaRec.ondataavailable=e=>{if(e.data.size>0)_audioChunks.push(e.data);};
+    _mediaRec.onstart=()=>{micOn=true;btn.classList.add('on','mic-recording');toast('🎤 Whisper listening… tap to stop');};
+    _mediaRec.onstop=async()=>{
+      micOn=false;btn.classList.remove('on','mic-recording');
+      stream.getTracks().forEach(t=>t.stop());
+      const blob=new Blob(_audioChunks,{type:_mediaRec.mimeType});
+      toast('🔄 Transcribing…');
+      try{
+        const fd=new FormData();
+        fd.append('audio',blob,'audio.webm');
+        fd.append('language','hi');
+        const res=await fetch('/api/transcribe',{method:'POST',body:fd});
+        if(res.ok){
+          const data=await res.json();
+          const txt=data.text||data.transcript||'';
+          if(txt){
+            document.getElementById('CINP').value=txt;
+            autoGrow(document.getElementById('CINP'));
+            toast('✓ Whisper transcribed');
+          } else toast('Kuch nahi sun paya — dobara try karein');
+        } else {
+          // Whisper not configured — fall back to Web Speech API
+          _fallbackSpeech();
+        }
+      }catch(e){ _fallbackSpeech(); }
+    };
+    _mediaRec.start();
+  }catch(e){
+    toast('Mic permission den — browser settings mein');
+  }
+}
+function _fallbackSpeech(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  mic=new SR();mic.lang='hi-IN';mic.interimResults=false;
-  mic.onstart=()=>{micOn=true;btn.classList.add('on');toast('🎤 Bol rahe hain…');};
-  mic.onresult=e=>{
+  if(!SR){toast('Voice input supported nahi');return;}
+  const r=new SR();r.lang='hi-IN';r.interimResults=false;
+  r.onresult=e=>{
     document.getElementById('CINP').value=e.results[0][0].transcript;
-    micOn=false;btn.classList.remove('on');
     autoGrow(document.getElementById('CINP'));
+    toast('🎤 Web Speech captured');
   };
-  mic.onerror=mic.onend=()=>{micOn=false;btn.classList.remove('on');};
-  mic.start();
+  r.onerror=()=>toast('Voice capture failed');
+  r.start();
 }
 
 // ── NOTIFICATIONS ─────────────────────────────────────
@@ -2141,6 +2585,113 @@ function toast(msg,dur=2800){
   clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),dur);
 }
 
+// ══════════════════════════════════════════════════════
+//  WHATSAPP / SMS OTP AUTH SYSTEM
+// ══════════════════════════════════════════════════════
+let _waPhone='', _waMethod='whatsapp', _waResendTimer=null;
+
+function getWaPhone(){
+  return (document.getElementById('waPhone')?.value||'').trim().replace(/\s/g,'');
+}
+
+async function sendWaOTP(method='whatsapp'){
+  const phone=getWaPhone();
+  if(!phone||phone.length<8){showAuthErr('Valid phone number daalen'); return;}
+  _waPhone=phone; _waMethod=method;
+  const btn=method==='whatsapp'?document.getElementById('waSendBtn'):document.getElementById('smsSendBtn');
+  const origTxt=btn.innerHTML; btn.disabled=true; btn.textContent='Sending…';
+  try{
+    const res=await fetch('/api/otp/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,method})});
+    const data=await res.json();
+    if(!res.ok){showAuthErr(data.error||'Failed to send OTP');btn.innerHTML=origTxt;btn.disabled=false;return;}
+    // Show OTP step
+    document.getElementById('waStep1').style.display='none';
+    document.getElementById('waStep2').style.display='block';
+    const ico=method==='whatsapp'?'💬 WhatsApp':'📲 SMS';
+    document.getElementById('waOtpHint').textContent=`${ico} pe OTP bheja — ${phone.slice(-4).padStart(phone.length,'•')}`;
+    buildOtpBoxes();
+    startResendTimer(30);
+    // Dev mode: show OTP in toast
+    if(data.dev_otp){toast(`🔧 Dev OTP: ${data.dev_otp}`,8000);}
+  }catch(e){showAuthErr('Network error — try again');btn.innerHTML=origTxt;btn.disabled=false;}
+}
+
+function buildOtpBoxes(){
+  const el=document.getElementById('OTP_BOXES'); if(!el)return;
+  el.innerHTML=Array.from({length:6},(_,i)=>`<input class="otp-box" id="ob${i}" maxlength="1" inputmode="numeric" type="text" autocomplete="one-time-code" oninput="otpInput(${i},this)" onkeydown="otpKey(${i},event)">`).join('');
+  document.getElementById('ob0')?.focus();
+}
+function otpInput(i,el){
+  el.value=el.value.replace(/\D/g,'').slice(-1);
+  if(el.value&&i<5)document.getElementById('ob'+(i+1))?.focus();
+  if(i===5&&el.value)verifyWaOTP();
+}
+function otpKey(i,e){
+  if(e.key==='Backspace'&&!document.getElementById('ob'+i)?.value&&i>0)document.getElementById('ob'+(i-1))?.focus();
+}
+function getOtpValue(){return Array.from({length:6},(_,i)=>document.getElementById('ob'+i)?.value||'').join('');}
+
+async function verifyWaOTP(){
+  const otp=getOtpValue();
+  if(otp.length<6){showAuthErr('6-digit OTP daalen');return;}
+  const btn=document.getElementById('waVerifyBtn');
+  btn.disabled=true; btn.textContent='Verifying…';
+  try{
+    const res=await fetch('/api/otp/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:_waPhone,otp})});
+    const data=await res.json();
+    if(!res.ok||!data.ok){
+      showAuthErr(data.error||'Wrong OTP');
+      btn.disabled=false; btn.textContent='Verify & Login →';
+      document.getElementById('ob0')?.focus();
+      return;
+    }
+    // Success
+    clearTimeout(_waResendTimer);
+    ST.s('authUser',{name:'',phone:_waPhone,token:data.token,method:_waMethod});
+    toast('✅ Login successful!');
+    goOB(2);  // go to profile setup
+  }catch(e){showAuthErr('Network error — try again');btn.disabled=false;btn.textContent='Verify & Login →';}
+}
+
+function resetWaAuth(){
+  document.getElementById('waStep1').style.display='';
+  document.getElementById('waStep2').style.display='none';
+  clearTimeout(_waResendTimer);
+  hideAuthErr();
+  document.getElementById('waPhone').value='';
+  document.getElementById('waSendBtn').disabled=false;
+  document.getElementById('smsSendBtn').disabled=false;
+  document.getElementById('waSendBtn').innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.848L.057 23.882l6.196-1.625A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.516-5.177-1.416l-.371-.22-3.678.964.982-3.588-.242-.382A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg> WhatsApp OTP Bhejein`;
+  document.getElementById('smsSendBtn').textContent='📲 SMS OTP Bhejein';
+}
+
+function resendWaOTP(){sendWaOTP(_waMethod);}
+
+function startResendTimer(sec){
+  const txt=document.getElementById('waResendTxt');
+  const btn=document.getElementById('waResendBtn');
+  btn.style.display='none';
+  let s=sec;
+  _waResendTimer=setInterval(()=>{
+    s--;
+    if(txt)txt.textContent=`${s}s mein dobara bhej sakte hain`;
+    if(s<=0){clearInterval(_waResendTimer);if(txt)txt.textContent='OTP nahi aaya?';if(btn)btn.style.display='inline';}
+  },1000);
+}
+
+function showAuthErr(msg){
+  const el=document.getElementById('authErr');
+  if(el){el.textContent=msg;el.style.display='block';}
+}
+function hideAuthErr(){
+  const el=document.getElementById('authErr');
+  if(el){el.textContent='';el.style.display='none';}
+}
+function showQuickLogin(){
+  document.getElementById('quickLoginArea').style.display='';
+  document.getElementById('quickName')?.focus();
+}
+
 // ── FALLBACK ──────────────────────────────────────────
 function fallback(msg){
   const l=msg.toLowerCase();
@@ -2148,6 +2699,520 @@ function fallback(msg){
   if(/bp|blood pressure/.test(l))return '**BP ke liye:** Namak kam, 30 min walk roz, stress manage karein.\n\n⚠ Doctor se zaroor milein.';
   return 'Connection problem lag rahi hai. API key check karein ya proxy URL verify karein. ⚠ Doctor se zaroor milein.';
 }
+
+// ══════════════════════════════════════════════════════
+//  ADAPTIVE THEME SYSTEM
+// ══════════════════════════════════════════════════════
+const THEMES = [
+  {
+    id:'dark', name:'Hridai Dark', tag:'DEFAULT',
+    desc:'Deep space · Cardinal red · Classic CardioGuardAI',
+    dots:['#040608','#C41E35','#00CFA8'],
+    bg:'#040608', rec:'Everyone',
+  },
+  {
+    id:'theme-cyber', name:'Cyber Pulse', tag:'YOUTH',
+    desc:'Electric neon · Cyberpunk · Futuristic AI aesthetic',
+    dots:['#020508','#00F5FF','#FF0090'],
+    bg:'linear-gradient(135deg,#020508,#071520)',
+    rec:'18–25 years · Gen-Z · Tech enthusiasts',
+  },
+  {
+    id:'theme-genz', name:'Gen-Z Vibe', tag:'TRENDY',
+    desc:'Vibrant gradients · Instagram-core · Aesthetic + fun',
+    dots:['#0D0A16','#FF6CE8','#4ECDC4'],
+    bg:'linear-gradient(135deg,#0D0A16,#1C163A)',
+    rec:'Under 25 · Teens · Vibrant souls',
+  },
+  {
+    id:'theme-bloom', name:'Bloom Lilac', tag:'WOMEN',
+    desc:'Soft lilac · Violet depth · Elegant & feminine',
+    dots:['#0C0818','#C77DFF','#FF85C2'],
+    bg:'linear-gradient(135deg,#0C0818,#1A1430)',
+    rec:'Women · Lilac lovers · Purple aesthetic',
+  },
+  {
+    id:'theme-rose', name:'Bloom Rose', tag:'WOMEN',
+    desc:'Rose gold · Blush tones · Warm & romantic',
+    dots:['#120810','#FF6B9D','#98F5E1'],
+    bg:'linear-gradient(135deg,#120810,#2A1522)',
+    rec:'Women · Rose gold · Warm palette',
+  },
+  {
+    id:'theme-pearl', name:'Pearl Light', tag:'WOMEN · LIGHT',
+    desc:'White & lavender · Soft pastels · Clean and bright',
+    dots:['#FAF8FF','#7C3AED','#0D9488'],
+    bg:'linear-gradient(135deg,#FAF8FF,#EDE9FE)',
+    rec:'Women · Light mode lovers · Minimal aesthetic',
+  },
+  {
+    id:'theme-clarity', name:'Clarity', tag:'50+ SENIORS',
+    desc:'Light · High readability · Large contrast · Easy on eyes',
+    dots:['#F5F7FA','#C0392B','#2C7A7B'],
+    bg:'linear-gradient(135deg,#F5F7FA,#EDF2F7)',
+    rec:'50+ years · Seniors · Anyone preferring light',
+  },
+  {
+    id:'theme-hc', name:'High Contrast', tag:'ACCESSIBILITY',
+    desc:'Maximum contrast · WCAG AAA · Differently abled friendly',
+    dots:['#000000','#FF4444','#00FF99'],
+    bg:'#000000',
+    rec:'Differently abled · Low vision · Max accessibility',
+  },
+];
+
+let _pickerTarget = 'ob';  // 'ob' or 'modal'
+let _selectedTheme = '';
+
+function autoSuggestTheme(age, gender) {
+  age = parseInt(age) || 0;
+  gender = (gender || '').toLowerCase();
+  if (age > 0 && age < 18)   return 'theme-genz';
+  if (age >= 18 && age <= 25) return 'theme-cyber';
+  if (age > 50)               return 'theme-clarity';
+  if (gender === 'female')    return 'theme-bloom';
+  return 'dark';
+}
+
+function initThemePicker(target) {
+  _pickerTarget = target;
+  _selectedTheme = ST.g('theme') || '';
+  const suggested = autoSuggestTheme(profile.age, profile.gender);
+
+  if (target === 'ob') {
+    // Onboarding version
+    const sg = document.getElementById('OB3SUGGEST');
+    const grid = document.getElementById('OB3GRID');
+    if (sg) {
+      const th = THEMES.find(t=>t.id===suggested);
+      sg.innerHTML = `✨ Aapke profile ke liye recommended: <strong style="color:var(--red2)">${th?.name||'Hridai Dark'}</strong>`;
+    }
+    if (grid) grid.innerHTML = renderThemeGrid(suggested);
+  } else {
+    // Modal version
+    const grid = document.getElementById('MODAL_GRID');
+    if (grid) grid.innerHTML = renderThemeGrid(suggested);
+  }
+
+  // Preview suggested if nothing saved yet
+  if (!ST.g('theme')) applyTheme(suggested, false);
+}
+
+function renderThemeGrid(suggested) {
+  return THEMES.map(t => {
+    const isSel = (_selectedTheme === t.id) || (!_selectedTheme && t.id === suggested);
+    return `<div class="tpick${isSel?' sel':''}"
+      style="background:${t.bg};border-color:${isSel?'rgba(255,255,255,.6)':'transparent'}"
+      onclick="pickTheme('${t.id}',this)">
+      <div class="tp-swatch">
+        ${t.dots.map(d=>`<div class="tp-dot" style="background:${d};border:1.5px solid rgba(255,255,255,.2)"></div>`).join('')}
+      </div>
+      <div class="tp-name" style="color:${t.dots[1]||'#fff'}">${t.name}</div>
+      <div class="tp-desc" style="color:rgba(255,255,255,.65)">${t.desc}</div>
+      <div class="tp-tag" style="background:${t.dots[1]}22;color:${t.dots[1]};border:1px solid ${t.dots[1]}44">${t.tag}</div>
+    </div>`;
+  }).join('');
+}
+
+function pickTheme(id, el) {
+  _selectedTheme = id;
+  const container = el.closest('.theme-grid');
+  container.querySelectorAll('.tpick').forEach(p => {
+    p.classList.remove('sel');
+    p.style.borderColor = 'transparent';
+  });
+  el.classList.add('sel');
+  el.style.borderColor = 'rgba(255,255,255,.6)';
+  // Live preview
+  applyTheme(id, false);
+}
+
+function applyTheme(id, save=true) {
+  const ALL = ['blue-theme','theme-cyber','theme-genz','theme-bloom','theme-rose','theme-pearl','theme-clarity','theme-hc'];
+  ALL.forEach(c => document.body.classList.remove(c));
+  if (id && id !== 'dark') document.body.classList.add(id);
+  if (save) { ST.s('theme', id || 'dark'); toast('✨ Theme applied!'); }
+}
+
+function confirmTheme() {
+  const theme = _selectedTheme || autoSuggestTheme(profile.age, profile.gender);
+  applyTheme(theme, true);
+  launch();
+}
+
+// ══════════════════════════════════════════════════════
+//  AGENT CONTEXT MEMORY SYSTEM
+// ══════════════════════════════════════════════════════
+const AGT_MEM = {};
+function getAgMem(id) {
+  if (!AGT_MEM[id]) AGT_MEM[id] = ST.g('agm_'+id) || {lastRun:null,findings:[],tasks:[],alerts:[],context:{}};
+  return AGT_MEM[id];
+}
+function setAgMem(id, patch) {
+  const m = getAgMem(id);
+  Object.assign(m, patch, {updated:Date.now()});
+  AGT_MEM[id] = m;
+  ST.s('agm_'+id, m);
+}
+function addAgFinding(id, text) {
+  const m = getAgMem(id);
+  m.findings.unshift({text, ts:Date.now()});
+  if (m.findings.length > 20) m.findings.length = 20;
+  setAgMem(id, {findings:m.findings});
+}
+function addAgTask(id, task) {
+  const m = getAgMem(id);
+  if (!m.tasks.find(t=>t.task===task&&t.status==='pending')) {
+    m.tasks.unshift({task, status:'pending', ts:Date.now()});
+    if (m.tasks.length > 10) m.tasks.length = 10;
+    setAgMem(id, {tasks:m.tasks});
+  }
+}
+function completeAgTask(id, task) {
+  const m = getAgMem(id);
+  const t = m.tasks.find(t=>t.task===task);
+  if (t) { t.status='done'; t.doneAt=Date.now(); setAgMem(id,{tasks:m.tasks}); }
+}
+function getAgMemSummary(id) {
+  const m = getAgMem(id);
+  const pending = (m.tasks||[]).filter(t=>t.status==='pending');
+  return { findings: (m.findings||[]).slice(0,3), pending, lastRun: m.lastRun };
+}
+
+// Expose agent memory in the agents list
+const _origBuildAgentList = buildAgentList;
+function buildAgentList() {
+  _origBuildAgentList();
+  // Append memory badges to each agent card
+  const el = document.getElementById('AGLIST'); if (!el) return;
+  AGENTS.forEach(a => {
+    const m = getAgMemSummary(a.id);
+    if (!m.findings.length && !m.pending.length) return;
+    const item = el.querySelector(`#agt_${a.id}`)?.closest('.agitem');
+    if (!item) return;
+    const meta = item.querySelector('.ag-meta');
+    if (!meta) return;
+    const badge = document.createElement('span');
+    badge.className = 'agm-badge';
+    badge.style.marginLeft = '5px';
+    badge.textContent = `📋 ${m.findings.length} logs${m.pending.length?' · '+m.pending.length+' tasks':''}`;
+    badge.onclick = (e) => { e.stopPropagation(); toggleAgMem(a.id, item); };
+    meta.appendChild(badge);
+  });
+}
+function toggleAgMem(id, item) {
+  const existing = item.querySelector('.agm-mem');
+  if (existing) { existing.remove(); return; }
+  const m = getAgMemSummary(id);
+  const div = document.createElement('div');
+  div.className = 'agm-mem';
+  const findings = m.findings.map(f=>`<div class="agm-row">📌 ${f.text} <span style="color:var(--ink3);font-size:.6rem">${new Date(f.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span></div>`).join('');
+  const tasks = m.pending.map(t=>`<div class="agm-row" style="color:var(--gold)">⏳ ${t.task}</div>`).join('');
+  div.innerHTML = (findings||'<div class="agm-row">No recent findings</div>') + (tasks||'');
+  item.appendChild(div);
+}
+
+// ══════════════════════════════════════════════════════
+//  TRIAGE SYSTEM (CTAS-BASED EMERGENCY PROTOCOL)
+// ══════════════════════════════════════════════════════
+const TRIAGE_SYMS = [
+  { id:'unresponsive', lbl:'Behosh / Unresponsive', sub:'Vyakti baat nahi kar raha, uthane pe response nahi', ico:'🆘', lv:1 },
+  { id:'chest_severe', lbl:'Severe Chest Pain / Pressure', sub:'Crushing, tightness, squeezing — 5+ min, pasiine ke saath', ico:'💔', lv:2 },
+  { id:'breathless',   lbl:'Severe Breathlessness',  sub:'Saans lena mushkil, lips neele ya grey, na baith sake', ico:'😮‍💨', lv:2 },
+  { id:'stroke',       lbl:'Stroke — Face / Arm / Speech', sub:'Ek taraf weakness, chehra tirchha, baat unclear — FAST check', ico:'🧠', lv:2 },
+  { id:'chest_mod',    lbl:'Moderate Chest Discomfort', sub:'Dard/pressure aata-jaata, shoulder ya jaw mein bhi', ico:'😣', lv:3 },
+  { id:'women_sym',    lbl:'Women\'s Atypical Symptoms', sub:'Jaw pain, unusual fatigue, nausea, breathless without chest pain', ico:'♀️', lv:3 },
+  { id:'syncope',      lbl:'Fainting / Severe Dizziness', sub:'Behoshi aayi ya aane wali hai, ankhon ke saamne andhera', ico:'😵', lv:3 },
+  { id:'palpitation',  lbl:'Severe Palpitations', sub:'Dil bahut tez ya irregular — rest mein bhi feel ho raha hai', ico:'💓', lv:3 },
+  { id:'mild',         lbl:'Mild / Stable Symptoms',  sub:'Halki thakaan, BP thoda zyada, koi acute distress nahi', ico:'🙂', lv:4 },
+];
+
+const TRIAGE_PROTO = {
+  1: { badge:'⛔ RESUSCITATION', cls:'tres-l1', col:'var(--rose)',
+       title:'Life-Threatening — Abhi!',
+       desc:'Yeh immediate life-threatening situation hai. Ek second bhi mat ruko.',
+       steps:['📞 108 pe ABHI call karein — abhi is waqt', 'Vyakti ko flat surface pe litsaen', 'Breathing check karein — CPR shuru karein if trained', 'Darwaza khola rakhen — ambulance ke liye raasta saaf rakhen', 'Kisi bhi paas wale ko help ke liye bhejein'], urgent:true },
+  2: { badge:'🔴 EMERGENT', cls:'tres-l2', col:'var(--amb)',
+       title:'Emergency — 15 Min Mein!',
+       desc:'Turant hospital emergency ya 108 ambulance chahiye. 15 min ki limit.',
+       steps:['108 call karein ya seedha Emergency mein jaayein', 'Akele mat jaao — koi saath rahe', 'Khana-paani bilkul nahi jab tak doctor na kahe', 'Saari dawaiyan saath le jaayein', 'Symptoms aur waqt note karein'], urgent:true },
+  3: { badge:'🟡 URGENT', cls:'tres-l3', col:'var(--gold)',
+       title:'1 Ghante Mein Hospital',
+       desc:'Yeh serious hai. Ek ghante ke andar emergency OPD ya urgent care zaroor.',
+       steps:['Nearest hospital emergency OPD mein jaayein', 'Koi bhaari kaam ya drive bilkul nahi', 'Rest karein — position comfortable rakhen', 'Symptoms ki timing likhen — doctor ko batayein', 'Badh rahe hain to 108 pe call karein'], urgent:false },
+  4: { badge:'🟢 LESS URGENT', cls:'tres-l4', col:'var(--grn)',
+       title:'Aaj Doctor Se Milein',
+       desc:'Symptoms mild hain lekin aaj din mein GP ya OPD mein jaayein.',
+       steps:['Regular OPD ya general physician', 'Vitals log karein (BP, HR)', 'Paani piyen, rest karein', 'Symptoms badhen to turant hospital'], urgent:false },
+};
+
+let triageStep=0, triageSym=null;
+
+function initTriage() {
+  triageStep=0; triageSym=null;
+  renderTriage();
+}
+
+function renderTriage() {
+  const el = document.getElementById('TRIAGE_BODY'); if (!el) return;
+  if (triageStep === 0) {
+    el.innerHTML = `
+      <div style="font-size:.79rem;color:var(--ink2);margin-bottom:10px;padding:0 1px">
+        Kya ho raha hai? Sabse close symptom chunein:
+      </div>
+      ${TRIAGE_SYMS.map(s=>`
+        <div class="tcard" onclick="selectTriageSym('${s.id}')">
+          <div class="tc-ico">${s.ico}</div>
+          <div><div class="tc-t">${s.lbl}</div><div class="tc-s">${s.sub}</div></div>
+        </div>`).join('')}`;
+  } else {
+    const sym = TRIAGE_SYMS.find(s=>s.id===triageSym);
+    const p = TRIAGE_PROTO[sym.lv] || TRIAGE_PROTO[4];
+    const womenCard = sym.id==='women_sym' ? `
+      <div class="wsym-banner" style="margin-top:8px">
+        ♀ Women-specific: <strong>Jaw/Neck/Back pain · Unusual fatigue · Nausea · SOB without chest pain · Cold sweat · Dizziness</strong><br>
+        <span style="font-size:.68rem">Inhe chest pain ke barabar seriously lein. Doctor ko sab kuch batayein.</span>
+      </div>` : '';
+    el.innerHTML = `
+      <div class="tres ${p.cls}">
+        <div class="tres-badge" style="background:${p.col}1A;color:${p.col};border:1px solid ${p.col}40">${p.badge}</div>
+        <div class="tres-title">${p.title}</div>
+        <div class="tres-desc">${p.desc}</div>
+        <div style="margin-bottom:12px">
+          ${p.steps.map(s=>`<div class="tres-step">▸ ${s}</div>`).join('')}
+        </div>
+        ${p.urgent
+          ? `<a class="tres-act tres-pri" href="tel:108">📞 108 CALL — ABHI</a>`
+          : `<button class="tres-act tres-pri" onclick="triageNearby()">🗺 Nearest Hospital Dhundein</button>`}
+        <button class="tres-act tres-sec" onclick="triageToChatGuide('${sym.lbl}')">💬 Hridai se Protocol Guide</button>
+        <button class="tres-act tres-sec" onclick="initTriage()">↺ Dobara Assess Karein</button>
+      </div>
+      ${womenCard}`;
+    logAg('em','urgent','🏥 Triage Agent',`Protocol: ${sym.lbl} → Level ${sym.lv} (${p.badge})`);
+    addAgFinding('em', `Triage completed: ${sym.lbl} — Level ${sym.lv}`);
+    addAgTask('em', `Monitor: follow up triage result (${sym.lbl})`);
+    setAgMem('em', {lastRun:Date.now(), context:{sym:sym.id, level:sym.lv}});
+    if (sym.lv <= 2 && navigator.vibrate) navigator.vibrate([500,200,500,200,1000]);
+  }
+}
+
+function selectTriageSym(id) {
+  triageSym = id; triageStep = 1;
+  renderTriage();
+}
+function triageNearby() {
+  setEtab('nearby', document.getElementById('etab-nearby'));
+  loadNearby();
+}
+function triageToChatGuide(label) {
+  goS('chat');
+  setTimeout(()=>qc(`Triage mein yeh select kiya: "${label}". Mujhe step-by-step emergency protocol guide karo.`), 350);
+}
+
+// ══════════════════════════════════════════════════════
+//  WOMEN'S CARDIAC SYMPTOMS
+// ══════════════════════════════════════════════════════
+const WOMEN_SYMS = [
+  { t:'Unusual Extreme Fatigue',     s:'Dil ke daure se days-weeks pehle extreme thakaan — koi kaam nahi kiya phir bhi',                    col:'var(--rose)' },
+  { t:'Jaw / Neck / Back Pain',      s:'Upper back, jaw, neck, shoulder mein unexplained dard — akela ya chest ke saath ya bina',            col:'var(--amb)'  },
+  { t:'Nausea / Vomiting',           s:'Bina wajah upset stomach, ulti jaisi feeling — indigestion ya anxiety samajhkar ignore kar lete hain', col:'var(--gold)' },
+  { t:'Breathlessness (no chest pain)',s:'Saans fulna — bina chest pain ke, halki activity pe bhi, ya sirf lete hue',                        col:'var(--blue)' },
+  { t:'Sleep Disturbances',          s:'Attack se hafte pehle neend baar baar toot rahi thi ya aa hi nahi rahi thi',                         col:'var(--pur)'  },
+  { t:'Dizziness / Lightheadedness', s:'Khade hone pe chakkar, ankhon ke saamne andhera, balance loss',                                      col:'var(--teal)' },
+  { t:'Pressure / Squeezing',        s:'Chest mein dbaav ya tightness — men wali crushing pain ki jagah subtle pressure',                    col:'var(--rose)' },
+  { t:'Cold Sweat',                  s:'Bina wajah pasiine aana — exercise ya heat ke bina, khaas kar raat ko',                              col:'var(--ink2)' },
+];
+
+function buildWomenSymptoms() {
+  const el = document.getElementById('WSYM_LIST'); if (!el) return;
+  el.innerHTML = WOMEN_SYMS.map(s=>`
+    <div class="wsym-item">
+      <div class="wsym-dot" style="background:${s.col}"></div>
+      <div><div class="wsym-t">${s.t}</div><div class="wsym-s">${s.s}</div></div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  NEARBY HEALTH SERVICES (OpenStreetMap — no API key)
+// ══════════════════════════════════════════════════════
+function loadNearby() {
+  const btn = document.getElementById('NEARBY_BTN');
+  const list = document.getElementById('NEARBY_LIST');
+  if (!navigator.geolocation) {
+    list.innerHTML = '<div class="empty"><div class="empty-ico">📍</div>Location access supported nahi hai is browser mein<br><a href="https://maps.google.com/maps?q=hospital+near+me" target="_blank" style="color:var(--blue)">🗺 Google Maps try karein →</a></div>';
+    return;
+  }
+  btn.textContent = '📡 Location detect ho rahi hai…';
+  btn.disabled = true;
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const {latitude:lat, longitude:lon} = pos.coords;
+      btn.textContent = '🔍 Aas-paas search ho raha hai…';
+      try {
+        const q = `[out:json][timeout:15];(node["amenity"~"^(hospital|clinic|pharmacy)$"](around:5000,${lat},${lon});way["amenity"~"^(hospital|clinic)$"](around:5000,${lat},${lon}););out center 25;`;
+        const res = await fetch('https://overpass-api.de/api/interpreter', {
+          method:'POST',
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          body:'data='+encodeURIComponent(q)
+        });
+        const data = await res.json();
+        renderNearby(data.elements, lat, lon);
+        addAgFinding('asha', `Nearby search: ${data.elements.length} facilities found near user`);
+        setAgMem('asha', {lastRun:Date.now(), context:{lat,lon,count:data.elements.length}});
+      } catch(e) {
+        list.innerHTML = `<div class="empty"><div class="empty-ico">🔌</div>Search nahi ho paya.<br><a href="https://maps.google.com/maps?q=hospital+near+me" target="_blank" style="color:var(--blue)">🗺 Google Maps pe dhundein →</a></div>`;
+        btn.textContent = '↺ Dobara Try Karein'; btn.disabled = false;
+      }
+    },
+    err => {
+      list.innerHTML = `<div class="empty"><div class="empty-ico">🔒</div>Location permission den — browser settings mein<br><br><a href="https://maps.google.com/maps?q=hospital+near+me" target="_blank" style="color:var(--blue)">🗺 Google Maps try karein →</a></div>`;
+      btn.textContent = '📍 Aas-paas ke Hospitals dhundein'; btn.disabled = false;
+    },
+    { timeout:12000, maximumAge:60000 }
+  );
+}
+
+function renderNearby(elements, userLat, userLon) {
+  const btn = document.getElementById('NEARBY_BTN');
+  const list = document.getElementById('NEARBY_LIST');
+  const typeIco = { hospital:'🏥', clinic:'🏨', pharmacy:'💊' };
+  const typeLabel = { hospital:'Hospital', clinic:'Clinic', pharmacy:'Pharmacy' };
+  const items = elements
+    .filter(e => e.tags?.name || e.tags?.['name:en'])
+    .map(e => {
+      const lat2 = e.lat || e.center?.lat;
+      const lon2 = e.lon || e.center?.lon;
+      const dist = (lat2 && lon2) ? distKm(userLat, userLon, lat2, lon2) : 99;
+      return { name: e.tags?.name || e.tags?.['name:en'] || 'Health Facility', type: e.tags?.amenity || 'hospital', dist, lat:lat2, lon:lon2 };
+    })
+    .filter(i => i.dist < 10)
+    .sort((a,b) => a.dist - b.dist)
+    .slice(0, 12);
+
+  if (!items.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-ico">🔍</div>5km mein registered facility nahi mili.<br><a href="https://maps.google.com/maps?q=hospital+near+me" target="_blank" style="color:var(--blue)">Google Maps →</a></div>`;
+    btn.textContent = '↺ Dobara Try'; btn.disabled = false; return;
+  }
+
+  list.innerHTML = `<div style="display:flex;flex-direction:column;gap:7px">
+    ${items.map(i => {
+      const mapsUrl = `https://maps.google.com/?q=${i.lat},${i.lon}`;
+      return `<a class="nb-item" href="${mapsUrl}" target="_blank">
+        <div class="nb-ico">${typeIco[i.type]||'🏥'}</div>
+        <div class="nb-info">
+          <div class="nb-nm">${i.name}</div>
+          <div class="nb-meta">${typeLabel[i.type]||'Health Facility'} · Tap for directions</div>
+        </div>
+        <div class="nb-dist">${i.dist.toFixed(1)} km</div>
+      </a>`;
+    }).join('')}
+  </div>`;
+  btn.textContent = '↺ Refresh Location'; btn.disabled = false;
+  logAg('asha','info','🏥 Wellness Coordinator',`${items.length} health facilities found nearby (${(items[0]?.dist||0).toFixed(1)}km closest)`);
+}
+
+function distKm(lat1, lon1, lat2, lon2) {
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// ── ETAB SWITCHER ─────────────────────────────────────
+function setEtab(id, el) {
+  document.querySelectorAll('.etab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.epanel').forEach(p=>p.classList.remove('on'));
+  if(el) el.classList.add('on');
+  const p = document.getElementById('ep-'+id); if(p) p.classList.add('on');
+  if (id==='triage') { if(!triageSym&&!triageStep) initTriage(); }
+  if (id==='women') buildWomenSymptoms();
+  if (id==='conts') buildContList();
+}
+
+// ── PWA: SERVICE WORKER ────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(reg => {
+        console.info('[SW] Registered, scope:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              // New version available — subtle toast
+              const t = document.createElement('div');
+              t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--bd2);border-radius:10px;padding:9px 16px;font-size:.72rem;z-index:9999;color:var(--ink2);white-space:nowrap';
+              t.innerHTML = '✨ Update ready — <strong style="color:var(--teal);cursor:pointer" onclick="location.reload()">Reload to apply</strong>';
+              document.body.appendChild(t);
+              setTimeout(() => t.remove(), 12000);
+            }
+          });
+        });
+      })
+      .catch(err => console.warn('[SW] Registration failed:', err));
+  });
+}
+
+// ── PWA: DEEP LINK SHORTCUTS ───────────────────────────
+(function handleDeepLink() {
+  const p = new URLSearchParams(location.search).get('s');
+  if (p) {
+    // Navigate to shortcut screen after app init
+    window.addEventListener('cgai:ready', () => goS(p), { once: true });
+  }
+})();
+
+// ── PWA: A2HS INSTALL BANNER ──────────────────────────
+let _a2hsDeferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _a2hsDeferredPrompt = e;
+  // Don't show if already dismissed or installed
+  if (ST.g('a2hs_dismissed')) return;
+  // Wait 30s after load before showing
+  setTimeout(() => {
+    const el = document.getElementById('A2HS');
+    if (el && _a2hsDeferredPrompt) el.classList.add('show');
+  }, 30000);
+});
+
+window.addEventListener('appinstalled', () => {
+  _a2hsDeferredPrompt = null;
+  const el = document.getElementById('A2HS');
+  if (el) el.classList.remove('show');
+  ST.s('a2hs_dismissed', true);
+});
+
+function installPWA() {
+  if (!_a2hsDeferredPrompt) return;
+  const el = document.getElementById('A2HS');
+  if (el) el.classList.remove('show');
+  _a2hsDeferredPrompt.prompt();
+  _a2hsDeferredPrompt.userChoice.then(c => {
+    if (c.outcome === 'accepted') ST.s('a2hs_dismissed', true);
+    _a2hsDeferredPrompt = null;
+  });
+}
+
+function dismissA2HS() {
+  const el = document.getElementById('A2HS');
+  if (el) el.classList.remove('show');
+  ST.s('a2hs_dismissed', Date.now());
+}
 </script>
+
+<!-- PWA install banner -->
+<div id="A2HS" role="banner" aria-label="Install app">
+  <img src="/logo.png" alt="CardioGuardAI">
+  <div class="a2hs-txt">
+    <strong>Install CardioGuardAI</strong>
+    Home screen pe add karein — faster &amp; offline support
+  </div>
+  <div class="a2hs-btns">
+    <button class="a2hs-install" onclick="installPWA()">Install</button>
+    <button class="a2hs-dismiss" onclick="dismissA2HS()">✕</button>
+  </div>
+</div>
+
 </body>
 </html>
