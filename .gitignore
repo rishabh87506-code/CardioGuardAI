@@ -1,42 +1,91 @@
-# Virtual environments
-.venv/
-venv/
-env/
-ENV/
+# ─────────────────────────────────────────────────────────────────────────────
+# CardioGuard AI — .gitignore
+# ─────────────────────────────────────────────────────────────────────────────
 
-# Python
+# ── Node.js ──────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# ── Python ───────────────────────────────────────────────────────────────────
 __pycache__/
+*.py[cod]
+*$py.class
 *.pyc
 *.pyo
 *.pyd
 .Python
+.venv/
+venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+*.egg
 
-# macOS
+# ── Environment & Secrets ────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.production
+*.env
+**/.env
+**/.env.local
+*.pem
+*.key
+service-account.json
+firebase-adminsdk*.json
+
+# ── Build Artifacts ──────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# ── IDE & OS ─────────────────────────────────────────────────────────────────
 .DS_Store
 **/.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-# Logs & temp
+# ── Testing & Coverage ───────────────────────────────────────────────────────
+coverage/
+.coverage
+.pytest_cache/
+htmlcov/
+.nyc_output/
+junit.xml
+
+# ── Docker ───────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+logs/
 *.log
 *.out
 *.tmp
 
-# Node
-node_modules/
-dist/
+# ── Database ─────────────────────────────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
 
-# Editor
-.vscode/
-.idea/
-
-# Secrets — never commit real credentials
-.env
-.env.local
-*.env
-**/.env
-**/.env.local
-
-# Archives
+# ── Archives ─────────────────────────────────────────────────────────────────
 *.zip
 
-# Model artifacts (large binaries — do NOT commit unless versioned)
-# model/*.pkl
+# ── ML Models (large binaries — store in object storage for production) ───────
+# Uncomment to exclude model artifacts from git
+# *.pkl

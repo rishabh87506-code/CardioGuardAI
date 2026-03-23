@@ -1,0 +1,138 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CardioGuard AI — Local Development Stack
+# Usage: docker compose up --build
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Infrastructure ──────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: cardioguard-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PG_DATABASE:-cardioguard}
+      POSTGRES_USER: ${PG_USER:-cardioguard_user}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-change-me}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Run schema migrations on first start
+      - ./backend/api-gateway/setup_db.sql:/docker-entrypoint-initdb.d/01_setup.sql:ro
+      - ./backend/api-gateway/init_db.sql:/docker-entrypoint-initdb.d/02_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER:-cardioguard_user} -d ${PG_DATABASE:-cardioguard}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cardioguard-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: cardioguard-influxdb
+    restart: unless-stopped
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_ADMIN_USER:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_ADMIN_PASSWORD:-change-me-influx}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG:-cardioguard}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET:-wellness_metrics}
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN:-your-token}
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # ── Application Services ────────────────────────────────────────────────────
+
+  wellness-engine:
+    build:
+      context: ./backend/app
+      dockerfile: Dockerfile
+    container_name: cardioguard-wellness-engine
+    restart: unless-stopped
+    environment:
+      PYTHON_ENV: ${PYTHON_ENV:-development}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      INFLUXDB_URL: ${INFLUXDB_URL:-http://influxdb:8086}
+      INFLUXDB_ORG: ${INFLUXDB_ORG:-cardioguard}
+      INFLUXDB_BUCKET: ${INFLUXDB_BUCKET:-wellness_metrics}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN:-your-token}
+      DATABASE_URL: postgresql://${PG_USER:-cardioguard_user}:${PG_PASSWORD:-change-me}@postgres:5432/${PG_DATABASE:-cardioguard}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app
+      - ./backend/static:/app/static:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
+
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    container_name: cardioguard-api-gateway
+    restart: unless-stopped
+    environment:
+      PORT: ${PORT:-3000}
+      NODE_ENV: ${NODE_ENV:-development}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      PYTHON_BACKEND_URL: ${PYTHON_BACKEND_URL:-http://wellness-engine:8000}
+      DATABASE_URL: postgresql://${PG_USER:-cardioguard_user}:${PG_PASSWORD:-change-me}@postgres:5432/${PG_DATABASE:-cardioguard}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      wellness-engine:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
+
+# ── Persistent Volumes ────────────────────────────────────────────────────────
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  influxdb_data:
+    driver: local
