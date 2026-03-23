@@ -1,5 +1,2 @@
-# Force Python provider — package.json exists for Capacitor (mobile), not the server
+# Force Python provider — ignore package.json (that's for Capacitor/mobile)
 providers = ["python"]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
