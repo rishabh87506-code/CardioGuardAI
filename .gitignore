@@ -43,3 +43,4 @@ dist/
 
 # Model artifacts (large binaries — do NOT commit unless versioned)
 # model/*.pkl
+backend/
