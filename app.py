@@ -51,6 +51,7 @@ ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 WHATSAPP_KEY      = os.environ.get('WHATSAPP_API_KEY', '')
 WHATSAPP_PHONE_ID = os.environ.get('WHATSAPP_PHONE_ID', '')
 OPENAI_API_KEY    = os.environ.get('OPENAI_API_KEY', '')
+SARVAM_API_KEY    = os.environ.get('SARVAM_API_KEY', '') # For Indic Voice Layer
 SESSION_SECRET    = os.environ.get('SESSION_SECRET', secrets.token_hex(32))
 PITCH_TOKEN       = os.environ.get('PITCH_ACCESS_TOKEN', '')  # empty = pitch disabled
 MODEL_PATH        = os.path.join(os.path.dirname(__file__), 'model', 'antigravity_model.pkl')
@@ -430,66 +431,95 @@ def otp_verify():
 @app.route('/api/transcribe', methods=['POST'])
 @limiter.limit("20 per minute")
 def transcribe():
-    """Whisper STT — accepts audio file, returns transcript."""
-    if not OPENAI_API_KEY:
-        return jsonify({"error": "Transcription service not configured"}), 503
+    """Indic Voice Layer: Sarvam AI (Primary) → Whisper (Fallback)"""
     audio = request.files.get('audio')
-    if not audio:
-        return jsonify({"error": "No audio file"}), 400
-    lang = request.form.get('language', 'hi')
-    try:
-        res = requests.post(
-            "https://api.openai.com/v1/audio/transcriptions",
-            headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
-            files={"file": (audio.filename or "audio.webm",
-                            audio.stream,
-                            audio.content_type or "audio/webm")},
-            data={"model": "whisper-1", "language": lang,
-                  "prompt": "CardioGuardAI wellness platform. Hinglish medical conversation."},
-            timeout=30
-        )
-        _audit("WHISPER_TRANSCRIBE", {"lang": lang})
-        return (res.text, res.status_code, {"Content-Type": "application/json"})
-    except requests.Timeout:
-        return jsonify({"error": "Transcription timed out"}), 504
-    except Exception as e:
-        log.error(f"Whisper error: {e}")
-        return jsonify({"error": "Transcription failed"}), 500
+    if not audio: return jsonify({"error": "No audio file"}), 400
+    lang = request.form.get('language', 'hi-IN')
+
+    # 1. Try Sarvam AI (Indic optimized)
+    if SARVAM_API_KEY:
+        try:
+            res = requests.post(
+                "https://api.sarvam.ai/speech-to-text-translate",
+                headers={"api-subscription-key": SARVAM_API_KEY},
+                files={"file": (audio.filename or "audio.webm", audio.stream, audio.content_type or "audio/webm")},
+                data={"model": "saarika:v1", "language_code": lang},
+                timeout=25
+            )
+            if res.status_code == 200:
+                _audit("SARVAM_STT", {"lang": lang})
+                return (res.text, 200, {"Content-Type": "application/json"})
+        except Exception as e:
+            log.error(f"Sarvam STT failed: {e}")
+
+    # 2. Fallback to OpenAI Whisper
+    if OPENAI_API_KEY:
+        try:
+            # We need to seek back to start of stream if Sarvam failed
+            audio.stream.seek(0)
+            res = requests.post(
+                "https://api.openai.com/v1/audio/transcriptions",
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
+                files={"file": (audio.filename or "audio.webm", audio.stream, audio.content_type or "audio/webm")},
+                data={"model": "whisper-1", "language": lang.split('-')[0],
+                      "prompt": "CardioGuardAI Hinglish cardiac wellness platform."},
+                timeout=30
+            )
+            _audit("WHISPER_STT", {"lang": lang})
+            return (res.text, res.status_code, {"Content-Type": "application/json"})
+        except Exception as e:
+            log.error(f"Whisper fallback failed: {e}")
+
+    return jsonify({"error": "Transcription Layer unavailable"}), 503
 
 
 @app.route('/api/tts', methods=['POST'])
 @limiter.limit("30 per minute")
 def tts():
-    """OpenAI TTS — returns audio/mpeg."""
-    if not OPENAI_API_KEY:
-        return jsonify({"error": "TTS not configured"}), 503
+    """Indic Voice Layer: Sarvam AI (Primary) → OpenAI (Fallback)"""
     data  = request.get_json(force=True, silent=True) or {}
     text  = str(data.get('text', ''))[:600]
-    voice = data.get('voice', 'nova')  # nova | shimmer | alloy | echo | fable | onyx
-    if voice not in ('nova','shimmer','alloy','echo','fable','onyx'):
-        voice = 'nova'
-    if not text:
-        return jsonify({"error": "No text"}), 400
-    # Clean markdown for TTS
-    import re as _re
-    clean = _re.sub(r'\*\*|__|\*|_|#{1,6} |`|<[^>]+>', '', text)[:500]
-    try:
-        res = requests.post(
-            "https://api.openai.com/v1/audio/speech",
-            headers={"Authorization": f"Bearer {OPENAI_API_KEY}",
-                     "Content-Type": "application/json"},
-            json={"model": "tts-1", "input": clean, "voice": voice},
-            timeout=20
-        )
-        if res.status_code == 200:
-            return (res.content, 200, {"Content-Type": "audio/mpeg",
-                                       "Cache-Control": "no-store"})
-        return jsonify({"error": "TTS API error"}), res.status_code
-    except requests.Timeout:
-        return jsonify({"error": "TTS timed out"}), 504
-    except Exception as e:
-        log.error(f"TTS error: {e}")
-        return jsonify({"error": "TTS failed"}), 500
+    lang  = data.get('lang', 'hi-IN')
+    if not text: return jsonify({"error": "No text"}), 400
+
+    # 1. Try Sarvam AI (Indic quality is superior)
+    if SARVAM_API_KEY:
+        try:
+            res = requests.post(
+                "https://api.sarvam.ai/text-to-speech",
+                headers={"api-subscription-key": SARVAM_API_KEY, "Content-Type": "application/json"},
+                json={
+                    "text": text,
+                    "target_language_code": lang,
+                    "speaker": "shiku",  # Empathetic Hinglish female
+                    "model": "bulbul:v1"
+                },
+                timeout=12
+            )
+            if res.status_code == 200:
+                audio_base64 = res.json().get('audios', [None])[0]
+                if audio_base64:
+                    import base64
+                    return (base64.b64decode(audio_base64), 200, {"Content-Type": "audio/wav"})
+        except Exception as e:
+            log.error(f"Sarvam TTS failed: {e}")
+
+    # 2. Fallback to OpenAI TTS
+    if OPENAI_API_KEY:
+        try:
+            clean = re.sub(r'\*\*|__|\*|_|#{1,6} |`|<[^>]+>', '', text)[:500]
+            res = requests.post(
+                "https://api.openai.com/v1/audio/speech",
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
+                json={"model": "tts-1", "input": clean, "voice": "nova"},
+                timeout=15
+            )
+            if res.status_code == 200:
+                return (res.content, 200, {"Content-Type": "audio/mpeg"})
+        except Exception as e:
+            log.error(f"OpenAI TTS fallback failed: {e}")
+
+    return jsonify({"error": "Voice Layer unavailable"}), 503
 
 
 @app.route('/api/predict', methods=['POST'])

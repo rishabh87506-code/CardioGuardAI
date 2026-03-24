@@ -1820,47 +1820,45 @@ async function sendMsg() {
   chatHist.push({role:'user',content:msg});
   updateStreak(true);
 
+  // ── HRIDAI MASTER ORCHESTRATOR ──────────────────────
+  // Step 1: Decide Route (Determining which specialist agent to lead)
   const lc = msg.toLowerCase();
-  const isEmerg = /chest|dard|pain|saans|breathless|behosh|ghabra|jaw|fainting/.test(lc);
-  if (isEmerg) { buildQR('emergency'); if(prefs.emerg) emergAgent(msg); }
-  else if (/khana|diet|exercise|neend|sleep|stress|walk|yoga/.test(lc)) buildQR('lifestyle');
-  else if (/risk|score|percent|%|assessment/.test(lc)) buildQR('risk');
-  else buildQR('default');
+  let intentRoute = 'CHAT'; 
+  if (/chest|dard|pain|saans|breathless|behosh|ghabra|jaw|fainting/.test(lc)) intentRoute = 'CRISIS';
+  else if (/risk|percent|%|score|assessment|checkup/.test(lc))   intentRoute = 'RISK';
+  else if (/khana|diet|walk|exercise|neend|sleep|stress/.test(lc)) intentRoute = 'LIFESTYLE';
+  else if (/bp|blood pressure|systolic|heart rate|sugar/.test(lc)) intentRoute = 'VITALS';
+
+  buildQR(intentRoute === 'CRISIS' ? 'emergency' : intentRoute.toLowerCase());
 
   const tid = 'tp_'+Date.now();
   bubble('__typing__','ai',tid); setThink(true);
   document.getElementById('SBTN').disabled = true;
 
-  // Build context-aware system prompt
+  // Step 2: Assemble Knowledge Context (The Intelligence Layer)
   let sys = SYS;
   const currLang = ST.g('ui_lang') || 'Hinglish (Hindi + English mix)';
+  sys += `\n\n[ORCHESTRATOR_ROUTE: ${intentRoute}]`;
   if (profile.name) sys += `\n\n[USER: Name=${profile.name}, Age=${profile.age}, Gender=${profile.gender}, City=${profile.city}, Conditions=${profile.conditions?.join(',')||'none'}, PreferredLanguage=${currLang}]`;
   if (lastRisk) sys += `\n\n[RISK: Score=${lastRisk.score?.toFixed(1)}%, Level=${lastRisk.level}, Date=${new Date(lastRisk.ts).toLocaleDateString('hi-IN')}]`;
+  
   const lv = vitalsLog[vitalsLog.length-1];
-  if (lv) sys += `\n\n[VITALS: BP=${lv.sys}/${lv.dia}, HR=${lv.hr}, BS=${lv.bs}]`;
+  if (lv) sys += `\n\n[VITALS_LATEST: BP=${lv.sys}/${lv.dia}, HR=${lv.hr}, BS=${lv.bs}]`;
   if (meds.length) sys += `\n\n[MEDS: ${meds.map(m=>m.nm).join(', ')}]`;
 
-  // Include agent memory context for richer, cross-session dialogue
-  const _agCtx = ['em','vit','lc','mm','risk'].map(id=>{
-    const s = getAgMemSummary(id);
-    const f = s.findings.slice(0,2).map(x=>x.text).join(' | ');
-    const ag = AGENTS.find(a=>a.id===id);
-    return f ? `[${ag?.n||id}: ${f}]` : null;
-  }).filter(Boolean);
-  if (_agCtx.length) sys += '\n\n[AGENT_MEMORY]\n' + _agCtx.join('\n');
-
-  // Include recent vitals trend if available (last 3)
-  if (vitalsLog.length > 1) {
-    const recent = vitalsLog.slice(-3).map(v=>`BP ${v.sys}/${v.dia} HR ${v.hr}`).join(' → ');
-    sys += `\n\n[VITALS_TREND: ${recent}]`;
-  }
+  // Include only the most relevant agent memory based on route for focus
+  const relevantAgIdMap = { CRISIS:'em', RISK:'risk', VITALS:'vit', LIFESTYLE:'lc', CHAT:'mm' };
+  const targetAgId = relevantAgIdMap[intentRoute] || 'mm';
+  const s = getAgMemSummary(targetAgId);
+  const f = s.findings.slice(0,3).map(x=>x.text).join(' | ');
+  if (f) sys += `\n\n[AGENT_SPECIFIC_MEMORY(${targetAgId}): ${f}]`;
 
   try {
     const reply = await callClaude(chatHist.slice(-24), sys);
     removeBubble(tid);
     bubble(reply,'ai');
     chatHist.push({role:'assistant',content:reply});
-    postAgents(msg,reply);
+    postAgents(msg,reply); // Update background specialist memory
     if (prefs.voice) speak(reply);
   } catch(err) {
     removeBubble(tid);
@@ -2644,20 +2642,24 @@ async function speak(t){
   if(!prefs.voice)return;
   const clean=t.replace(/\*\*|__|[*_`#]/g,'').replace(/[🚨⚠❤️🙏😴🥗🧘🩸📊💊🏥📅👨‍👩‍👦⬇️💧🚶🧠⚖️🌅🌙🫀🔥📋🏥]/gu,'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim().substring(0,500);
   if(!clean)return;
+  
+  const curLang = ST.g('lang') || 'hi';
+  const langMap = { hi:'hi-IN', en:'en-IN', ta:'ta-IN', te:'te-IN', bn:'bn-IN', mr:'mr-IN' };
+  const targetLang = langMap[curLang] || 'hi-IN';
 
-  // 1. Try OpenAI TTS (best quality, Hinglish-aware)
+  // Try Server-side Voice (Sarvam/OpenAI)
   try{
     const res=await fetch('/api/tts',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:clean,voice:'nova'})
+      body:JSON.stringify({text:clean, lang:targetLang, voice:'nova'})
     });
     if(res.ok){
       const blob=await res.blob();
       const url=URL.createObjectURL(blob);
       if(_ttsAudio){_ttsAudio.pause();URL.revokeObjectURL(_ttsAudio.src);}
       _ttsAudio=new Audio(url);
-      _ttsAudio.play();
+      _ttsAudio.play().catch(()=>{});
       return;
     }
   }catch(e){}
@@ -2693,7 +2695,9 @@ async function toggleMic(){
       try{
         const fd=new FormData();
         fd.append('audio',blob,'audio.webm');
-        fd.append('language','hi');
+        const curLang = ST.g('lang') || 'hi';
+        const langMap = { hi:'hi-IN', en:'en-IN', ta:'ta-IN', te:'te-IN', bn:'bn-IN', mr:'mr-IN' };
+        fd.append('language', langMap[curLang] || 'hi-IN');
         const res=await fetch('/api/transcribe',{method:'POST',body:fd});
         if(res.ok){
           const data=await res.json();
