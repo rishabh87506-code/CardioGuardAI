@@ -328,10 +328,6 @@ def serve_assetlinks():
 @app.route('/')
 @app.route('/index.html')
 def serve_index():
-    host = request.host.lower()
-    if 'co.in' in host:
-        # co.in is now private — redirect to main app
-        return redirect('https://cardioguardai.in', code=301)
     return send_file('index.html')
 
 @app.route('/health', methods=['GET'])
