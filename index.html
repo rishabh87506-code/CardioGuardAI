@@ -1747,7 +1747,7 @@ async function callClaude(messages, sys, maxTokens=1024) {
     hdrs['x-api-key'] = KEY;
     hdrs['anthropic-version'] = '2023-06-01';
     hdrs['anthropic-dangerous-direct-browser-access'] = 'true';
-    body = { model:'claude-sonnet-4-20250514', max_tokens:maxTokens, system:sys, messages };
+    body = { model:'claude-3-5-sonnet-20240620', max_tokens:maxTokens, system:sys, messages };
   }
 
   const res = await fetch(url, { method:'POST', headers:hdrs, body:JSON.stringify(body) });
@@ -1827,14 +1827,11 @@ async function sendMsg() {
     removeBubble(tid);
     bubble(reply,'ai');
     chatHist.push({role:'assistant',content:reply});
-    postAgents(msg,reply); // Update background specialist memory
+    postAgents(msg,reply); 
     if (prefs.voice) speak(reply);
   } catch(err) {
     removeBubble(tid);
-    const em = err.message?.includes('authentication') ? '❌ API key galat hai. Profile → API Key change karein.'
-      : err.message?.includes('rate') ? '⏱ Requests bahut zyada ho gayi. Thodi der mein dobara try karein.'
-      : (err.message?.includes('not configured') || err.message?.includes('503')) ? '⚙️ AI service abhi server pe configure nahi hai. ANTHROPIC_API_KEY set karein.\n\n' + fallback(msg)
-      : fallback(msg);
+    const em = fallback(msg);
     bubble(em,'ai');
   }
   setThink(false);
@@ -2829,10 +2826,21 @@ function showQuickLogin(){
 
 // ── FALLBACK ──────────────────────────────────────────
 function fallback(msg){
-  const l=msg.toLowerCase();
-  if(/chest|dard|pain|saans/.test(l))return '🚨 **Abhi 108 pe call karein!**\n\nBaithh jaao. Gaadi mat chalao. Darwaza khol rakhein. Kisi ko paas bulao.\n\n⚠ Doctor se zaroor milein.';
-  if(/bp|blood pressure/.test(l))return '**BP ke liye:** Namak kam, 30 min walk roz, stress manage karein.\n\n⚠ Doctor se zaroor milein.';
-  return 'Connection problem lag rahi hai. API key check karein ya proxy URL verify karein. ⚠ Doctor se zaroor milein.';
+  const l = msg.toLowerCase();
+  const nm = profile.name ? `${profile.name} ji` : 'dost';
+  
+  // Crisis Fallback
+  if(/chest|dard|pain|saans|breathless|ghabra|behosh/.test(l)) {
+    return `🚨 **${nm}, please abhi 108 dial karein!**\n\nMujhe lag raha hai aapko help ki zaroorat hai. Ghabrayein mat, main yahin hoon. Bas abhi araam se baith jaayein aur kisi ko bulaein. 🚑`;
+  }
+  
+  // Vitals/Risk Fallback
+  if(/bp|blood pressure|risk|percent|score/.test(l)) {
+    return `Oho ${nm}, abhi network thoda slow hai, par patterns dekh ke lag raha hai ki thoda dhyaan dena chahiye. Namak kam karein, walk zaroor karein aur ek baar doctor se milna behtar hoga. ❤️`;
+  }
+  
+  // General Chat Fallback
+  return `Arre ${nm}, thoda signal ka issue lag raha hai Hridai ko. Par fikar mat karo, main yahin hoon. Aap ek baar dobara poochhenge? Tab tak thoda relax kijiye. ❤️`;
 }
 
 // ══════════════════════════════════════════════════════
