@@ -9,18 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --red:    #E8202E;
-      --red-dk: #B91C28;
-      --dark:   #0D0D1A;
-      --dark2:  #12121F;
-      --mid:    #1E1E35;
-      --card:   #16162A;
-      --border: rgba(255,255,255,0.07);
-      --text:   #E8EAF0;
-      --muted:  #8A8FA8;
-      --green:  #22C55E;
-      --amber:  #F59E0B;
-      --blue:   #3B82F6;
+      --red:    #1565C0; /* Primary wellness blue for v5 */
+      --red-dk: #0D47A1;
+      --dark:   #F4F7FF; /* Warm light bg */
+      --dark2:  #EEF4FF;
+      --mid:    #DBEAFE;
+      --card:   #FFFFFF;
+      --border: rgba(21,101,192,0.12);
+      --text:   #0A1628;
+      --muted:  #3D4F6E;
+      --green:  #2E7D32;
+      --amber:  #F57F17;
+      --blue:   #1565C0;
+      --heart:  #E8202E; /* Keeping heart logo red */
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -42,7 +43,7 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       display: flex; align-items: center; justify-content: space-between;
       padding: 18px 6vw;
-      background: rgba(13,13,26,0.92);
+      background: rgba(244,247,255,0.92);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
       transition: all .3s;
@@ -50,10 +51,10 @@
     .nav-logo {
       display: flex; align-items: center; gap: 10px;
       font-weight: 800; font-size: 1.1rem; letter-spacing: -0.03em;
-      color: white; text-decoration: none;
+      color: var(--text); text-decoration: none;
     }
     .nav-logo .heart {
-      width: 32px; height: 32px; background: var(--red);
+      width: 32px; height: 32px; background: var(--heart);
       border-radius: 8px; display: flex; align-items: center;
       justify-content: center; font-size: 16px;
       animation: heartbeat 1.4s ease-in-out infinite;
@@ -91,14 +92,14 @@
     .hero-bg {
       position: absolute; inset: 0; z-index: 0;
       background: radial-gradient(ellipse 80% 60% at 50% 40%,
-        rgba(232,32,46,0.12) 0%,
-        rgba(13,13,26,0) 70%);
+        rgba(21,101,192,0.12) 0%,
+        rgba(244,247,255,0) 70%);
     }
     .hero-grid {
       position: absolute; inset: 0; z-index: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        linear-gradient(rgba(21,101,192,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(21,101,192,0.025) 1px, transparent 1px);
       background-size: 60px 60px;
     }
     .hero-content { position: relative; z-index: 1; max-width: 900px; }
@@ -147,11 +148,11 @@
       box-shadow: 0 8px 32px rgba(232,32,46,0.35);
     }
     .btn-secondary {
-      background: transparent; color: white;
+      background: transparent; color: var(--red);
       padding: 14px 32px; border-radius: 10px;
       font-weight: 600; font-size: 1rem;
       text-decoration: none;
-      border: 1px solid var(--border);
+      border: 1px solid var(--red);
       transition: all .2s;
     }
     .btn-secondary:hover {
@@ -166,8 +167,8 @@
     }
     .hero-stat .num {
       font-size: 2rem; font-weight: 800;
-      background: linear-gradient(135deg, white, #ff9aA2);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background: linear-gradient(135deg, var(--red-dk), var(--red));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
     .hero-stat .label {
       font-size: .8rem; color: var(--muted);
@@ -215,7 +216,7 @@
       height: 3px; background: var(--red);
     }
     .prob-card .big {
-      font-size: 2.2rem; font-weight: 800; color: white;
+      font-size: 2.2rem; font-weight: 800; color: var(--text);
       line-height: 1; margin-bottom: 8px;
     }
     .prob-card .big span { color: var(--red); }
@@ -341,7 +342,7 @@
       font-size: 12px; flex-shrink: 0; margin-top: 1px;
     }
     .moat-point p { font-size: .87rem; color: var(--muted); line-height: 1.6; }
-    .moat-point p strong { color: white; }
+    .moat-point p strong { color: var(--text); }
 
     /* ── MARKET ── */
     #market { background: var(--dark2); }
@@ -400,20 +401,20 @@
     }
     .impact-card .impact-icon { font-size: 2.5rem; margin-bottom: 18px; }
     .impact-card h3 {
-      font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 8px;
+      font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 8px;
     }
     .impact-card p { font-size: .87rem; color: var(--muted); line-height: 1.65; }
     .impact-quote {
       margin-top: 50px;
-      background: linear-gradient(135deg, rgba(232,32,46,0.06), transparent);
-      border: 1px solid rgba(232,32,46,0.2);
+      background: linear-gradient(135deg, rgba(21,101,192,0.06), transparent);
+      border: 1px solid rgba(21,101,192,0.2);
       border-radius: 20px; padding: 40px;
       text-align: center;
     }
     .impact-quote blockquote {
       font-family: 'DM Serif Display', serif;
       font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-      line-height: 1.4; color: white; margin-bottom: 20px;
+      line-height: 1.4; color: var(--text); margin-bottom: 20px;
       font-style: italic;
     }
     .impact-quote cite {
@@ -454,8 +455,8 @@
     }
     .traction-item .t-val {
       font-size: 2.4rem; font-weight: 900;
-      background: linear-gradient(135deg, white, #ff9aA2);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background: linear-gradient(135deg, var(--red-dk), var(--red));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
       line-height: 1; margin-bottom: 8px;
     }
     .traction-item .t-label { font-size: .8rem; color: var(--muted); font-weight: 500; }
@@ -521,10 +522,10 @@
     .contact-box p { font-size: .88rem; color: var(--muted); margin-bottom: 28px; }
     .contact-form { display: flex; flex-direction: column; gap: 12px; }
     .contact-form input, .contact-form select, .contact-form textarea {
-      background: rgba(255,255,255,0.05);
+      background: rgba(21,101,192,0.05);
       border: 1px solid var(--border);
       border-radius: 10px; padding: 12px 16px;
-      color: white; font-family: inherit; font-size: .9rem;
+      color: var(--text); font-family: inherit; font-size: .9rem;
       outline: none; transition: border-color .2s;
       width: 100%;
     }

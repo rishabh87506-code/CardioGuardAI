@@ -1833,7 +1833,8 @@ async function sendMsg() {
 
   // Build context-aware system prompt
   let sys = SYS;
-  if (profile.name) sys += `\n\n[USER: Name=${profile.name}, Age=${profile.age}, Gender=${profile.gender}, City=${profile.city}, Conditions=${profile.conditions?.join(',')||'none'}]`;
+  const currLang = ST.g('ui_lang') || 'Hinglish (Hindi + English mix)';
+  if (profile.name) sys += `\n\n[USER: Name=${profile.name}, Age=${profile.age}, Gender=${profile.gender}, City=${profile.city}, Conditions=${profile.conditions?.join(',')||'none'}, PreferredLanguage=${currLang}]`;
   if (lastRisk) sys += `\n\n[RISK: Score=${lastRisk.score?.toFixed(1)}%, Level=${lastRisk.level}, Date=${new Date(lastRisk.ts).toLocaleDateString('hi-IN')}]`;
   const lv = vitalsLog[vitalsLog.length-1];
   if (lv) sys += `\n\n[VITALS: BP=${lv.sys}/${lv.dia}, HR=${lv.hr}, BS=${lv.bs}]`;
