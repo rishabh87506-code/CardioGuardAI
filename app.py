@@ -648,23 +648,59 @@ def chat():
         system = str(data.get("system", ""))[:4000]
         max_tokens = min(int(data.get("max_tokens", 1024)), 2048)
 
-        res = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "x-api-key": ANTHROPIC_API_KEY,
-                "anthropic-version": "2023-06-01",
-                "Content-Type": "application/json"
-            },
-            json={
-                "model":      "claude-sonnet-4-6",
-                "max_tokens": max_tokens,
-                "system":     system,
-                "messages":   messages
-            },
-            timeout=30
-        )
-        # Only forward Content-Type — never leak Anthropic internals
-        return (res.text, res.status_code, {"Content-Type": res.headers.get("Content-Type", "application/json")})
+        # Correct Anthropic models:
+        # - claude-3-5-sonnet-20240620 (Primary)
+        # - claude-3-sonnet-20240229
+        # - claude-3-haiku-20240307
+        model = "claude-3-5-sonnet-20240620"
+
+        last_err = None
+        for attempt in range(3):
+            try:
+                res = requests.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers={
+                        "x-api-key": ANTHROPIC_API_KEY,
+                        "anthropic-version": "2023-06-01",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model":      model,
+                        "max_tokens": max_tokens,
+                        "system":     system,
+                        "messages":   messages
+                    },
+                    timeout=20 + (attempt * 10) # Increasing timeout
+                )
+                if res.status_code == 200:
+                    _audit("CHAT_SUCCESS", {"attempt": attempt + 1})
+                    return (res.text, 200, {"Content-Type": "application/json"})
+                
+                # If rate limited, wait a bit
+                if res.status_code == 429:
+                    time.sleep(1 + attempt)
+                    continue
+
+                # If other error, log it and retry
+                log.warning(f"Claude API attempt {attempt+1} failed with {res.status_code}: {res.text}")
+                last_err = res.text
+            except Exception as e:
+                log.error(f"Claude API connection error (attempt {attempt+1}): {e}")
+                last_err = str(e)
+                time.sleep(0.5)
+
+        # Fallback logic if all retries fail
+        # If we have a user name, make it personal
+        user_match = re.search(r'Name=([^,\]]+)', system)
+        user_name = user_match.group(1) if user_match else "Beta"
+        
+        fallback_msg = f"Arre {user_name}, thoda Network ka issue lag raha hai Hridai ko. Par fikar mat karo, main yahin hoon. Aap ek baar dobara try karenge? Tab tak thoda paani pee lijiye aur relax kijiye. ❤️"
+        
+        return jsonify({
+            "content": [{"type": "text", "text": fallback_msg}],
+            "model": "hridai-fallback-v1",
+            "role": "assistant"
+        }), 200
 
     except requests.Timeout:
         return jsonify({"error": "AI service timeout. Please try again."}), 504

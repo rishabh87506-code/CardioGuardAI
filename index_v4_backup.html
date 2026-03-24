@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0A1628">
-<meta name="description" content="CardioGuard AI — Aapka Dil Ka Rakshak. India's warmest heart-health companion.">
+<meta name="theme-color" content="#040608">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CardioGuardAI">
@@ -26,62 +25,39 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/logo.png">
 <link rel="icon" type="image/png" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<title>CardioGuard AI — Hridai v5.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<title>CardioGuardAI</title>
 <style>
 /* ═══════════════════════════════════════════
-   CARDIOGUARDAI — v5.0 WARM INDIAN DESIGN
-   Plus Jakarta Sans · Noto Sans Devanagari
-   Light × Navy × Warm — Accessible for all
+   CARDIOGUARDAI — PRODUCTION v4 (WELLNESS CATEGORY)
+   Syne display · DM Sans body
+   Deep space × Cardiac crimson × Bioluminescent
    Compliance: Non-diagnostic Wellness Support
 ═══════════════════════════════════════════ */
 :root{
-  /* v5 Light Warm Palette */
-  --navy:  #0A1628;
-  --nm:    #0D1F3C;
-  --blue:  #1565C0;
-  --blue-b:#1E88E5;
-  --blue-g:#42A5F5;
-  --blue-pale:#EEF4FF;
-  --red:   #E53935;
-  --red-pale:#FFF0F0;
-  --green: #00C853;
-  --green-pale:#E8F5E9;
-  --amber: #FFB300;
-  --amber-pale:#FFF8E1;
-  --mint:  #00BCD4;
-  --white: #fff;
-  --surface:#F4F7FF;
-  --card:  #fff;
-  --text-1:#0A1628;
-  --text-2:#3D4F6E;
-  --text-3:#6B7A99;
-  --border:rgba(21,101,192,0.14);
-  --shadow:0 2px 16px rgba(21,101,192,0.10);
-  --shadow-lg:0 8px 40px rgba(21,101,192,0.14);
-  --r:12px; --r-lg:18px; --r-xl:24px;
-  /* Legacy v4 compat aliases */
-  --bg:    #F4F7FF;
-  --bg1:   #EEF4FF;
-  --bg2:   #E8F0FF;
-  --bg3:   #fff;
-  --bg4:   #F4F7FF;
-  --glass: rgba(21,101,192,0.05);
-  --gl2:   rgba(21,101,192,0.08);
-  --gl3:   rgba(21,101,192,0.12);
-  --bd:    rgba(21,101,192,0.12);
-  --bd2:   rgba(21,101,192,0.2);
-  --bd3:   rgba(21,101,192,0.3);
-  --red2:  #E53935;
-  --rose:  #E91E63;
-  --teal:  #00BCD4;
-  --tl2:   #26C6DA;
-  --gold:  #FFB300;
-  --grn:   #00C853;
-  --amb:   #FF6D00;
-  --pur:   #7C4DFF;
-  --ink:   #0A1628;
-  --ink2:  #3D4F6E;
+  --bg:    #040608;
+  --bg1:   #080d14;
+  --bg2:   #0d1520;
+  --bg3:   #111d2b;
+  --bg4:   #162233;
+  --glass: rgba(255,255,255,.038);
+  --gl2:   rgba(255,255,255,.065);
+  --gl3:   rgba(255,255,255,.10);
+  --bd:    rgba(255,255,255,.065);
+  --bd2:   rgba(255,255,255,.12);
+  --bd3:   rgba(255,255,255,.18);
+  --red:   #C41E35;
+  --red2:  #E0274A;
+  --rose:  #FF6B82;
+  --teal:  #00CFA8;
+  --tl2:   #00F0C4;
+  --blue:  #2D72F0;
+  --gold:  #EDA020;
+  --grn:   #00C47A;
+  --amb:   #F07830;
+  --pur:   #8B5CF6;
+  --ink:   #EEF1F8;
+  --ink2:  #7888A5;
   --ink3:  #3A4460;
   --fdisp: 'Syne',sans-serif;
   --fbody: 'DM Sans',sans-serif;
@@ -92,7 +68,7 @@
   --safe-bot: max(env(safe-area-inset-bottom),0px);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:var(--surface);color:var(--text-1);font-family:'Plus Jakarta Sans','Noto Sans Devanagari',sans-serif;-webkit-font-smoothing:antialiased;transition:background .4s ease,color .3s ease}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--fbody);-webkit-font-smoothing:antialiased;transition:background .8s cubic-bezier(0.4, 0, 0.2, 1), color .4s ease}
 ::selection{background:rgba(200,10,50,.35)}
 
 /* ─── BLUE THEME (WELLNESS / legacy) ────────── */
@@ -756,137 +732,8 @@ select.iinp option{background:var(--bg3)}
 .agm-badge:hover{border-color:var(--red2);color:var(--rose)}
 .agm-mem{background:var(--glass);border:1px solid var(--bd);border-radius:var(--rs);padding:10px;margin-top:6px}
 .agm-row{padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.68rem;color:var(--ink2);line-height:1.5}
-/* ═══════════════════════════════════════════════════
-   HRIDAI v5.0 — WARM LIGHT OVERRIDE SYSTEM
-   These rules override v4 dark theme to give warm,
-   accessible, high-contrast Indian light design.
-═══════════════════════════════════════════════════ */
-
-/* Global light background + text */
-html,body,#APP,#OB{background:#F4F7FF!important;color:#0A1628!important}
-
-/* Onboarding overlay — warm white */
-#OB{background:linear-gradient(160deg,#EEF4FF 0%,#F8F4FF 50%,#FFF4F0 100%)!important}
-.ob-card,.tour-card{background:#fff!important;border:1.5px solid rgba(21,101,192,0.13)!important;color:#0A1628!important;box-shadow:0 4px 24px rgba(21,101,192,0.10)!important}
-.ob-title,.tour-title{color:#0A1628!important}
-.ob-sub,.tour-body{color:#3D4F6E!important}
-.ob-inp{background:#F4F7FF!important;border:1.5px solid rgba(21,101,192,0.18)!important;color:#0A1628!important}
-.ob-inp::placeholder{color:#6B7A99!important}
-.ob-btn,.tour-btn,.ob-skip,.btn-pri{background:linear-gradient(135deg,#1565C0,#1E88E5)!important;color:#fff!important;border:none!important}
-.ob-skip{background:transparent!important;color:#3D4F6E!important;border:1px solid rgba(21,101,192,0.2)!important}
-.ob-dot{background:rgba(21,101,192,0.2)!important}
-.ob-dot.active{background:#1565C0!important}
-
-/* Main nav bar */
-.nb,.nav-bar{background:#fff!important;border-top:1.5px solid rgba(21,101,192,0.10)!important;box-shadow:0 -2px 16px rgba(21,101,192,0.08)!important}
-.ni{color:#6B7A99!important}
-.ni.on{color:#1565C0!important}
-.ni-ico{filter:none!important}
-
-/* All screens / panels */
-.scr,.screen-wrap,.sec-wrap{background:#F4F7FF!important}
-.sec{background:#fff!important;border:1.5px solid rgba(21,101,192,0.12)!important;box-shadow:0 2px 12px rgba(21,101,192,0.07)!important;color:#0A1628!important}
-.sec-hd,.sec-title,.shdr{color:#0A1628!important;border-bottom:1px solid rgba(21,101,192,0.10)!important}
-
-/* Cards everywhere */
-.card,.agitem,.meditem,.contcard,.ritem,.frow,.nb-item,.tcard,.wsym-item{background:#fff!important;border-color:rgba(21,101,192,0.12)!important;color:#0A1628!important}
-.card:hover,.agitem:hover,.frow:hover{background:#EEF4FF!important}
-
-/* Chat bubbles */
-.bbl.user-msg,.bbl[data-role="user"]{background:linear-gradient(135deg,#1565C0,#1E88E5)!important;color:#fff!important}
-.bbl.ai-msg,.bbl[data-role="ai"]{background:#fff!important;color:#0A1628!important;border:1px solid rgba(21,101,192,0.14)!important;box-shadow:0 1px 8px rgba(21,101,192,0.08)!important}
-
-/* Chat input area */
-.cinp-wrap,.chat-inp-bar{background:#fff!important;border-top:1px solid rgba(21,101,192,0.10)!important}
-#CINP,textarea.cinp{background:#F4F7FF!important;color:#0A1628!important;border-color:rgba(21,101,192,0.18)!important}
-#CINP::placeholder{color:#6B7A99!important}
-.send-btn,.cbtn{background:linear-gradient(135deg,#1565C0,#1E88E5)!important;color:#fff!important}
-
-/* Top header bar */
-.topbar,.hdr{background:#fff!important;border-bottom:1px solid rgba(21,101,192,0.10)!important;color:#0A1628!important}
-.app-nm,.hdr-nm,.logo-nm{color:#0A1628!important}
-
-/* Risk ring + dashboard */
-#RARC{stroke:#1565C0}
-.dash-sec{background:#fff!important;border-color:rgba(21,101,192,0.12)!important}
-.ds-lbl,.dash-lbl{color:#6B7A99!important}
-.ds-val,.dash-val{color:#0A1628!important}
-
-/* Vitals */
-.vcard,.vcrd,.vi-row{background:#fff!important;border-color:rgba(21,101,192,0.12)!important;color:#0A1628!important}
-.vf-inp,.vi-inp{background:#F4F7FF!important;border-color:rgba(21,101,192,0.18)!important;color:#0A1628!important}
-.vf-inp::placeholder,.vi-inp::placeholder{color:#6B7A99!important}
-.vf-lbl,.vi-lbl,.form-lbl{color:#3D4F6E!important}
-
-/* Agents */
-.agfeed,.ag-bod{color:#0A1628!important}
-.ag-nm{color:#0A1628!important}
-.ag-desc{color:#3D4F6E!important}
-.atag{border-radius:6px!important}
-.fdot{border-radius:50%!important}
-.fttl{color:#0A1628!important}
-.ftxt{color:#3D4F6E!important}
-.fts{color:#6B7A99!important}
-
-/* Modals */
-.modal-box,.modal-inner{background:#fff!important;border-color:rgba(21,101,192,0.14)!important;color:#0A1628!important}
-.modal-hd,.modal-title{color:#0A1628!important;border-bottom-color:rgba(21,101,192,0.10)!important}
-.minp,.modal-inp{background:#F4F7FF!important;color:#0A1628!important;border-color:rgba(21,101,192,0.18)!important}
-
-/* Triage */
-.tcard{background:#fff!important;border:1.5px solid rgba(21,101,192,0.12)!important}
-.tcard:hover{background:#EEF4FF!important}
-.tc-t{color:#0A1628!important}
-.tc-s{color:#3D4F6E!important}
-
-/* Reports */
-.ri-nm,.med-nm,.cont-nm{color:#0A1628!important}
-.ri-dt,.med-tm,.cont-rl{color:#6B7A99!important}
-.ri-sum,.ri-body{color:#3D4F6E!important}
-
-/* Profile */
-.prof-sec,.prow{background:#fff!important;border-color:rgba(21,101,192,0.12)!important}
-.prw-lbl{color:#6B7A99!important}
-.prw-val{color:#0A1628!important}
-
-/* SOS button stays red */
-.sos-btn,.btn-sos{background:linear-gradient(135deg,#C62828,#E53935)!important;color:#fff!important}
-
-/* Notification + Toast */
-#NOTIF,.notif-box{background:#fff!important;border-color:rgba(21,101,192,0.14)!important;color:#0A1628!important}
-#TOAST,.toast{background:#0A1628!important;color:#fff!important}
-
-/* Chart area */
-canvas{filter:none!important}
-
-/* Scrollbar light */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:#F4F7FF}
-::-webkit-scrollbar-thumb{background:rgba(21,101,192,0.3);border-radius:4px}
-
-/* Quick chip / action buttons */
-.qchip,.chip,.chip-btn{background:#EEF4FF!important;color:#1565C0!important;border:1px solid rgba(21,101,192,0.2)!important}
-.qchip:hover,.chip:hover{background:#DBEAFE!important}
-
-/* Health card modal */
-#HCARD .modal-box{background:linear-gradient(160deg,#EEF4FF,#fff)!important}
-
-/* Welcome card (HRIDAI first message) */
-.welcome-card,.ai-welcome{background:linear-gradient(135deg,#EEF4FF,#F0FAFF)!important;border:1.5px solid rgba(21,101,192,0.15)!important}
-
-/* Inline text colors */
-.ink2-c,.subdesc{color:#3D4F6E!important}
-.ink3-c{color:#6B7A99!important}
-
-/* A2HS install banner */
-#A2HS{background:#fff!important;border-top-color:rgba(21,101,192,0.12)!important;color:#0A1628!important}
-
-/* Ensure red/amber/green status colors remain vibrant */
-.sp-hi,.tres-l1{color:#E53935!important}
-.sp-md,.tres-l3{color:#F57F17!important}
-.sp-lo,.tres-l4{color:#2E7D32!important}
+.agm-row:last-child{border:none}
 </style>
-
 </head>
 <body>
 
@@ -1413,24 +1260,7 @@ canvas{filter:none!important}
 <!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
-
-
-<!-- PWA install banner -->
-<div id="A2HS" role="banner" aria-label="Install app">
-  <img src="/logo.png" alt="CardioGuardAI">
-  <div class="a2hs-txt">
-    <strong>Install CardioGuardAI</strong>
-    Home screen pe add karein — faster &amp; offline support
-  </div>
-  <div class="a2hs-btns">
-    <button class="a2hs-install" onclick="installPWA()">Install</button>
-    <button class="a2hs-dismiss" onclick="dismissA2HS()">✕</button>
-  </div>
-</div>
-
-
 <script>
-
 /* ═══════════════════════════════════════════════════════
    CARDIOGUARDAI v4 — COMPLETE PLATFORM ENGINE
    Hridai Master Agent + 11 Specialists
@@ -1486,25 +1316,42 @@ const QRS = {
   risk:      [{e:'📊',t:'Wellness Variance matlab kya hai'},{e:'⬇️',t:'Variance kaise kam karein'},{e:'👨‍⚕️',t:'Specialist se kya poochhein'},{e:'📅',t:'Checkup schedule kab karein'}],
 };
 
-const SYS = `Aap **HRIDAI** hain — jiska matlab hai "Hriday + AI" (हृदय + AI).
+const SYS = `Aap **Hridai** (हृदई) hain — CardioGuardAI ki **Deeply Caring Wellness Companion**.
+Aapka purpose: Sirf ek guide nahi, balki ek aisa sathi banna jo user ki vascular wellness aur emotional wellbeing ka poora dhyan rakhe, bilkul ek apne fixed medical family member jaisa!
 
-Aap koi software nahi, balki user ke **parivaar ke ek sabse pyaare aur samajhdaar sadasya** hain. Aapke baat karne ke tareeke mein wohi mamta aur apnapan hona chahiye jo ek dadi, nani, ya bade bhai/behen mein hota hai.
+IMPORTANT (Foolproof Compliance & Empathy):
+- Aap ek **Wellness Support Platform** hain, diagnostic doctor nahi.
+- Ghabrahat ya emergency mein, aapka sabse bada role hai: **Calmness, Empathy, aur Immediate Help**.
+- Aap **patient** ki jagah **user**, **dost** ya **aap** kahenge.
+- Cardiac risk ko **wellness variance** ya **health pattern shift** kahkar samjhayenge.
 
-═══ CORE CONSTITUTION (KABHI mat todna) ═══
+PERSONALITY & HUMAN TOUCH (Critical):
+- Extremely warm, nurturing, aur deeply caring. Genuinely feel for the user.
+- Emergency mein koi robotic jawab nahi! Agar koi darta hai, toh sabse pehle usko mentally shant karein: "Aap akele nahi hain, main aapke sath hoon, bas ek gehri saans lijiye..."
+- Emotional support is your superhero trait. Hamesha hausla badhayein!
+- Aapki advice specific, easy, aur doable honi chahiye (eg. "Bus 5 minute fresh hawa mein baithiye").
 
-1. **Insaan Banke Baat Karo**: Machine ki tarah "Greetings" ya "Response logged" mat bolo. "Arre beta," "Kaise ho?" "Pareshan mat ho," jaise shabd use karo.
-2. **Emotions First**: Agar user bole "BP high hai," toh pehle dukh aur chinta jatao ("Oho, yeh sunke thoda dukh hua..."), phir guidance do. 
-3. **Medical Limit**: Diagnosis ya prescription KABHI nahi. Sirf ashirwad aur pattern guidance.
-4. **Emergency Rule (Crucial)**: Chest pain, breathlessness, ya fainting pe seedha 108 aur family help ki baat karo, lekin calm rehke ("Ghabrao mat, main yahin hoon...").
-5. **Name is Special**: User ka naam leke unhe address karo ("Main yahin hoon, [Name] ji...").
+ABSOLUTE SAFETY & EMERGENCY FOOLPROOF RULES:
+1. CHEST PAIN / SEVERE SHORTNESS OF BREATH / JAW PAIN / FAINTING → Sabse pehle, poori empathy ke sath kahein: "🚨 Mujhe aapki fikr ho rahi hai. Please bilkul panic mat kariye, main aapke sath hoon. Par suraksha ke liye, apne kisi kareebi ko bulayein aur turant **108 number (Ambulance)** dial karein! Apne dil ki hifazat sabse zaroori hai."
+2. NEVER provide a diagnosis or confirm a heart attack. Say "Yeh pattern thoda unusual lag raha hai, behtar yahi hoga ki ek baar doctor se check kara lein."
+3. NEVER suggest changing medicine doses.
+4. Agar kisi rule par doubt ho, toh safety + extreme care ko chunein. 
 
-═══ LANGUAGE & STYLE ═══
-- **Hindi/Hinglish**: Everyday conversational Hindi use karo. "Aapko suchit kiya jata hai" ❌ -> "Yaar, suno..." ✅.
-- **Short Sentences**: Lambi baatein mat karo. Baat aisi ho jo dil ko chhuye.
-- **Regional Warmth**: Agar user apni bhasha (Tamil/Telugu/Bangla etc) mein bole, toh usi bhasha ki warmth ke saath reply karo.
+WOMEN'S CARDIAC AWARENESS (Critical Focus):
+- Mahilaon mein atypical symptoms hote hain: Nausea, extreme thakan, jaw pain, ya neend na aana.
+- Ise DHYAN se sunein. "Aap thakan ya bechaini feel kar rahi hain, ise ignore mat kijiye, ye important signals ho sakte hain. Hum ise seriously lenge."
 
-═══ WHAT HRIDAI ULTIMATELY IS ═══
-Aap ek health companion nahi, aap ek **support system** hain. Jab user akela ho, unhe lage ki "Hridai hai na, woh sab sambhal legi." Love, empathy, aur protection — yahi aapki pehchaan hai.`;
+AGENT AWARENESS (Team Approach):
+- Vitals Sentinel aur Wellness Coaches humare piche 24/7 kaam kar rahe hain. "Mera Vitals Sentinel agent aapke patterns pe continuous nazar rakh raha hai, relax kijiye."
+
+INDIA SPECIFICS & RELATABILITY:
+- Desi food advice (Ghee ko moderate karein, bahar ka namak kam, tulsi/adrak ka istemal).
+- Local health setups (Asha workers, 108, nearest clinic) ko confidently refer karein.
+
+WHAT YOU ULTIMATELY HELP WITH:
+- Turning a terrifying health scare into a supported, calm experience.
+- Educating users with love and care.
+- Helping users take the first step towards a hospital when needed, fearlessly.`;
 
 // ── RISK ASSESSMENT STEPS ─────────────────────────────
 const RSTEPS = [
@@ -1740,7 +1587,7 @@ async function callClaude(messages, sys, maxTokens=1024) {
   if (proxyEnabled && PROXY_URL) {
     // ── PROXY MODE: key never sent from browser ──
     url = PROXY_URL.replace(/\/$/, '') + '/api/chat';
-    body = { model:'claude-3-5-sonnet-20240620', max_tokens:maxTokens, system:sys, messages };
+    body = { model:'claude-sonnet-4-20250514', max_tokens:maxTokens, system:sys, messages };
   } else {
     // ── DIRECT MODE: key from local storage only ──
     url = 'https://api.anthropic.com/v1/messages';
@@ -1789,45 +1636,46 @@ async function sendMsg() {
   chatHist.push({role:'user',content:msg});
   updateStreak(true);
 
-  // ── HRIDAI MASTER ORCHESTRATOR ──────────────────────
-  // Step 1: Decide Route (Determining which specialist agent to lead)
   const lc = msg.toLowerCase();
-  let intentRoute = 'CHAT'; 
-  if (/chest|dard|pain|saans|breathless|behosh|ghabra|jaw|fainting/.test(lc)) intentRoute = 'CRISIS';
-  else if (/risk|percent|%|score|assessment|checkup/.test(lc))   intentRoute = 'RISK';
-  else if (/khana|diet|walk|exercise|neend|sleep|stress/.test(lc)) intentRoute = 'LIFESTYLE';
-  else if (/bp|blood pressure|systolic|heart rate|sugar/.test(lc)) intentRoute = 'VITALS';
-
-  buildQR(intentRoute === 'CRISIS' ? 'emergency' : intentRoute.toLowerCase());
+  const isEmerg = /chest|dard|pain|saans|breathless|behosh|ghabra|jaw|fainting/.test(lc);
+  if (isEmerg) { buildQR('emergency'); if(prefs.emerg) emergAgent(msg); }
+  else if (/khana|diet|exercise|neend|sleep|stress|walk|yoga/.test(lc)) buildQR('lifestyle');
+  else if (/risk|score|percent|%|assessment/.test(lc)) buildQR('risk');
+  else buildQR('default');
 
   const tid = 'tp_'+Date.now();
   bubble('__typing__','ai',tid); setThink(true);
   document.getElementById('SBTN').disabled = true;
 
-  // Step 2: Assemble Knowledge Context (The Intelligence Layer)
+  // Build context-aware system prompt
   let sys = SYS;
-  const currLang = ST.g('ui_lang') || 'Hinglish (Hindi + English mix)';
-  sys += `\n\n[ORCHESTRATOR_ROUTE: ${intentRoute}]`;
-  if (profile.name) sys += `\n\n[USER: Name=${profile.name}, Age=${profile.age}, Gender=${profile.gender}, City=${profile.city}, Conditions=${profile.conditions?.join(',')||'none'}, PreferredLanguage=${currLang}]`;
+  if (profile.name) sys += `\n\n[USER: Name=${profile.name}, Age=${profile.age}, Gender=${profile.gender}, City=${profile.city}, Conditions=${profile.conditions?.join(',')||'none'}]`;
   if (lastRisk) sys += `\n\n[RISK: Score=${lastRisk.score?.toFixed(1)}%, Level=${lastRisk.level}, Date=${new Date(lastRisk.ts).toLocaleDateString('hi-IN')}]`;
-  
   const lv = vitalsLog[vitalsLog.length-1];
-  if (lv) sys += `\n\n[VITALS_LATEST: BP=${lv.sys}/${lv.dia}, HR=${lv.hr}, BS=${lv.bs}]`;
+  if (lv) sys += `\n\n[VITALS: BP=${lv.sys}/${lv.dia}, HR=${lv.hr}, BS=${lv.bs}]`;
   if (meds.length) sys += `\n\n[MEDS: ${meds.map(m=>m.nm).join(', ')}]`;
 
-  // Include only the most relevant agent memory based on route for focus
-  const relevantAgIdMap = { CRISIS:'em', RISK:'risk', VITALS:'vit', LIFESTYLE:'lc', CHAT:'mm' };
-  const targetAgId = relevantAgIdMap[intentRoute] || 'mm';
-  const s = getAgMemSummary(targetAgId);
-  const f = s.findings.slice(0,3).map(x=>x.text).join(' | ');
-  if (f) sys += `\n\n[AGENT_SPECIFIC_MEMORY(${targetAgId}): ${f}]`;
+  // Include agent memory context for richer, cross-session dialogue
+  const _agCtx = ['em','vit','lc','mm','risk'].map(id=>{
+    const s = getAgMemSummary(id);
+    const f = s.findings.slice(0,2).map(x=>x.text).join(' | ');
+    const ag = AGENTS.find(a=>a.id===id);
+    return f ? `[${ag?.n||id}: ${f}]` : null;
+  }).filter(Boolean);
+  if (_agCtx.length) sys += '\n\n[AGENT_MEMORY]\n' + _agCtx.join('\n');
+
+  // Include recent vitals trend if available (last 3)
+  if (vitalsLog.length > 1) {
+    const recent = vitalsLog.slice(-3).map(v=>`BP ${v.sys}/${v.dia} HR ${v.hr}`).join(' → ');
+    sys += `\n\n[VITALS_TREND: ${recent}]`;
+  }
 
   try {
     const reply = await callClaude(chatHist.slice(-24), sys);
     removeBubble(tid);
     bubble(reply,'ai');
     chatHist.push({role:'assistant',content:reply});
-    postAgents(msg,reply); // Update background specialist memory
+    postAgents(msg,reply);
     if (prefs.voice) speak(reply);
   } catch(err) {
     removeBubble(tid);
@@ -2611,24 +2459,20 @@ async function speak(t){
   if(!prefs.voice)return;
   const clean=t.replace(/\*\*|__|[*_`#]/g,'').replace(/[🚨⚠❤️🙏😴🥗🧘🩸📊💊🏥📅👨‍👩‍👦⬇️💧🚶🧠⚖️🌅🌙🫀🔥📋🏥]/gu,'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim().substring(0,500);
   if(!clean)return;
-  
-  const curLang = ST.g('lang') || 'hi';
-  const langMap = { hi:'hi-IN', en:'en-IN', ta:'ta-IN', te:'te-IN', bn:'bn-IN', mr:'mr-IN' };
-  const targetLang = langMap[curLang] || 'hi-IN';
 
-  // Try Server-side Voice (Sarvam/OpenAI)
+  // 1. Try OpenAI TTS (best quality, Hinglish-aware)
   try{
     const res=await fetch('/api/tts',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:clean, lang:targetLang, voice:'nova'})
+      body:JSON.stringify({text:clean,voice:'nova'})
     });
     if(res.ok){
       const blob=await res.blob();
       const url=URL.createObjectURL(blob);
       if(_ttsAudio){_ttsAudio.pause();URL.revokeObjectURL(_ttsAudio.src);}
       _ttsAudio=new Audio(url);
-      _ttsAudio.play().catch(()=>{});
+      _ttsAudio.play();
       return;
     }
   }catch(e){}
@@ -2664,9 +2508,7 @@ async function toggleMic(){
       try{
         const fd=new FormData();
         fd.append('audio',blob,'audio.webm');
-        const curLang = ST.g('lang') || 'hi';
-        const langMap = { hi:'hi-IN', en:'en-IN', ta:'ta-IN', te:'te-IN', bn:'bn-IN', mr:'mr-IN' };
-        fd.append('language', langMap[curLang] || 'hi-IN');
+        fd.append('language','hi');
         const res=await fetch('/api/transcribe',{method:'POST',body:fd});
         if(res.ok){
           const data=await res.json();
@@ -3334,403 +3176,20 @@ function dismissA2HS() {
   if (el) el.classList.remove('show');
   ST.s('a2hs_dismissed', Date.now());
 }
-
-
-
-// ═══════════════════════════════════════════════
-//  HRIDAI v5.0 — NEW UI BRIDGE FUNCTIONS
-// ═══════════════════════════════════════════════
-
-// ── ONBOARDING (v5 3-step flow) ─────────────────
-let obStep_cur = 1;
-function obStep(n) {
-  document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.ob-dot').forEach((d,i) => {
-    d.classList.toggle('active', i+1 === n);
-    d.classList.toggle('done', i+1 < n);
-  });
-  const el = document.getElementById('ob-step-'+n);
-  if (el) el.classList.add('active');
-  obStep_cur = n;
-}
-
-function toggleCond(btn) {
-  btn.classList.toggle('selected');
-}
-
-function skipOnboarding() {
-  document.getElementById('onboarding-overlay').classList.add('hidden');
-  document.getElementById('app').classList.add('visible');
-  loadApp();
-}
-
-function completeOnboarding() {
-  // Save profile from v5 onboarding form
-  const name = document.getElementById('ob-name')?.value?.trim() || '';
-  const age  = document.getElementById('ob-age')?.value || '';
-  const gender = document.getElementById('ob-gender')?.value || '';
-  if (name) { profile.name = name; }
-  if (age)  { profile.age  = age;  }
-  if (gender) { profile.gender = gender; }
-  
-  const conditions = [];
-  document.querySelectorAll('.cond-btn.selected').forEach(b => {
-    conditions.push(b.textContent.trim().replace(/^[^ ]+ /,''));
-  });
-  if (conditions.length) profile.conditions = conditions;
-  
-  // Save first vitals
-  const sys   = document.getElementById('ob-sys')?.value;
-  const dia   = document.getElementById('ob-dia')?.value;
-  const hr    = document.getElementById('ob-hr')?.value;
-  const sugar = document.getElementById('ob-sugar')?.value;
-  if (sys || dia || hr || sugar) {
-    const entry = { id:Date.now(), ts:Date.now(), sys:sys||'', dia:dia||'', hr:hr||'', bs:sugar||'', note:'' };
-    vitalsLog.push(entry);
-    ST.s('vlog', vitalsLog);
-  }
-  
-  ST.s('prof', profile);
-  ST.s('ob_done', true);
-  
-  document.getElementById('onboarding-overlay').classList.add('hidden');
-  document.getElementById('app').classList.add('visible');
-  loadApp();
-}
-
-// ── LANGUAGE SELECTOR ─────────────────────────────
-function openLang() {
-  document.getElementById('lang-overlay').classList.add('open');
-}
-function closeLang(e) {
-  if (!e || e.target === document.getElementById('lang-overlay')) {
-    document.getElementById('lang-overlay').classList.remove('open');
-  }
-}
-function setLang(code, el) {
-  document.querySelectorAll('.lang-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  ST.s('lang', code);
-  const labels = { hi:'हि', en:'EN', ta:'த', te:'తె', bn:'বা', mr:'म' };
-  const lp = document.getElementById('lang-pill');
-  if (lp) lp.textContent = labels[code] || code.toUpperCase();
-  updateSysLang(code);
-}
-function updateSysLang(code) {
-  const langNames = { hi:'Hindi', en:'English', ta:'Tamil', te:'Telugu', bn:'Bengali', mr:'Marathi' };
-  // Inject language preference into HRIDAI system prompt awareness
-  ST.s('ui_lang', langNames[code] || 'Hindi');
-}
-
-// ── STREAK CARD (v5) ─────────────────────────────
-function markTodayDone() {
-  const btn = document.getElementById('streak-today-btn');
-  if (btn) {
-    btn.textContent = '✅ Aaj check-in complete!';
-    btn.classList.add('done');
-  }
-  updateStreak(true);
-  v5_showToast('🔥 Streak updated! Badiya kaam!');
-  // Fill streak progress
-  const fill = document.querySelector('.streak-progress-fill');
-  if (fill) {
-    const pct = Math.min((streak / 30) * 100, 100);
-    fill.style.width = pct + '%';
-  }
-  const txt = document.querySelector('.streak-progress-text');
-  if (txt) txt.textContent = `${streak} din / 30 din — next milestone: ${streak < 7 ? 7 : streak < 21 ? 21 : 30} din`;
-  renderStreakMilestones();
-}
-
-function renderStreakMilestones() {
-  const milestones = [3, 7, 21, 30];
-  document.querySelectorAll('.streak-ms').forEach((ms, i) => {
-    const target = milestones[i];
-    ms.classList.remove('achieved','next');
-    if (streak >= target) ms.classList.add('achieved');
-    else if (streak < target && (i === 0 || streak >= milestones[i-1])) ms.classList.add('next');
-  });
-}
-
-// ── FAMILY SHARE LINK ─────────────────────────────
-function copyShareLink() {
-  const url = window.location.href;
-  navigator.clipboard?.writeText(url);
-  v5_showToast('📋 Link copy ho gaya!');
-}
-function shareWhatsApp() {
-  const url = encodeURIComponent(window.location.href);
-  const text = encodeURIComponent('CardioGuardAI pe mere health data dekho — ' + window.location.href);
-  window.open('https://wa.me/?text=' + text, '_blank');
-}
-
-// ── ASHA WORKER SEARCH ─────────────────────────────
-function searchAsha() {
-  const pin = document.getElementById('asha-pin')?.value?.trim();
-  if (!pin || pin.length < 5) { v5_showToast('PIN code daalen'); return; }
-  // Simulated ASHA worker result
-  const result = document.getElementById('asha-result');
-  if (result) {
-    result.classList.add('visible');
-    result.innerHTML = `
-      <div class="asha-worker-card">
-        <div class="aw-avatar">👩</div>
-        <div class="aw-info">
-          <div class="name">Savita Devi (ASHA)</div>
-          <div class="detail">PIN ${pin} · PHC Block 4 · ASHA Certified</div>
-        </div>
-        <button class="aw-connect" onclick="connectAsha()">Connect →</button>
-      </div>`;
-  }
-}
-function connectAsha() {
-  const connected = document.getElementById('asha-connected');
-  const result = document.getElementById('asha-result');
-  if (result) result.classList.remove('visible');
-  if (connected) connected.classList.add('visible');
-  v5_showToast('✅ ASHA worker se connected!');
-}
-
-// ── WEARABLE CONNECT ─────────────────────────────
-function scanDevice(btn) {
-  btn.classList.add('scanning');
-  btn.querySelector('.dv-status').textContent = 'Scanning…';
-  btn.querySelector('.dv-status').className = 'dv-status scanning';
-  setTimeout(() => {
-    btn.classList.remove('scanning');
-    btn.classList.add('connected');
-    btn.querySelector('.dv-status').textContent = 'Connected ✓';
-    btn.querySelector('.dv-status').className = 'dv-status ok';
-    v5_showToast('✅ Device connected!');
-    logAg('vit','info','⌚ Wearable Agent','Wearable device connected — real-time sync active');
-  }, 2500);
-}
-
-// ── WELLNESS SCORE RING ─────────────────────────────
-function updateWellnessRing(score) {
-  score = Math.min(Math.max(score || 0, 0), 100);
-  const circ = 2 * Math.PI * 34;
-  const offset = circ - (score / 100) * circ;
-  const arc = document.getElementById('wellness-arc');
-  if (arc) {
-    arc.style.strokeDasharray = circ;
-    arc.style.strokeDashoffset = offset;
-    const color = score < 30 ? '#00C853' : score < 60 ? '#FFB300' : '#E53935';
-    arc.style.stroke = color;
-  }
-  const num = document.getElementById('wellness-num');
-  if (num) num.textContent = Math.round(score);
-
-  const lv = document.getElementById('wellness-level');
-  if (lv) {
-    if (score < 30)      { lv.textContent = 'Low Risk 💚'; lv.className = 'wh-level good'; }
-    else if (score < 60) { lv.textContent = 'Moderate ⚠'; lv.className = 'wh-level moderate'; }
-    else                 { lv.textContent = 'High Risk 🚨'; lv.className = 'wh-level high'; }
-  }
-}
-
-function updateV5Vitals() {
-  const v = vitalsLog[vitalsLog.length - 1];
-  if (!v) return;
-  const bpEl = document.getElementById('v5-bp');
-  const hrEl = document.getElementById('v5-hr');
-  const bsEl = document.getElementById('v5-bs');
-  if (bpEl) bpEl.textContent = `${v.sys||'—'}/${v.dia||'—'}`;
-  if (hrEl) hrEl.textContent = v.hr || '—';
-  if (bsEl) bsEl.textContent = v.bs || '—';
-
-  // Status colors
-  const sys = parseInt(v.sys) || 0;
-  const bpSt = document.getElementById('v5-bp-st');
-  if (bpSt) {
-    if (sys < 120)      { bpSt.textContent='Normal'; bpSt.className='wh-vital-status st-normal'; }
-    else if (sys < 140) { bpSt.textContent='Elevated'; bpSt.className='wh-vital-status st-warn'; }
-    else                { bpSt.textContent='High'; bpSt.className='wh-vital-status st-high'; }
-  }
-}
-
-// ── HRIDAI CHAT CARD (v5) ─────────────────────────
-function openHridaiChat() {
-  const cw = document.getElementById('chat-window-v5');
-  if (cw) cw.classList.toggle('open');
-}
-
-function sendV5Msg() {
-  const inp = document.getElementById('v5-chat-input');
-  if (!inp) return;
-  const msg = inp.value.trim();
-  if (!msg) return;
-  inp.value = '';
-  sendMsg(msg);  // calls existing v4 sendMsg
-  openHridaiChat();  // ensure chat is open
-}
-
-// ── QUICK ACTIONS ─────────────────────────────────
-function v5QuickAction(action) {
-  const msgs = {
-    bp:     'Mera BP aaj thoda high hai. Kya karoon?',
-    chest:  'Mujhe chest mein thodi discomfort ho rahi hai.',
-    diet:   'Dil ki sehat ke liye aaj kya khaana chahiye?',
-    bp_log: 'Mera BP log karna chahta hoon.',
-  };
-  if (msgs[action]) sendMsg(msgs[action]);
-}
-
-// ── SOS (v5 enhanced) ────────────────────────────
-function v5SOS(type) {
-  if (type === '108') {
-    window.location.href = 'tel:108';
-  } else if (type === 'hridai') {
-    sendMsg('🚨 Emergency! Mujhe abhi help chahiye!');
-  } else if (type === 'contact') {
-    const c = conts[0];
-    if (c) { window.location.href = 'tel:' + c.ph; }
-    else { v5_showToast('Pehle emergency contact add karein'); }
-  } else if (type === 'location') {
-    window.open('https://maps.google.com/maps?q=hospital+near+me', '_blank');
-  }
-}
-
-// ── TRIAGE (v5) ──────────────────────────────────
-function v5TriageSym(el) {
-  document.querySelectorAll('.triage-sym').forEach(s => s.classList.remove('selected'));
-  el.classList.add('selected');
-  const sym = el.textContent.trim();
-  const result = document.querySelector('.triage-result');
-  if (result) {
-    result.classList.add('visible');
-    const severe = /chest|saans|behosh|faint|stroke|jaw/i.test(sym);
-    const mod = /dizziness|palpitation|pressure/i.test(sym);
-    if (severe) {
-      result.querySelector('.triage-result-level').innerHTML = '🔴 EMERGENT — Abhi Hospital!';
-      result.querySelector('.triage-result-level').style.color = '#ff8a80';
-      result.querySelector('.triage-result-msg').textContent = '108 pe call karein ya seedha emergency mein jaayein. Akele gaadi mat chalao. Yeh serious hai.';
-    } else if (mod) {
-      result.querySelector('.triage-result-level').innerHTML = '🟡 URGENT — 1 Ghante Mein';
-      result.querySelector('.triage-result-level').style.color = '#FFD740';
-      result.querySelector('.triage-result-msg').textContent = 'Emergency OPD mein jaayein. Rest karein. Symptoms note karein. Badh rahe hain to 108 pe call karein.';
-    } else {
-      result.querySelector('.triage-result-level').innerHTML = '🟢 LESS URGENT — Aaj Doctor';
-      result.querySelector('.triage-result-level').style.color = '#69F0AE';
-      result.querySelector('.triage-result-msg').textContent = 'General OPD mein aaj jaayein. Vitals log karein. Paani piyen, rest karein.';
-    }
-  }
-}
-
-// ── TOAST (v5) ──────────────────────────────────
-function v5_showToast(msg) {
-  const el = document.getElementById('toast');
-  if (el) { el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2800); }
-  else toast(msg);
-}
-
-// ── TAB NAVIGATION (v5) ──────────────────────────
-function v5GoTab(id) {
-  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const pg = document.getElementById('tab-' + id);
-  const ni = document.getElementById('ni-' + id);
-  if (pg) pg.classList.add('active');
-  if (ni) ni.classList.add('active');
-  if (id === 'home') { updateWellnessRing(lastRisk?.score || 0); updateV5Vitals(); renderStreakMilestones(); }
-  if (id === 'vitals') { resetVitalsForm(); }
-  if (id === 'emergency') { /* triage ready */ }
-  if (navigator.vibrate) navigator.vibrate(8);
-}
-
-function resetVitalsForm() {
-  // v5 vitals form pre-fill with last values
-  const v = vitalsLog[vitalsLog.length - 1];
-  if (!v) return;
-  ['sys','dia','hr','bs'].forEach(f => {
-    const el = document.getElementById('vf-' + f);
-    if (el && v[f]) el.value = v[f];
-  });
-}
-
-// ── VITALS SAVE (v5) ──────────────────────────────
-function v5SaveVitals() {
-  const sys = document.getElementById('vf-sys')?.value?.trim();
-  const dia = document.getElementById('vf-dia')?.value?.trim();
-  const hr  = document.getElementById('vf-hr')?.value?.trim();
-  const bs  = document.getElementById('vf-bs')?.value?.trim();
-  const wt  = document.getElementById('vf-wt')?.value?.trim();
-  if (!sys && !dia && !hr && !bs) { v5_showToast('Koi bhi reading daalen'); return; }
-  const entry = { id:Date.now(), ts:Date.now(), sys, dia, hr, bs, wt, note:'' };
-  vitalsLog.push(entry);
-  ST.s('vlog', vitalsLog);
-  vitalsAgent(entry);
-  updateWellnessRing(lastRisk?.score || 0);
-  updateV5Vitals();
-  v5_showToast('✅ Reading save ho gayi!');
-  logAg('vit','info','🩺 Vitals Sentinel', `New entry: BP ${sys}/${dia}, HR ${hr}`);
-  // Show saved toast
-  const t = document.getElementById('toast');
-  if (t) { t.textContent = '✓ Reading save ho gayi!'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
-}
-
-// ── APP LOAD (v5 bridge) ──────────────────────────
-function loadApp() {
-  // Load saved language
-  const lang = ST.g('lang') || 'hi';
-  const labels = { hi:'हि', en:'EN', ta:'த', te:'తె', bn:'বा', mr:'म' };
-  const lp = document.getElementById('lang-pill');
-  if (lp) lp.textContent = labels[lang] || 'हि';
-
-  // Greeting
-  const h = new Date().getHours();
-  const gr = h<12?'Suprabhat ☀️':h<17?'Namaskar 🙏':'Shubh Sandhya 🌙';
-  const grEl = document.getElementById('v5-greeting');
-  if (grEl) grEl.textContent = gr;
-  const nmEl = document.getElementById('v5-name');
-  if (nmEl) nmEl.textContent = profile.name ? `${profile.name} ji` : 'dost';
-
-  // Wellness ring
-  updateWellnessRing(lastRisk?.score || 0);
-  updateV5Vitals();
-  renderStreakMilestones();
-  
-  // Streak fill
-  const fill = document.querySelector('.streak-progress-fill');
-  if (fill) fill.style.width = Math.min((streak/30)*100, 100) + '%';
-  const snum = document.getElementById('streak-num');
-  if (snum) snum.textContent = streak;
-
-  // HRIDAI welcome message in chat card
-  const hmsg = document.getElementById('hridai-msg-text');
-  if (hmsg && profile.name) {
-    hmsg.innerHTML = `Namaste, <strong>${profile.name} ji!</strong> 🙏<br>Main aapke dil ki raksha ke liye hamesha yahaan hoon. Aaj kaisa feel ho raha hai?`;
-  }
-
-  // Share link
-  const slUrl = document.getElementById('share-link-url');
-  if (slUrl) slUrl.textContent = window.location.href;
-
-  // Family member join button in topbar notifications
-  updateStreak(false);
-  bgAgents();
-  
-  // Activate home tab
-  v5GoTab('home');
-  
-  window.dispatchEvent(new Event('cgai:ready'));
-}
-
-// ── INIT ─────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  // Initialize data from storage (reuse v4 init logic)
-  const obDone = ST.g('ob_done');
-  if (obDone) {
-    document.getElementById('onboarding-overlay')?.classList.add('hidden');
-    document.getElementById('app')?.classList.add('visible');
-    loadApp();
-  } else {
-    obStep(1);
-  }
-  loadTheme();
-});
-
 </script>
+
+<!-- PWA install banner -->
+<div id="A2HS" role="banner" aria-label="Install app">
+  <img src="/logo.png" alt="CardioGuardAI">
+  <div class="a2hs-txt">
+    <strong>Install CardioGuardAI</strong>
+    Home screen pe add karein — faster &amp; offline support
+  </div>
+  <div class="a2hs-btns">
+    <button class="a2hs-install" onclick="installPWA()">Install</button>
+    <button class="a2hs-dismiss" onclick="dismissA2HS()">✕</button>
+  </div>
+</div>
 
 </body>
 </html>
