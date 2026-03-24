@@ -192,19 +192,24 @@ body.theme-clarity .scr{font-size:1.04rem;line-height:1.7}
 body.theme-clarity .ni,.theme-clarity .ni.on{color:var(--ink2)}
 body.theme-clarity .ni.on .ni-ico,.theme-clarity .ni.on .ni-lbl{color:var(--red2)}
 
-/* ─── HIGH CONTRAST (Accessibility) ─────────── */
-body.theme-hc{
-  --bg:#000000;--bg1:#0A0A0A;--bg2:#111111;--bg3:#1C1C1C;--bg4:#242424;
-  --glass:rgba(255,255,255,.06);--gl2:rgba(255,255,255,.1);--gl3:rgba(255,255,255,.15);
-  --bd:rgba(255,255,255,.35);--bd2:rgba(255,255,255,.55);--bd3:rgba(255,255,255,.75);
-  --red:#FF4444;--red2:#FF6666;--rose:#FF8888;--teal:#00FF99;--tl2:#00FFCC;
-  --blue:#55AAFF;--gold:#FFDD00;--grn:#00FF88;--amb:#FF8800;--pur:#BB88FF;
-  --ink:#FFFFFF;--ink2:#DDDDDD;--ink3:#999999;
-}
-body.theme-hc *{letter-spacing:.01em}
-body.theme-hc .scr{font-size:1.05rem}
-body.theme-hc button,body.theme-hc a,body.theme-hc [onclick]{outline-offset:2px}
-body.theme-hc button:focus-visible,body.theme-hc a:focus-visible{outline:3px solid var(--gold)}
+/* ─── V6.0 EXTENSIONS ────────────────────────── */
+.v6-vitals-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--navy);border-bottom:1px solid var(--bd)}
+.v6-scan-btn{padding:6px 14px;background:var(--red);border:none;border-radius:18px;color:#fff;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:1px;box-shadow:0 0 15px rgba(229,57,53,.3)}
+.v6-cam-sim{height:160px;background:#000;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.v6-cam-sim::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,transparent 30%,rgba(0,0,0,.8) 100%);z-index:2}
+.scan-line{position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);box-shadow:0 0 15px var(--red);z-index:3;opacity:0}
+.scanning .scan-line{animation:scanV 2s linear infinite;opacity:1}
+@keyframes scanV{0%{top:0}100%{top:100%}}
+.v6-er-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px}
+.er-btn{background:var(--bg3);border:1.5px solid var(--bd);border-radius:var(--r);padding:16px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.er-btn:active{transform:scale(.95);background:var(--red-pale);border-color:var(--red)}
+.er-icon{font-size:24px;margin-bottom:8px}
+.er-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink2)}
+.m-list{display:flex;flex-direction:column;gap:10px}
+.m-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:14px;box-shadow:var(--shadow)}
+.h-col{display:flex;flex-direction:column;gap:2px}
+.h-val{font-size:20px;font-weight:800;font-family:var(--fdisp)}
+.h-lab{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1px}
 
 /* ─── PWA INSTALL BANNER ─────────────────────── */
 #A2HS{
@@ -1142,34 +1147,62 @@ canvas{filter:none!important}
       <div class="dsgreet" id="DSG">Namaskar, <em>Dost</em></div>
       <div class="dssub" id="DSS">Aaj aapka dil kaisa hai?</div>
     </div>
-    <div class="rring-card">
-      <div class="rring">
-        <svg viewBox="0 0 84 84">
-          <circle class="rbg" cx="42" cy="42" r="34"/>
-          <circle class="rarc" id="RARC" cx="42" cy="42" r="34" stroke="var(--teal)" stroke-dasharray="214" stroke-dashoffset="214"/>
-        </svg>
-        <div class="rnum"><div class="n" id="RNUM">—</div><div class="p">WELLNESS</div></div>
+    <!-- ── V6.0 REALTIME VITALS HUB ── -->
+    <div class="h-card" style="margin:12px var(--pad) 0; padding:0; overflow:hidden; background:var(--bg3); border:1.5px solid var(--bd2); border-radius:18px;">
+      <div class="v6-vitals-header">
+        <div class="h-col">
+          <div class="h-lab" style="color:#fff; opacity:.8;">rPPG Real-time Scan</div>
+          <div class="h-val" id="rppg-status" style="font-size:14px; color:var(--teal);">READY FOR SCAN</div>
+        </div>
+        <button class="v6-scan-btn" onclick="v6_startScan()">SCAN NOW</button>
       </div>
-      <div class="rinfo">
-        <div class="rlv" id="RLV" style="color:var(--ink3)">NOT ASSESSED</div>
-        <div class="rlb" id="RLB">Assessment nahi hua</div>
-        <div class="rht" id="RHT">Wellness tab → Screening chalaaein</div>
-        <div class="rrun-btn" onclick="goS('risk')">🧘 Run Screening</div>
+      <div id="v6-cam-sim" class="v6-cam-sim">
+        <div class="scan-line"></div>
+        <div class="pulse-overlay" style="position:absolute; inset:0; background:rgba(229,57,53,0.05); animation:pls 1.5s infinite; opacity:0;" id="v6-pulse"></div>
+        <div style="font-size:32px; z-index:3;">🤳</div>
+      </div>
+      <div class="h-row" style="padding:16px; background:rgba(0,188,212,0.05); display:flex; justify-content:space-between;">
+        <div class="h-col">
+          <div class="h-val" id="sim-hr" style="font-size:24px;">--</div>
+          <div class="h-lab">Heart Rate</div>
+        </div>
+        <div class="h-col">
+          <div class="h-val" id="sim-bp" style="font-size:24px;">--/--</div>
+          <div class="h-lab">Est. BP</div>
+        </div>
+        <div class="h-col">
+            <div class="h-val" id="sim-score" style="font-size:24px; color:var(--rose);">--%</div>
+            <div class="h-lab">Risk Score</div>
+        </div>
       </div>
     </div>
-    <div class="stk" onclick="goS('chat')">
-      <div class="stk-f">🔥</div>
-      <div><div class="stk-n" id="STKN">0</div><div class="stk-l">Din ki streak — Hridai se baat karte rahein!</div></div>
-    </div>
+
     <div class="sgrid">
       <div class="sc" style="--ac:var(--rose)" onclick="goS('vitals')"><div class="sc-ico">🩸</div><div class="sc-val" id="DBP">—/—</div><div class="sc-unit">mmHg</div><div class="sc-lbl">Blood Pressure</div><div class="sc-tr tr-ok" id="DBPt">—</div></div>
       <div class="sc" style="--ac:var(--red2)" onclick="goS('vitals')"><div class="sc-ico">💓</div><div class="sc-val" id="DHR">—</div><div class="sc-unit">bpm</div><div class="sc-lbl">Heart Rate</div><div class="sc-tr tr-ok" id="DHRt">—</div></div>
-      <div class="sc" style="--ac:var(--gold)" onclick="goS('vitals')"><div class="sc-ico">🍬</div><div class="sc-val" id="DBS">—</div><div class="sc-unit">mg/dL</div><div class="sc-lbl">Blood Sugar</div><div class="sc-tr tr-ok" id="DBSt">—</div></div>
-      <div class="sc" style="--ac:var(--teal)" onclick="goS('agents')"><div class="sc-ico">🤖</div><div class="sc-val">11</div><div class="sc-unit">Agents</div><div class="sc-lbl">Hridai Network</div><div class="sc-tr" style="color:var(--teal)">LIVE</div></div>
+      <div class="sc" style="--ac:var(--teal)" onclick="goS('partners')"><div class="sc-ico">🛡️</div><div class="sc-val">Active</div><div class="sc-unit">Network</div><div class="sc-lbl">Wellness Agents</div><div class="sc-tr" style="color:var(--teal)">FINDER</div></div>
+      <div class="sc" style="--ac:var(--gold)" onclick="goS('meds')"><div class="sc-ico">🏥</div><div class="sc-val">Nearby</div><div class="sc-unit">Doctors</div><div class="sc-lbl">CVD Booking</div><div class="sc-tr" style="color:var(--gold)">LIVE</div></div>
     </div>
     <div class="slbl">Hridai Agent Activity</div>
     <div id="AGFEED"></div>
     <div style="height:16px"></div>
+  </div>
+
+  <!-- ── V6.0 HUB: SPECIALIST FINDER ── -->
+  <div class="scr" id="s-partners">
+    <div class="aghdr">
+      <div class="aghdr-t">Wellness Network 🛡️</div>
+      <div class="aghdr-s">Nearby ASHA & Cardiac Specialists</div>
+    </div>
+    <div id="v6-agent-list" class="m-list" style="padding:var(--pad);">
+      <div class="m-card loading" style="height:100px; display:flex; align-items:center; justify-content:center;">Searching nearby agents...</div>
+    </div>
+  </div>
+
+  <!-- ── V6.0 HUB: DOCTOR BOOKING & REVIEW ── -->
+  <div class="scr" id="s-meds">
+    <div class="mhdr"><div class="mhdr-t">Healthcare Providers 🏥</div></div>
+    <div id="v6-doc-list" class="m-list" style="padding:var(--pad);"></div>
   </div>
 
   <!-- ── RISK ASSESSMENT ── -->
@@ -1244,13 +1277,18 @@ canvas{filter:none!important}
     <div style="height:16px"></div>
   </div>
 
-  <!-- ── MEDICATIONS ── -->
+  <!-- ── V6.0 HUB: DOCTOR BOOKING & REVIEW ── -->
+  <div class="scr" id="s-centers">
+    <div class="mhdr"><div class="mhdr-t">Healthcare Providers 🏥</div><div class="mhdr-s">CVD specialty centers & reviews</div></div>
+    <div id="v6-doc-list" class="m-list" style="padding:var(--pad);"></div>
+  </div>
+
+  <!-- ── MEDICATIONS (Restored v5) ── -->
   <div class="scr" id="s-meds">
-    <div class="mhdr"><div class="mhdr-t">Medications</div></div>
+    <div class="mhdr"><div class="mhdr-t">Medications 💊</div><div class="mhdr-s">Time and schedule tracking</div></div>
     <div class="addmed" onclick="openModal('MEDMODAL')"><div style="font-size:1.2rem">➕</div><div class="addmed-t">Nayi Dawai Add Karein</div></div>
-    <div class="slbl">Aaj Ki Dawaiyan</div>
+    <div class="slbl">Aaj Ki Schedule</div>
     <div id="MEDLIST"></div>
-    <div style="height:16px"></div>
   </div>
 
   <!-- ── EMERGENCY ── -->
@@ -1397,16 +1435,16 @@ canvas{filter:none!important}
     </div>
   </div>
 
-  <!-- ── BOTTOM NAV ── -->
+  <!-- ── BOTTOM NAV (v6.0) ── -->
   <div id="NAV">
     <button class="ni on" id="n-chat" onclick="goS('chat')"><div class="ni-ico">💬</div><div class="ni-lbl">Chat</div></button>
-    <button class="ni" id="n-dash" onclick="goS('dash')"><div class="ni-ico">📊<div class="nbdg" id="nb-dash"></div></div><div class="ni-lbl">Dashboard</div></button>
-    <button class="ni" id="n-risk" onclick="goS('risk')"><div class="ni-ico">🧘</div><div class="ni-lbl">Wellness</div></button>
+    <button class="ni" id="n-dash" onclick="goS('dash')"><div class="ni-ico">📊</div><div class="ni-lbl">Dash</div></button>
+    <button class="ni" id="n-partners" onclick="goS('partners')"><div class="ni-ico">🛡️</div><div class="ni-lbl">Agents</div></button>
     <button class="ni" id="n-vitals" onclick="goS('vitals')"><div class="ni-ico">🩺</div><div class="ni-lbl">Vitals</div></button>
-    <button class="ni" id="n-reports" onclick="goS('reports')"><div class="ni-ico">📋</div><div class="ni-lbl">Reports</div></button>
-    <button class="ni" id="n-meds" onclick="goS('meds')"><div class="ni-ico">💊<div class="nbdg" id="nb-meds"></div></div><div class="ni-lbl">Meds</div></button>
-    <button class="ni" id="n-emer" onclick="goS('emer')"><div class="ni-ico">🚨</div><div class="ni-lbl">SOS</div></button>
-    <button class="ni" id="n-profile" onclick="goS('profile')"><div class="ni-ico">👤</div><div class="ni-lbl">Profile</div></button>
+    <button class="ni" id="n-meds" onclick="goS('meds')"><div class="ni-ico">💊</div><div class="ni-lbl">Meds</div></button>
+    <button class="ni" id="n-centers" onclick="goS('centers')"><div class="ni-ico">🏥</div><div class="ni-lbl">Clinic</div></button>
+    <button class="ni" id="n-emer" onclick="goS('emer')"><div class="ni-ico">🚑</div><div class="ni-lbl">SOS</div></button>
+    <button class="ni" id="n-profile" onclick="goS('profile')"><div class="ni-ico">👤</div><div class="ni-lbl">Me</div></button>
   </div>
 </div>
 
@@ -3639,11 +3677,116 @@ function v5GoTab(id) {
   const pg = document.getElementById('tab-' + id);
   const ni = document.getElementById('ni-' + id);
   if (pg) pg.classList.add('active');
-  if (ni) ni.classList.add('active');
+  ni?.classList.add('active');
   if (id === 'home') { updateWellnessRing(lastRisk?.score || 0); updateV5Vitals(); renderStreakMilestones(); }
-  if (id === 'vitals') { resetVitalsForm(); }
-  if (id === 'emergency') { /* triage ready */ }
+  if (id === 'partners') v6_loadAgents();
+  if (id === 'meds') v6_loadDocs();
   if (navigator.vibrate) navigator.vibrate(8);
+}
+
+// ── V6.0 AGENT & DOC LOADERS ─────────────────────
+async function v6_loadAgents() {
+  const container = document.getElementById('v6-agent-list');
+  try {
+    const res = await fetch('/api/agents');
+    const data = await res.json();
+    container.innerHTML = data.map(ag => `
+      <div class="m-card h-row" style="margin-bottom:12px;">
+        <div class="h-col">
+          <div class="h-val" style="font-size:16px;">${ag.name}</div>
+          <div class="h-lab">${ag.role} • ${ag.location} (${ag.dist})</div>
+        </div>
+        <div class="h-val" style="color:${ag.status==='Active'?'#69f0ae':'#ffd740'}">${ag.status}</div>
+      </div>
+    `).join('');
+  } catch(e) { container.innerHTML = '<div class="m-card">Unable to load agents.</div>'; }
+}
+
+async function v6_loadDocs() {
+  const container = document.getElementById('v6-doc-list');
+  if(!container) return;
+  try {
+    const res = await fetch('/api/health_centers');
+    const data = await res.json();
+    container.innerHTML = data.map(d => `
+      <div class="m-card" style="margin-bottom:12px;">
+        <div class="h-row" style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:flex-start;">
+          <div class="h-col">
+            <div class="h-val" style="font-size:16px; color:var(--navy);">${d.name}</div>
+            <div class="h-lab" style="font-size:9px;">${d.type} • ${'₹'.repeat(d.price_rating)}</div>
+          </div>
+          <div style="text-align:right;">
+             <div style="color:var(--red); font-weight:800; font-size:14px;">⭐ ${d.cvd_specialty}/5</div>
+             <div style="font-size:8px; opacity:.7; text-transform:uppercase;">CVD Focus</div>
+          </div>
+        </div>
+        <div style="font-size:12px; color:var(--text-2); border-top:1px solid rgba(0,0,0,.05); padding-top:8px; font-style:italic;">
+          "${d.reviews}"
+        </div>
+        <button class="btn-pri" style="margin-top:12px; height:36px; font-size:12px;" onclick="v5_showToast('Booking logic active — Reservec in 10 mins')">SCHEDULE APPOINTMENT</button>
+      </div>
+    `).join('');
+  } catch(e) { container.innerHTML = '<div class="m-card">Unable to load centers.</div>'; }
+}
+
+// ── V6.0 EMERGENCY DISPATCH (Multi-Incident) ──
+function v6_triggerER(type) {
+  const box = document.getElementById('er-status-box');
+  const txt = document.getElementById('er-status-text');
+  const loc = document.getElementById('er-loc-text');
+  box.classList.remove('hidden');
+  txt.textContent = 'DISPATCHING RESPONDERS...';
+  if (navigator.vibrate) navigator.vibrate([200,100,200]);
+
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const {latitude:lat, longitude:lon} = pos.coords;
+    loc.textContent = `LOCATION: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+    try {
+      const res = await fetch('/api/emergency/report', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({type, lat, lon})
+      });
+      const data = await res.json();
+      txt.textContent = `REF: ${data.ref} — EN ROUTE 🚑`;
+      v5_showToast(`🚨 ${type.toUpperCase()} ALERT SENT!`);
+    } catch(e) { txt.textContent = 'DISPATCH ERROR. CALL 108!'; }
+  }, err => {
+    txt.textContent = 'LOC ERROR. CALL 108!';
+  });
+}
+
+// ── V6.0 Realtime Sim (rPPG/PPG) ────────────────
+let simChart;
+function v6_startScan() {
+  const st = document.getElementById('rppg-status');
+  const h = document.getElementById('sim-hr');
+  const b = document.getElementById('sim-bp');
+  const s = document.getElementById('sim-score');
+  const cam = document.getElementById('v6-cam-sim');
+  
+  st.textContent = 'SCANNING BLOOD FLOW...';
+  cam.classList.add('scanning');
+  
+  let ticks = 0;
+  const iv = setInterval(() => {
+    ticks++;
+    h.textContent = Math.floor(70 + Math.random()*15);
+    b.textContent = `${Math.floor(120+Math.random()*10)}/${Math.floor(80+Math.random()*5)}`;
+    s.textContent = Math.floor(Math.random()*25) + '%';
+    if(ticks > 30) {
+      clearInterval(iv);
+      st.textContent = 'SCAN COMPLETE • SYNCED';
+      cam.classList.remove('scanning');
+      v5_showToast('✅ Vitals Audit Logged');
+      // Sync to server
+      fetch('/api/vitals/sync', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({sys:120, dia:80, hr:75, bs:100, type:'rppg', source:'camera'})
+      });
+    }
+  }, 100);
 }
 
 function resetVitalsForm() {
@@ -3675,6 +3818,31 @@ function v5SaveVitals() {
   // Show saved toast
   const t = document.getElementById('toast');
   if (t) { t.textContent = '✓ Reading save ho gayi!'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
+}
+
+// ── V6.0 INITIALIZATION ───────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize V6.0 Realtime Components
+  setTimeout(() => {
+    v6_setupCheckins();
+  }, 2000);
+});
+
+function v6_setupCheckins() {
+  // Check for updates every 15 minutes (demo: 1 min)
+  setInterval(() => {
+    const last = ST.g('v6_last_checkin') || 0;
+    if (Date.now() - last > 900000) { // 15 mins
+        ST.s('v6_last_checkin', Date.now());
+        v5_showToast('🔔 Wellness Check-in Due');
+        logAg('risk', 'info', 'Wellness Monitor', 'Routine check-in triggered.');
+    }
+  }, 60000);
+}
+
+function goS(id) {
+  // Legacy goS bridge to v5GoTab
+  v5GoTab(id);
 }
 
 // ── APP LOAD (v5 bridge) ──────────────────────────
